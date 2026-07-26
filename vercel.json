@@ -1,8 +1,5 @@
 {
-  "cleanUrls": true,
-  "rewrites": [
-    { "source": "/", "destination": "/out/dashboard.html" },
-    { "source": "/dashboard", "destination": "/out/dashboard.html" },
-    { "source": "/(.*)", "destination": "/out/$1" }
-  ]
+  "buildCommand": "mkdir -p public && cp out/dashboard.html public/index.html && cp -r out/* public/",
+  "outputDirectory": "public",
+  "cleanUrls": true
 }
