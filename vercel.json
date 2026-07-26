@@ -1,4 +1,5 @@
 {
+  "framework": null,
   "buildCommand": "mkdir -p public && cp out/dashboard.html public/index.html && cp -r out/* public/",
   "outputDirectory": "public",
   "cleanUrls": true
