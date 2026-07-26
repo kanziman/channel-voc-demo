@@ -117,7 +117,8 @@ section{padding:56px 0;border-top:1px solid var(--border)}
 .gp-hyp{font-size:13.5px;color:var(--ink-2);margin:10px 0}
 .chip{display:inline-block;font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:999px;
   background:var(--surface-2);border:1px solid var(--border);color:var(--ink-2);margin:3px 4px 0 0}
-.node-lbl{font-family:var(--mono);font-size:9.5px;fill:var(--ink-2);pointer-events:none}
+.node-lbl{font-family:var(--mono);font-size:9.5px;fill:var(--ink-2);pointer-events:none;
+  stroke:var(--surface);stroke-width:3px;paint-order:stroke fill;stroke-linejoin:round}
 .edge{stroke:var(--border);stroke-width:1.2}
 .edge.hi{stroke:var(--s2);stroke-width:2.4}
 .gnode{cursor:pointer}
@@ -128,10 +129,20 @@ section{padding:56px 0;border-top:1px solid var(--border)}
 .rc-list{display:grid;gap:14px}
 .rc{padding:20px}
 .rc-top{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap}
+.rc-head{flex:1 1 auto;min-width:0}
+.rc-top .krw{flex:0 0 auto}
 .rc h3{font-size:16px}
 .rc .comp{font-family:var(--mono);font-size:12px;color:var(--s1);text-transform:uppercase;letter-spacing:.04em}
 .rc .krw{font-size:20px;font-weight:800;color:var(--s2);font-variant-numeric:tabular-nums;white-space:nowrap}
 .rc .hyp{color:var(--ink-2);font-size:14px;margin:8px 0 12px}
+.rc.pending{border-color:color-mix(in srgb,var(--warning) 30%,var(--border))}
+.rc.pending .comp{color:var(--warning)}
+.rc.pending .hyp{font-size:15px;color:var(--ink);margin:10px 0 12px}
+.rc-state{display:inline-block;margin-left:8px;font-family:var(--mono);font-size:10px;padding:1px 7px;border-radius:999px;
+  background:color-mix(in srgb,var(--warning) 18%,transparent);color:var(--warning);text-transform:none;letter-spacing:0;vertical-align:middle}
+.pending-badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:12px;margin-top:10px;
+  padding:5px 10px;border-radius:8px;background:color-mix(in srgb,var(--warning) 12%,transparent);
+  color:var(--warning);border:1px solid color-mix(in srgb,var(--warning) 30%,transparent)}
 .meta{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);font-family:var(--mono)}
 .sev{display:inline-flex;align-items:center;gap:6px}
 .sev b{width:8px;height:8px;border-radius:50%}
@@ -553,10 +564,11 @@ const TYPE_LABEL={Component:'컴포넌트',RootCause:'루트원인',Symptom:'증
         <span class="pill ${pill}">${src} ${sim!=='—'?sim:''}</span>
         <span class="snip">${esc((e.text||'').slice(0,90))}</span></div>`;
     }).join('');
-    return `<div class="card rc">
+    const deployed = !!rc.action_url;
+    return `<div class="card rc${deployed?'':' pending'}">
       <div class="rc-top">
-        <div><div class="comp">${esc(rc.component)}</div>
-          <h3>${esc(d.title||rc.hypothesis)}</h3></div>
+        <div class="rc-head"><div class="comp">${esc(rc.component)}${deployed?'':'<span class="rc-state">검토 대기</span>'}</div>
+          ${d.title?`<h3>${esc(d.title)}</h3>`:''}</div>
         <div class="krw">${krw(rc.revenue)}</div>
       </div>
       <div class="hyp">${esc(rc.hypothesis)}</div>
@@ -566,7 +578,7 @@ const TYPE_LABEL={Component:'컴포넌트',RootCause:'루트원인',Symptom:'증
         <span>인용 ${(d.cited_conv_ids||[]).length}</span>
         <span>회수가능 ${krw(rc.recoverable)}</span>
       </div>
-      ${rc.action_url?`<a class="issue-link" href="${rc.action_url}" target="_blank">✓ 배포됨 → ${esc(rc.action_url.split('/').pop())} ↗</a>`:''}
+      ${deployed?`<a class="issue-link" href="${rc.action_url}" target="_blank">✓ 배포됨 → ${esc(rc.action_url.split('/').pop())} ↗</a>`:`<span class="pending-badge">◷ 검토 대기 · 게이트 미만이라 미배포</span>`}
       ${ev.length?`<details class="prov"><summary>GraphRAG 근거 · 대화 ${ev.length}건 (벡터 + 그래프)</summary>${evHtml}</details>`:''}
     </div>`;
   }).join('');
