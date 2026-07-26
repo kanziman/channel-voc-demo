@@ -1,0 +1,8 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/", "destination": "/out/dashboard.html" },
+    { "source": "/dashboard", "destination": "/out/dashboard.html" },
+    { "source": "/(.*)", "destination": "/out/$1" }
+  ]
+}
