@@ -89,29 +89,90 @@ python src/pipeline/run.py --execute
 
 PHASE 2는 단순 텍스트 분류기를 넘어 **"에이전틱 지식그래프 루트원인 탐지 엔진"**으로 동작합니다.
 
+### 1. 엔드투엔드 시스템 다이어그램 (System Flow)
+
+```mermaid
+flowchart TD
+    subgraph DataIngestion ["1. 데이터 수집 & 신호 추출"]
+        RAW["1,200건 고객 대화 데이터 (Bitext CS)"] --> EXTRACT["LLM Function Calling 추출기\n(extract.py)"]
+        EXTRACT --> SIGNALS["구조화 신호\n(Intent, Symptom, Component, Severity)"]
+    end
+
+    subgraph KnowledgeGraph ["2. Neo4j 지식그래프 & 임베딩"]
+        SIGNALS --> KG_LOAD["Neo4j MERGE 로더\n(load.py)"]
+        KG_LOAD --> DENSE["FastEmbed ONNX 384d 벡터 인덱스"]
+        KG_LOAD --> SPARSE["Lucene Full-text 인덱스"]
+        KG_LOAD --> GRAPH_NODES["지식그래프 노드/엣지 구축\n(Customer→Conv→Symptom→Component)"]
+    end
+
+    subgraph RootCauseEngine ["3. 루트원인 탐지 & GraphRAG"]
+        GRAPH_NODES --> CYPHER["Cypher 순회 엔진\n(rootcause.py)"]
+        CYPHER --> PROMOTION{"동일 부품 지목\n8건 이상?"}
+        PROMOTION -- YES --> RC_PROMOTE["RootCause 노드 승격\n+ ₩ 매출 손실액 집계"]
+        
+        RC_PROMOTE --> RRF_RETRIEVER["3중 하이브리드 검색 & RRF 융합\n(retriever.py)"]
+        DENSE --> RRF_RETRIEVER
+        SPARSE --> RRF_RETRIEVER
+        
+        RRF_RETRIEVER --> DRAFTER["팩트 근거 이슈 초안 작성\n(drafter.py)"]
+    end
+
+    subgraph HumanInTheLoop ["4. LangGraph 승인 게이트 & 배포"]
+        DRAFTER --> INTERRUPT["⏸️ LangGraph interrupt()\n인간 승인 대기 노드 (agent.py)"]
+        INTERRUPT --> APPROVAL{"사람의 승인 결정"}
+        APPROVAL -- Approved --> DISPATCH["GitHub Issue 배포 & Provenance 기록\n(dispatch.py)"]
+        APPROVAL -- Rejected --> REJECT["배포 취소 & 로깅"]
+        
+        DISPATCH --> NEO4J_EDGE["Neo4j 출처 엣지 생성\n(Action)-[:EVIDENCES]->(Conv)"]
+        DISPATCH --> DASHBOARD["out/dashboard.html 생성\n(6가지 인터랙티브 Visual)"]
+    end
+
+    style RAW fill:#f9f9fb,stroke:#d1d5db,stroke-width:1px
+    style EXTRACT fill:#eff6ff,stroke:#3b82f6,stroke-width:1.5px
+    style CYPHER fill:#fef3c7,stroke:#f59e0b,stroke-width:1.5px
+    style INTERRUPT fill:#ffedd5,stroke:#f97316,stroke-width:2px
+    style DISPATCH fill:#dcfce7,stroke:#22c55e,stroke-width:2px
 ```
-[ 1,200건 고객 대화 ]
-         │
-         ▼ (1단계: LLM 구조화 추출 - extract.py)
-[ Intent, Symptoms, Component, Severity, Confidence 추출 ]
-         │
-         ▼ (2단계: Neo4j 지식그래프 적재 & 임베딩 - load.py)
-[ Neo4j Knowledge Graph ] ── (FastEmbed bge-small-en-v1.5 384d 벡터 & Lucene Full-text)
-         │
-         ▼ (3단계: Cypher 루트원인 순회 & ₩ 집계 - rootcause.py)
-[ Cypher 순회: 8건 이상 동일 부품 지목 시 RootCause 승격 & 매출 위험액 집계 ]
-         │
-         ▼ (4단계: 3중 하이브리드 GraphRAG & 이슈 작성 - retriever.py & drafter.py)
-[ RRF 융합: Dense 384d + Sparse Lucene + Graph 1-Hop → 팩트 근거 박힌 이슈 초안 ]
-         │
-         ▼ (5단계: LangGraph 인간 승인 게이트 - agent.py)
-[ interrupt() 발동: 사람의 최종 승인 전까지 일시 정지 ]
-         │
-         ▼ (6단계: 실전 이슈 배포 & 출처 그래프 연결 - dispatch.py)
-[ GitHub Issue 실시간 생성 + Neo4j Action-[:EVIDENCES]->Conversation 엣지 연동 ]
-         │
-         ▼
-[ out/dashboard.html 생성 (6가지 인터랙티브 visual 시각화) ]
+
+### 2. Neo4j 지식그래프 데이터 모델 (ERD)
+
+```mermaid
+erDiagram
+    Customer ||--o{ Conversation : INITIATED
+    Conversation ||--o{ Symptom : EXPRESSES
+    Symptom }|--|| Component : INDICATES
+    Component ||--o| RootCause : EVOLVED_INTO
+    Action }|--o{ Conversation : EVIDENCES
+
+    Customer {
+        string customer_id PK
+    }
+    Conversation {
+        string conv_id PK
+        string text
+        float32_array embedding_384d
+        string intent
+        float confidence
+    }
+    Symptom {
+        string name PK
+    }
+    Component {
+        string name PK
+        int frequency
+    }
+    RootCause {
+        string component PK
+        int frequency
+        int total_risk_krw
+        float avg_severity
+        string hypothesis
+    }
+    Action {
+        string issue_id PK
+        string title
+        string status
+    }
 ```
 
 ### 파이썬 모듈 역할 (`src/graph/`)
