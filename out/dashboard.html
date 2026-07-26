@@ -72,8 +72,8 @@ section{padding:56px 0;border-top:1px solid var(--border)}
 .flow{display:flex;flex-wrap:nowrap;gap:0;align-items:stretch;padding:22px 18px;overflow-x:auto}
 .fnode{position:relative;flex:1 0 104px;min-width:104px;padding:13px 9px;border:1px solid var(--border);
   border-radius:12px;background:var(--surface-2);text-align:center;margin:5px}
-.fnode .fn{font-family:var(--mono);font-size:11.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.fnode .fs{font-size:11px;color:var(--muted);margin-top:3px;white-space:nowrap}
+.fnode .fn{font-family:var(--mono);font-size:11px;font-weight:600;line-height:1.25;overflow-wrap:anywhere}
+.fnode .fs{font-size:10.5px;color:var(--muted);margin-top:4px;white-space:nowrap}
 .fnode.exec{background:color-mix(in srgb,var(--s1) 14%,var(--surface));border-color:color-mix(in srgb,var(--s1) 45%,var(--border))}
 .fnode.exec .fn{color:var(--s1)}
 .fnode.interrupt.exec{background:color-mix(in srgb,var(--s2) 16%,var(--surface));border-color:var(--s2);
@@ -128,6 +128,8 @@ section{padding:56px 0;border-top:1px solid var(--border)}
 .rc-list{display:grid;gap:14px}
 .rc{padding:20px}
 .rc-top{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap}
+.rc-head{flex:1 1 auto;min-width:0}
+.rc-top .krw{flex:0 0 auto}
 .rc h3{font-size:16px}
 .rc .comp{font-family:var(--mono);font-size:12px;color:var(--s1);text-transform:uppercase;letter-spacing:.04em}
 .rc .krw{font-size:20px;font-weight:800;color:var(--s2);font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -156,7 +158,8 @@ section{padding:56px 0;border-top:1px solid var(--border)}
 @media(max-width:760px){.bench{grid-template-columns:1fr}}
 .bench-card{padding:22px}
 .bmetric{margin:18px 0}
-.bm-name{font-family:var(--mono);color:var(--ink-2);font-size:13px;margin-bottom:9px}
+.bm-name{font-family:var(--mono);color:var(--ink);font-size:13px;margin-bottom:9px;font-weight:600}
+.bm-desc{font-family:var(--sans);font-weight:400;color:var(--muted);font-size:11px;margin-left:6px}
 .bmrow{display:grid;grid-template-columns:58px 1fr 52px;gap:10px;align-items:center;margin:6px 0}
 .bmrow .who{font-family:var(--mono);font-size:11.5px;color:var(--ink-2)}
 .bmbar{height:12px;border-radius:99px;background:var(--surface-2);overflow:hidden;position:relative}
@@ -353,7 +356,9 @@ footer{padding:40px 0 60px;color:var(--muted);font-size:12.5px;text-align:center
 
   <section id="bench">
     <div class="sec-h"><span class="sec-n">07</span><h2>업그레이드를 숫자로 증명</h2></div>
-    <p class="sec-sub">같은 held-out 600건, 같은 27-class 인텐트 과제를 Cohen's κ로 채점.</p>
+    <p class="sec-sub"><b>sklearn</b>(전통 TF-IDF 분류기)과 <b>LLM</b>(언어모델)을, 정답을 숨긴 검증용 대화 600건에서
+      27종 문의 유형 분류로 비교. 세 지표 모두 <b>0~1</b> 범위이며 <b>1에 가까울수록</b> 사람이 매긴 정답과 잘 맞는다
+      (0.9 이상 = 매우 우수). 예: <b>0.9705</b> ≈ 사람 채점과 거의 완벽히 일치.</p>
     <div class="bench">
       <div class="card bench-card" id="benchBars"></div>
       <div class="card narr" id="benchNarr"></div>
@@ -418,7 +423,7 @@ document.getElementById('themeBtn').onclick = ()=>{
   nodes.forEach((n,i)=>{
     const on=ex.has(n.id)?'exec':'';
     html+=`<div class="fnode ${on} ${n.interrupt?'interrupt':''}">
-      <div class="fn">${n.label}</div><div class="fs">${n.sub}</div></div>`;
+      <div class="fn">${n.label.replace(/_/g,'_​')}</div><div class="fs">${n.sub}</div></div>`;
     if(i<nodes.length-1) html+='<div class="farrow">→</div>';
   });
   host.innerHTML=html;
@@ -572,12 +577,16 @@ const TYPE_LABEL={Component:'컴포넌트',RootCause:'루트원인',Symptom:'증
 /* ---------- Benchmark ---------- */
 (function(){
   const b=DATA.benchmark; if(!b||!b.sklearn){document.getElementById('benchBars').innerHTML='<p class="tag">벤치마크 데이터 없음</p>';return;}
-  const metrics=[['kappa','Cohen κ'],['macro_f1','macro-F1'],['accuracy','accuracy']];
+  const metrics=[
+    ['kappa','Cohen κ','예측이 사람 정답과 얼마나 일치하나 (우연히 맞은 건 빼고 계산)'],
+    ['macro_f1','macro-F1','드문 유형까지 고르게 맞혔나'],
+    ['accuracy','정확도','전체 중 맞힌 비율'],
+  ];
   let h='';
-  metrics.forEach(([k,lbl])=>{
+  metrics.forEach(([k,lbl,desc])=>{
     const sv=b.sklearn[k],lv=b.llm[k];
     const sWin=sv>=lv;
-    h+=`<div class="bmetric"><div class="bm-name">${lbl}</div>
+    h+=`<div class="bmetric"><div class="bm-name">${lbl} <span class="bm-desc">${desc}</span></div>
       <div class="bmrow"><span class="who">sklearn</span>
         <div class="bmbar skl"><i data-w="${sv*100}" style="width:0"></i></div>
         <span class="bmval">${sv}${sWin?'<span class="bm-win">우세</span>':''}</span></div>

@@ -156,7 +156,8 @@ section{padding:56px 0;border-top:1px solid var(--border)}
 @media(max-width:760px){.bench{grid-template-columns:1fr}}
 .bench-card{padding:22px}
 .bmetric{margin:18px 0}
-.bm-name{font-family:var(--mono);color:var(--ink-2);font-size:13px;margin-bottom:9px}
+.bm-name{font-family:var(--mono);color:var(--ink);font-size:13px;margin-bottom:9px;font-weight:600}
+.bm-desc{font-family:var(--sans);font-weight:400;color:var(--muted);font-size:11px;margin-left:6px}
 .bmrow{display:grid;grid-template-columns:58px 1fr 52px;gap:10px;align-items:center;margin:6px 0}
 .bmrow .who{font-family:var(--mono);font-size:11.5px;color:var(--ink-2)}
 .bmbar{height:12px;border-radius:99px;background:var(--surface-2);overflow:hidden;position:relative}
@@ -353,7 +354,9 @@ footer{padding:40px 0 60px;color:var(--muted);font-size:12.5px;text-align:center
 
   <section id="bench">
     <div class="sec-h"><span class="sec-n">07</span><h2>업그레이드를 숫자로 증명</h2></div>
-    <p class="sec-sub">같은 held-out 600건, 같은 27-class 인텐트 과제를 Cohen's κ로 채점.</p>
+    <p class="sec-sub"><b>sklearn</b>(전통 TF-IDF 분류기)과 <b>LLM</b>(언어모델)을, 정답을 숨긴 검증용 대화 600건에서
+      27종 문의 유형 분류로 비교. 세 지표 모두 <b>0~1</b> 범위이며 <b>1에 가까울수록</b> 사람이 매긴 정답과 잘 맞는다
+      (0.9 이상 = 매우 우수). 예: <b>0.9705</b> ≈ 사람 채점과 거의 완벽히 일치.</p>
     <div class="bench">
       <div class="card bench-card" id="benchBars"></div>
       <div class="card narr" id="benchNarr"></div>
@@ -572,12 +575,16 @@ const TYPE_LABEL={Component:'컴포넌트',RootCause:'루트원인',Symptom:'증
 /* ---------- Benchmark ---------- */
 (function(){
   const b=DATA.benchmark; if(!b||!b.sklearn){document.getElementById('benchBars').innerHTML='<p class="tag">벤치마크 데이터 없음</p>';return;}
-  const metrics=[['kappa','Cohen κ'],['macro_f1','macro-F1'],['accuracy','accuracy']];
+  const metrics=[
+    ['kappa','Cohen κ','예측이 사람 정답과 얼마나 일치하나 (우연히 맞은 건 빼고 계산)'],
+    ['macro_f1','macro-F1','드문 유형까지 고르게 맞혔나'],
+    ['accuracy','정확도','전체 중 맞힌 비율'],
+  ];
   let h='';
-  metrics.forEach(([k,lbl])=>{
+  metrics.forEach(([k,lbl,desc])=>{
     const sv=b.sklearn[k],lv=b.llm[k];
     const sWin=sv>=lv;
-    h+=`<div class="bmetric"><div class="bm-name">${lbl}</div>
+    h+=`<div class="bmetric"><div class="bm-name">${lbl} <span class="bm-desc">${desc}</span></div>
       <div class="bmrow"><span class="who">sklearn</span>
         <div class="bmbar skl"><i data-w="${sv*100}" style="width:0"></i></div>
         <span class="bmval">${sv}${sWin?'<span class="bm-win">우세</span>':''}</span></div>
