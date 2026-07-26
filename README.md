@@ -12,12 +12,13 @@
 
 ---
 
-### 🌐 인터랙티브 실시간 대시보드 리포트 바로가기 (Vercel Live)
+### 🔗 웹 대시보드 데모 (Vercel Live)
 
-[![인터랙티브 실시간 대시보드 리포트 (Vercel Live)](docs/dashboard_preview.png)](https://channel-voc-demo.vercel.app/)
+[![웹 대시보드 데모](docs/dashboard_preview.png)](https://channel-voc-demo.vercel.app/)
 
-> 🚀 **[👉 📊 실시간 대시보드 웹 리포트 열기 (channel-voc-demo.vercel.app)](https://channel-voc-demo.vercel.app/)**  
-> *이미지를 클릭하거나 위 링크를 누르면 **6가지 비주얼 대시보드**, **6단계 엔진 스테퍼**, **원문 열람**, **하이브리드 검색 플레이그라운드**를 별도 설치 없이 브라우저에서 바로 체험하실 수 있습니다.*
+> [https://channel-voc-demo.vercel.app](https://channel-voc-demo.vercel.app)
+> 
+> *상단 이미지 또는 링크를 클릭하면 별도 환경 구축 없이 브라우저에서 6단계 엔진 프로세스와 하이브리드 검색을 직접 테스트해 보실 수 있습니다.*
 
 ---
 
