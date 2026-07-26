@@ -10,9 +10,14 @@
 [![OpenRouter](https://img.shields.io/badge/OpenRouter-GPT--4o--mini-6366F1.svg)](src/graph/llm.py)
 [![AX Hackathon](https://img.shields.io/badge/AX_Hackathon-Submission-FF6B6B.svg)](src/docs/handoff.md)
 
-> 🚀 **[👉 📊 인터랙티브 실시간 대시보드 리포트 바로가기 (Vercel Live)](https://channel-voc-demo.vercel.app/)**
-> 
-> *별도 설치 없이 브라우저에서 **6가지 비주얼 대시보드**, **6단계 엔진 스테퍼**, **원문 열람**, **하이브리드 검색 플레이그라운드**를 즉시 체험하실 수 있습니다.*
+---
+
+### 🌐 인터랙티브 실시간 대시보드 리포트 바로가기 (Vercel Live)
+
+[![인터랙티브 실시간 대시보드 리포트 (Vercel Live)](docs/dashboard_preview.png)](https://channel-voc-demo.vercel.app/)
+
+> 🚀 **[👉 📊 실시간 대시보드 웹 리포트 열기 (channel-voc-demo.vercel.app)](https://channel-voc-demo.vercel.app/)**  
+> *이미지를 클릭하거나 위 링크를 누르면 **6가지 비주얼 대시보드**, **6단계 엔진 스테퍼**, **원문 열람**, **하이브리드 검색 플레이그라운드**를 별도 설치 없이 브라우저에서 바로 체험하실 수 있습니다.*
 
 ---
 
