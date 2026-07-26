@@ -1,0 +1,377 @@
+{
+  "generated_at": "2026-07-26T21:46:59",
+  "extracted": [
+    {
+      "n": 1200
+    }
+  ],
+  "components": [
+    {
+      "component": "support",
+      "n": 419
+    },
+    {
+      "component": "billing",
+      "n": 240
+    },
+    {
+      "component": "auth",
+      "n": 180
+    },
+    {
+      "component": "shipping",
+      "n": 141
+    },
+    {
+      "component": "orders",
+      "n": 133
+    },
+    {
+      "component": "subscription",
+      "n": 66
+    },
+    {
+      "component": "feedback",
+      "n": 49
+    },
+    {
+      "component": "checkout",
+      "n": 49
+    }
+  ],
+  "root_causes": [
+    {
+      "key": "rc_support",
+      "component": "support",
+      "frequency": 419,
+      "revenue_at_risk_krw": 6454800,
+      "projected_recoverable_krw": 2259180,
+      "hypothesis": "The underlying root cause is likely a lack of clear communication and transparency regarding payment processes and refund policies, leading to customer confusion and dissatisfaction.",
+      "sample_conv_ids": [
+        "conv_00327",
+        "conv_00853",
+        "conv_00976",
+        "conv_01022",
+        "conv_01049",
+        "conv_00528"
+      ]
+    },
+    {
+      "key": "rc_billing",
+      "component": "billing",
+      "frequency": 240,
+      "revenue_at_risk_krw": 5982900,
+      "projected_recoverable_krw": 2094015,
+      "hypothesis": "The billing component likely has a misconfiguration in the payment processing system that is causing inconsistent invoice generation and limited payment options.",
+      "sample_conv_ids": [
+        "conv_00576",
+        "conv_00859",
+        "conv_01022",
+        "conv_00002",
+        "conv_00170",
+        "conv_00408"
+      ]
+    },
+    {
+      "key": "rc_orders",
+      "component": "orders",
+      "frequency": 133,
+      "revenue_at_risk_krw": 5308600,
+      "projected_recoverable_krw": 1858010,
+      "hypothesis": "The underlying root cause is likely a failure in the order management system's state synchronization, leading to outdated or incorrect order status information being displayed to customers.",
+      "sample_conv_ids": [
+        "conv_00216",
+        "conv_00247",
+        "conv_00991",
+        "conv_01065",
+        "conv_00034",
+        "conv_00098"
+      ]
+    },
+    {
+      "key": "rc_checkout",
+      "component": "checkout",
+      "frequency": 49,
+      "revenue_at_risk_krw": 2316600,
+      "projected_recoverable_krw": 810810,
+      "hypothesis": "The checkout component likely has a confusing user interface and inadequate error handling for payment processing, leading to customer frustration and abandonment.",
+      "sample_conv_ids": [
+        "conv_00387",
+        "conv_00448",
+        "conv_00223",
+        "conv_00867",
+        "conv_00091",
+        "conv_01000"
+      ]
+    },
+    {
+      "key": "rc_subscription",
+      "component": "subscription",
+      "frequency": 66,
+      "revenue_at_risk_krw": 1925000,
+      "projected_recoverable_krw": 673750,
+      "hypothesis": "The underlying root cause is likely a misconfiguration in the subscription management system that fails to properly handle account status changes and newsletter preferences.",
+      "sample_conv_ids": [
+        "conv_00022",
+        "conv_00550",
+        "conv_00016",
+        "conv_00384",
+        "conv_00687",
+        "conv_00690"
+      ]
+    },
+    {
+      "key": "rc_auth",
+      "component": "auth",
+      "frequency": 180,
+      "revenue_at_risk_krw": 1731400,
+      "projected_recoverable_krw": 605990,
+      "hypothesis": "The underlying root cause is likely a confusing or poorly designed user interface for managing premium account features and options.",
+      "sample_conv_ids": [
+        "conv_00068",
+        "conv_01103",
+        "conv_00055",
+        "conv_00059",
+        "conv_00066",
+        "conv_00108"
+      ]
+    },
+    {
+      "key": "rc_shipping",
+      "component": "shipping",
+      "frequency": 141,
+      "revenue_at_risk_krw": 944900,
+      "projected_recoverable_krw": 330715,
+      "hypothesis": "The underlying root cause is likely a misconfiguration in the shipping logistics system that fails to accurately process and update delivery options and estimated arrival times based on customer inputs.",
+      "sample_conv_ids": [
+        "conv_00962",
+        "conv_00454",
+        "conv_00648",
+        "conv_00464",
+        "conv_00063",
+        "conv_00111"
+      ]
+    },
+    {
+      "key": "rc_feedback",
+      "component": "feedback",
+      "frequency": 49,
+      "revenue_at_risk_krw": 190300,
+      "projected_recoverable_krw": 66605,
+      "hypothesis": "The feedback submission process is likely failing due to a broken or unresponsive API endpoint.",
+      "sample_conv_ids": [
+        "conv_00955",
+        "conv_00810",
+        "conv_01110",
+        "conv_00587",
+        "conv_00751",
+        "conv_00863"
+      ]
+    }
+  ],
+  "candidate_actions": [
+    {
+      "root_cause_key": "rc_support",
+      "component": "support",
+      "title": "Improve Communication on Payment Processes and Refund Policies",
+      "labels": [
+        "support",
+        "payment-issues",
+        "customer-service"
+      ],
+      "severity": "high",
+      "revenue_at_risk_krw": 6454800,
+      "confidence": 0.88,
+      "cited_conv_ids": [
+        "conv_01075",
+        "conv_00674",
+        "conv_00267",
+        "conv_01120",
+        "conv_00365",
+        "conv_00465",
+        "conv_00013",
+        "conv_00073",
+        "conv_00278",
+        "conv_00651"
+      ]
+    },
+    {
+      "root_cause_key": "rc_billing",
+      "component": "billing",
+      "title": "Investigate billing component misconfiguration causing payment issues",
+      "labels": [
+        "billing",
+        "payment-issues",
+        "bug",
+        "high"
+      ],
+      "severity": "high",
+      "revenue_at_risk_krw": 5982900,
+      "confidence": 0.89,
+      "cited_conv_ids": [
+        "conv_00674",
+        "conv_00214",
+        "conv_01075",
+        "conv_00223",
+        "conv_00963",
+        "conv_00170",
+        "conv_00002",
+        "conv_00859",
+        "conv_00528",
+        "conv_00576"
+      ]
+    },
+    {
+      "root_cause_key": "rc_orders",
+      "component": "orders",
+      "title": "Order Management System State Synchronization Failure",
+      "labels": [
+        "bug",
+        "high-impact",
+        "order-management"
+      ],
+      "severity": "high",
+      "revenue_at_risk_krw": 5308600,
+      "confidence": 0.89,
+      "cited_conv_ids": [
+        "conv_00442",
+        "conv_01175",
+        "conv_00709",
+        "conv_00459",
+        "conv_00534",
+        "conv_00991",
+        "conv_01065",
+        "conv_00216",
+        "conv_00247",
+        "conv_00648"
+      ]
+    }
+  ],
+  "dispatched": [
+    {
+      "key": "act_rc_support",
+      "root_cause_key": "rc_support",
+      "title": "[VOC] Improve Communication on Payment Processes and Refund Policies",
+      "url": null,
+      "status": "drafted",
+      "revenue_at_risk_krw": 6454800,
+      "cited": [
+        "conv_01075",
+        "conv_00674",
+        "conv_00267",
+        "conv_01120",
+        "conv_00365",
+        "conv_00465",
+        "conv_00013",
+        "conv_00073",
+        "conv_00278",
+        "conv_00651"
+      ]
+    },
+    {
+      "key": "act_rc_billing",
+      "root_cause_key": "rc_billing",
+      "title": "[VOC] Investigate billing component misconfiguration causing payment issues",
+      "url": null,
+      "status": "drafted",
+      "revenue_at_risk_krw": 5982900,
+      "cited": [
+        "conv_00674",
+        "conv_00214",
+        "conv_01075",
+        "conv_00223",
+        "conv_00963",
+        "conv_00170",
+        "conv_00002",
+        "conv_00859",
+        "conv_00528",
+        "conv_00576"
+      ]
+    },
+    {
+      "key": "act_rc_orders",
+      "root_cause_key": "rc_orders",
+      "title": "[VOC] Order Management System State Synchronization Failure",
+      "url": null,
+      "status": "drafted",
+      "revenue_at_risk_krw": 5308600,
+      "cited": [
+        "conv_00442",
+        "conv_01175",
+        "conv_00709",
+        "conv_00459",
+        "conv_00534",
+        "conv_00991",
+        "conv_01065",
+        "conv_00216",
+        "conv_00247",
+        "conv_00648"
+      ]
+    }
+  ],
+  "activity": [
+    {
+      "node": "analyst_extract",
+      "message": "대화 1200건에서 intent·증상·컴포넌트를 LLM으로 추출",
+      "duration_s": 0.14,
+      "ts": "21:46:53",
+      "count": 1200
+    },
+    {
+      "node": "graph_writer",
+      "message": "지식그래프 이미 적재됨 (대화 1200건) — 멱등 스킵",
+      "duration_s": 0.1,
+      "ts": "21:46:53",
+      "counts": {
+        "Conversation": 1200,
+        "Customer": 1200,
+        "Symptom": 844,
+        "Intent": 27,
+        "Theme": 11,
+        "RootCause": 8,
+        "Component": 8,
+        "Action": 3
+      }
+    },
+    {
+      "node": "researcher_cluster",
+      "message": "대화를 8개 제품 컴포넌트로 클러스터링 (벡터 그래프)",
+      "duration_s": 0.12,
+      "ts": "21:46:53"
+    },
+    {
+      "node": "triage_rootcause",
+      "message": "그래프 순회 → 루트원인 8건 승격 (라벨이 아닌 집계)",
+      "duration_s": 2.66,
+      "ts": "21:46:56",
+      "count": 8
+    },
+    {
+      "node": "action_drafter",
+      "message": "GraphRAG로 이슈 3건 초안 작성 (인용 conv_id, 벡터+그래프 하이브리드 근거)",
+      "duration_s": 1.96,
+      "ts": "21:46:58",
+      "count": 3
+    },
+    {
+      "node": "human_approval",
+      "message": "사람이 이슈 3건 승인: ['rc_support', 'rc_billing', 'rc_orders']",
+      "duration_s": 0.0,
+      "ts": "21:46:58"
+    },
+    {
+      "node": "dispatcher",
+      "message": "이슈 3건 배포 (드라이런) + provenance 엣지 기록",
+      "duration_s": 0.94,
+      "ts": "21:46:59",
+      "count": 3
+    },
+    {
+      "node": "reporter",
+      "message": "manifest.json + 브리핑 작성",
+      "duration_s": 0.0,
+      "ts": "21:46:59"
+    }
+  ],
+  "briefing": "VOC 인텔리전스 실행: 루트원인 8건, 매출 위험액 ₩24,854,500, 이슈 3건 배포."
+}

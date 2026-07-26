@@ -1,0 +1,402 @@
+[
+  {
+    "root_cause_key": "rc_support",
+    "component": "support",
+    "title": "Improve Communication on Payment Processes and Refund Policies",
+    "body": "**Problem**  \nCustomers are experiencing confusion and dissatisfaction regarding payment processes and refund policies, leading to an increase in complaints and requests for assistance.\n\n**Root-cause hypothesis**  \nThe underlying root cause is likely a lack of clear communication and transparency regarding payment processes and refund policies.\n\n**Evidence**  \n- Customers are reporting issues with payment [conv_01075].  \n- Multiple customers have expressed a need for help to report payment issues [conv_00674], [conv_00267], [conv_01120], [conv_00365].  \n- There is a significant number of complaints being lodged against the business regarding payment issues [conv_00465], [conv_00013], [conv_00073], [conv_00278], [conv_00651].  \n\n**Proposed fix**  \nEnhance communication strategies by providing clearer information on payment processes and refund policies on the website and through customer support channels. Consider creating a dedicated FAQ section addressing common payment-related concerns.\n\n**Impact**  \nAddressing this issue could potentially recover ₩2,259,180 in projected revenue and improve overall customer satisfaction, reducing the volume of complaints and claims.",
+    "labels": [
+      "support",
+      "payment-issues",
+      "customer-service"
+    ],
+    "severity": "high",
+    "revenue_at_risk_krw": 6454800,
+    "projected_recoverable_krw": 2259180,
+    "confidence": 0.88,
+    "frequency": 419,
+    "cited_conv_ids": [
+      "conv_01075",
+      "conv_00674",
+      "conv_00267",
+      "conv_01120",
+      "conv_00365",
+      "conv_00465",
+      "conv_00013",
+      "conv_00073",
+      "conv_00278",
+      "conv_00651"
+    ],
+    "evidence": [
+      {
+        "id": "conv_01075",
+        "text": "reporting issues with payment",
+        "severity": 3,
+        "intent": "payment_issue",
+        "component": "support",
+        "similarity": 0.8696,
+        "source": "vector"
+      },
+      {
+        "id": "conv_00674",
+        "text": "need help to report an issue with payment",
+        "severity": 3,
+        "intent": "payment_issue",
+        "component": "billing",
+        "similarity": 0.8695,
+        "source": "vector"
+      },
+      {
+        "id": "conv_00267",
+        "text": "want help to report a trouble with payment",
+        "severity": 3,
+        "intent": "payment_issue",
+        "component": "support",
+        "similarity": 0.8623,
+        "source": "vector"
+      },
+      {
+        "id": "conv_01120",
+        "text": "want assistance notifying of an error with payments",
+        "severity": 3,
+        "intent": "payment_issue",
+        "component": "billing",
+        "similarity": 0.8622,
+        "source": "vector"
+      },
+      {
+        "id": "conv_00365",
+        "text": "I want help to notify of an issue with payments",
+        "severity": 3,
+        "intent": "payment_issue",
+        "component": "support",
+        "similarity": 0.8618,
+        "source": "vector"
+      },
+      {
+        "id": "conv_00465",
+        "text": "lodging consumer complaint against your business",
+        "severity": 4,
+        "intent": "complaint",
+        "symptoms": [
+          "consumer complaint"
+        ],
+        "hop": 1,
+        "source": "graph"
+      },
+      {
+        "id": "conv_00013",
+        "text": "i want help to file a consumer claim against ur organization",
+        "severity": 4,
+        "intent": "complaint",
+        "symptoms": [
+          "help to file a consumer claim"
+        ],
+        "hop": 1,
+        "source": "graph"
+      },
+      {
+        "id": "conv_00073",
+        "text": "could you help me to file a damn consumer complaint?",
+        "severity": 4,
+        "intent": "complaint",
+        "symptoms": [
+          "consumer complaint"
+        ],
+        "hop": 1,
+        "source": "graph"
+      },
+      {
+        "id": "conv_00278",
+        "text": "help me file a consumer complaint against ur company",
+        "severity": 4,
+        "intent": "complaint",
+        "symptoms": [
+          "consumer complaint"
+        ],
+        "hop": 1,
+        "source": "graph"
+      },
+      {
+        "id": "conv_00651",
+        "text": "help to file a consumer complaint against your organization",
+        "severity": 4,
+        "intent": "complaint",
+        "symptoms": [
+          "consumer complaint"
+        ],
+        "hop": 1,
+        "source": "graph"
+      }
+    ],
+    "n_both": 0,
+    "needs_approval": true,
+    "auto_gate_pass": true
+  },
+  {
+    "root_cause_key": "rc_billing",
+    "component": "billing",
+    "title": "Investigate billing component misconfiguration causing payment issues",
+    "body": "**Problem**  \nThe billing component is likely misconfigured in the payment processing system, leading to inconsistent invoice generation and limited payment options for users.\n\n**Root-cause hypothesis**  \nThe misconfiguration may be affecting the ability of users to complete payments and receive invoices correctly.\n\n**Evidence**  \n- Users are reporting issues with payment processing: [conv_00674]  \n- Multiple users have expressed trouble with payments: [conv_00214], [conv_01075], [conv_00223], [conv_00963]  \n- High severity reports indicate users cannot pay or are having significant issues: [conv_00170], [conv_00002], [conv_00528], [conv_00576]  \n- Users are expecting reimbursements, indicating potential billing errors: [conv_00859], [conv_00576]  \n\n**Proposed fix**  \nConduct a thorough review of the billing component's payment processing configuration. Ensure that all payment options are functioning correctly and that invoices are generated consistently.  \n\n**Impact**  \nAddressing this issue could recover projected revenue of ₩2,094,015 and improve user satisfaction by resolving payment-related frustrations.",
+    "labels": [
+      "billing",
+      "payment-issues",
+      "bug",
+      "high"
+    ],
+    "severity": "high",
+    "revenue_at_risk_krw": 5982900,
+    "projected_recoverable_krw": 2094015,
+    "confidence": 0.89,
+    "frequency": 240,
+    "cited_conv_ids": [
+      "conv_00674",
+      "conv_00214",
+      "conv_01075",
+      "conv_00223",
+      "conv_00963",
+      "conv_00170",
+      "conv_00002",
+      "conv_00859",
+      "conv_00528",
+      "conv_00576"
+    ],
+    "evidence": [
+      {
+        "id": "conv_00674",
+        "text": "need help to report an issue with payment",
+        "severity": 3,
+        "intent": "payment_issue",
+        "component": "billing",
+        "similarity": 0.8995,
+        "source": "vector"
+      },
+      {
+        "id": "conv_00214",
+        "text": "help me solving a trouble with payment",
+        "severity": 3,
+        "intent": "payment_issue",
+        "component": "support",
+        "similarity": 0.898,
+        "source": "vector"
+      },
+      {
+        "id": "conv_01075",
+        "text": "reporting issues with payment",
+        "severity": 3,
+        "intent": "payment_issue",
+        "component": "support",
+        "similarity": 0.8973,
+        "source": "vector"
+      },
+      {
+        "id": "conv_00223",
+        "text": "errors with online payments",
+        "severity": 3,
+        "intent": "payment_issue",
+        "component": "checkout",
+        "similarity": 0.8969,
+        "source": "vector"
+      },
+      {
+        "id": "conv_00963",
+        "text": "help me solving troubles with payment",
+        "severity": 3,
+        "intent": "payment_issue",
+        "component": "billing",
+        "similarity": 0.8961,
+        "source": "vector"
+      },
+      {
+        "id": "conv_00170",
+        "text": "I can't pay, assistance notifying of an issue with payment",
+        "severity": 4,
+        "intent": "payment_issue",
+        "symptoms": [
+          "issue with payment"
+        ],
+        "hop": 1,
+        "source": "graph"
+      },
+      {
+        "id": "conv_00002",
+        "text": "I cannot pay, help me to inform of a problem with payments",
+        "severity": 4,
+        "intent": "payment_issue",
+        "symptoms": [
+          "problem with payments"
+        ],
+        "hop": 1,
+        "source": "graph"
+      },
+      {
+        "id": "conv_00859",
+        "text": "I expect a bloody reimbursement of $64.00 dollars",
+        "severity": 4,
+        "intent": "get_refund",
+        "symptoms": [
+          "reimbursement of $64.00"
+        ],
+        "hop": 1,
+        "source": "graph"
+      },
+      {
+        "id": "conv_00528",
+        "text": "i cannot pay help me to report issues with payment",
+        "severity": 4,
+        "intent": "payment_issue",
+        "symptoms": [
+          "issues with payment"
+        ],
+        "hop": 1,
+        "source": "graph"
+      },
+      {
+        "id": "conv_00576",
+        "text": "i expect a damn restitution of $$64.00",
+        "severity": 4,
+        "intent": "get_refund",
+        "symptoms": [
+          "restitution of 64.00"
+        ],
+        "hop": 1,
+        "source": "graph"
+      }
+    ],
+    "n_both": 0,
+    "needs_approval": true,
+    "auto_gate_pass": true
+  },
+  {
+    "root_cause_key": "rc_orders",
+    "component": "orders",
+    "title": "Order Management System State Synchronization Failure",
+    "body": "**Problem**  \nCustomers are experiencing issues with outdated or incorrect order status information, particularly for order #80421. This leads to confusion and frustration, impacting their ability to manage their purchases effectively.\n\n**Root-cause hypothesis**  \nThe underlying root cause is likely a failure in the order management system's state synchronization, leading to outdated or incorrect order status information being displayed to customers.\n\n**Evidence**  \n- Customers frequently inquire about the status of order #80421, indicating a lack of clarity:  \n  - \"I try to see order #80421 status\" [conv_00442]  \n  - \"I have to see order #80421 status, I need assistance\" [conv_01175]  \n  - \"I am trying to check order #80421 current status\" [conv_00709]  \n  - \"wanna see the status of order #80421 i need help\" [conv_00459]  \n  - \"help me to check the current status of order #80421\" [conv_00534]  \n- Customers are requesting to cancel their orders due to confusion over the status:  \n  - \"I can no longer afford purchase #80421, cancel it\" [conv_00991]  \n  - \"I missed a fucking product in purchase #80421\" [conv_01065]  \n  - \"I can no longer afford purchase #80421\" [conv_00216]  \n  - \"I don't want order #80421\" [conv_00247]  \n- Customers are also asking for estimated time of arrival (ETA) for their purchases, indicating uncertainty:  \n  - \"I need help seeing the goddamn eta of purchase #80421\" [conv_00648]  \n\n**Proposed fix**  \nInvestigate the order management system's state synchronization processes and implement necessary updates to ensure that order status information is accurate and up-to-date. This may involve reviewing the data flow and updating the logic that handles order status updates.\n\n**Impact**  \nThe revenue at risk due to these issues is ₩5,308,600, with a projected recoverable amount of ₩1,858,010. Addressing this problem will improve customer satisfaction and reduce the number of cancellations related to order status confusion.",
+    "labels": [
+      "bug",
+      "high-impact",
+      "order-management"
+    ],
+    "severity": "high",
+    "revenue_at_risk_krw": 5308600,
+    "projected_recoverable_krw": 1858010,
+    "confidence": 0.89,
+    "frequency": 133,
+    "cited_conv_ids": [
+      "conv_00442",
+      "conv_01175",
+      "conv_00709",
+      "conv_00459",
+      "conv_00534",
+      "conv_00991",
+      "conv_01065",
+      "conv_00216",
+      "conv_00247",
+      "conv_00648"
+    ],
+    "evidence": [
+      {
+        "id": "conv_00442",
+        "text": "I try to see order #80421 status",
+        "severity": 2,
+        "intent": "track_order",
+        "component": "orders",
+        "similarity": 0.8682,
+        "source": "vector"
+      },
+      {
+        "id": "conv_01175",
+        "text": "I have to see order #80421 status, I need assistance",
+        "severity": 2,
+        "intent": "track_order",
+        "component": "orders",
+        "similarity": 0.8667,
+        "source": "vector"
+      },
+      {
+        "id": "conv_00709",
+        "text": "I am trying to check order #80421 current status",
+        "severity": 2,
+        "intent": "track_order",
+        "component": "orders",
+        "similarity": 0.8655,
+        "source": "vector"
+      },
+      {
+        "id": "conv_00459",
+        "text": "wanna see the statusof order #80421 i need help",
+        "severity": 2,
+        "intent": "track_order",
+        "component": "orders",
+        "similarity": 0.8622,
+        "source": "vector"
+      },
+      {
+        "id": "conv_00534",
+        "text": "help me to check the current status of order #80421",
+        "severity": 2,
+        "intent": "track_order",
+        "component": "orders",
+        "similarity": 0.861,
+        "source": "vector"
+      },
+      {
+        "id": "conv_00991",
+        "text": "I can no longer afford purchase #80421, cancel it",
+        "severity": 4,
+        "intent": "cancel_order",
+        "symptoms": [
+          "purchase cancellation"
+        ],
+        "hop": 1,
+        "source": "graph"
+      },
+      {
+        "id": "conv_01065",
+        "text": "i missed a fucking product in purchase #80421",
+        "severity": 4,
+        "intent": "complaint",
+        "symptoms": [
+          "missing product"
+        ],
+        "hop": 1,
+        "source": "graph"
+      },
+      {
+        "id": "conv_00216",
+        "text": "i can no longer afford purchase #80421",
+        "severity": 4,
+        "intent": "cancel_order",
+        "symptoms": [
+          "no longer afford purchase"
+        ],
+        "hop": 1,
+        "source": "graph"
+      },
+      {
+        "id": "conv_00247",
+        "text": "i dont want order #80421",
+        "severity": 4,
+        "intent": "cancel_order",
+        "symptoms": [
+          "order #80421"
+        ],
+        "hop": 1,
+        "source": "graph"
+      },
+      {
+        "id": "conv_00648",
+        "text": "i need help seeing the goddamn eta of purchae #80421",
+        "severity": 3,
+        "intent": "track_order",
+        "symptoms": [
+          "eta of purchase"
+        ],
+        "hop": 1,
+        "source": "graph"
+      }
+    ],
+    "n_both": 0,
+    "needs_approval": true,
+    "auto_gate_pass": true
+  }
+]

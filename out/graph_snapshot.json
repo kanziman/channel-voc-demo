@@ -1,0 +1,2420 @@
+{
+  "nodes": [
+    {
+      "id": "comp::support",
+      "type": "Component",
+      "label": "support",
+      "total_conversations": 419
+    },
+    {
+      "id": "rc::rc_support",
+      "type": "RootCause",
+      "label": "support",
+      "hypothesis": "The underlying root cause is likely a lack of clear communication and transparency regarding payment processes and refund policies, leading to customer confusion and dissatisfaction.",
+      "frequency": 419,
+      "revenue": 6454800,
+      "recoverable": 2259180,
+      "severity": 2.51,
+      "confidence": 0.88
+    },
+    {
+      "id": "sym::customer reclamation",
+      "type": "Symptom",
+      "label": "customer reclamation",
+      "freq": 7
+    },
+    {
+      "id": "sym::trouble with payment",
+      "type": "Symptom",
+      "label": "trouble with payment",
+      "freq": 7
+    },
+    {
+      "id": "sym::refund policy",
+      "type": "Symptom",
+      "label": "refund policy",
+      "freq": 6
+    },
+    {
+      "id": "sym::reimbursement policy",
+      "type": "Symptom",
+      "label": "reimbursement policy",
+      "freq": 6
+    },
+    {
+      "id": "sym::cases for refund",
+      "type": "Symptom",
+      "label": "cases for refund",
+      "freq": 5
+    },
+    {
+      "id": "conv::conv_00327",
+      "type": "Conversation",
+      "label": "conv_00327",
+      "text": "assistance demanding restitutions of money",
+      "severity": 4
+    },
+    {
+      "id": "conv::conv_00853",
+      "type": "Conversation",
+      "label": "conv_00853",
+      "text": "I do not know what to do to demand my money back",
+      "severity": 4
+    },
+    {
+      "id": "conv::conv_00976",
+      "type": "Conversation",
+      "label": "conv_00976",
+      "text": "I want assistance to request my money back",
+      "severity": 4
+    },
+    {
+      "id": "act::rc_support",
+      "type": "Action",
+      "label": "Issue ✓",
+      "url": "https://github.com/kanziman/channel-voc-demo/issues/10",
+      "status": "dispatched",
+      "title": "[VOC] Improve Communication on Payment Processes and Refund Policies"
+    },
+    {
+      "id": "comp::billing",
+      "type": "Component",
+      "label": "billing",
+      "total_conversations": 240
+    },
+    {
+      "id": "rc::rc_billing",
+      "type": "RootCause",
+      "label": "billing",
+      "hypothesis": "The billing component likely has a misconfiguration in the payment processing system that is causing inconsistent invoice generation and limited payment options.",
+      "frequency": 240,
+      "revenue": 5982900,
+      "recoverable": 2094015,
+      "severity": 2.27,
+      "confidence": 0.89
+    },
+    {
+      "id": "sym::payment modalities",
+      "type": "Symptom",
+      "label": "payment modalities",
+      "freq": 7
+    },
+    {
+      "id": "sym::bills from alex",
+      "type": "Symptom",
+      "label": "bills from alex",
+      "freq": 7
+    },
+    {
+      "id": "sym::download invoice",
+      "type": "Symptom",
+      "label": "download invoice",
+      "freq": 7
+    },
+    {
+      "id": "sym::payment options",
+      "type": "Symptom",
+      "label": "payment options",
+      "freq": 6
+    },
+    {
+      "id": "conv::conv_00576",
+      "type": "Conversation",
+      "label": "conv_00576",
+      "text": "i expect a damn restitution of $$64.00",
+      "severity": 4
+    },
+    {
+      "id": "conv::conv_00859",
+      "type": "Conversation",
+      "label": "conv_00859",
+      "text": "I expect a bloody reimbursement of $64.00 dollars",
+      "severity": 4
+    },
+    {
+      "id": "conv::conv_01022",
+      "type": "Conversation",
+      "label": "conv_01022",
+      "text": "i need help demanding restitutions of my money",
+      "severity": 4
+    },
+    {
+      "id": "act::rc_billing",
+      "type": "Action",
+      "label": "Issue",
+      "url": null,
+      "status": "drafted",
+      "title": "[VOC] Investigate billing component misconfiguration causing payment issues"
+    },
+    {
+      "id": "comp::orders",
+      "type": "Component",
+      "label": "orders",
+      "total_conversations": 133
+    },
+    {
+      "id": "rc::rc_orders",
+      "type": "RootCause",
+      "label": "orders",
+      "hypothesis": "The underlying root cause is likely a failure in the order management system's state synchronization, leading to outdated or incorrect order status information being displayed to customers.",
+      "frequency": 133,
+      "revenue": 5308600,
+      "recoverable": 1858010,
+      "severity": 2.45,
+      "confidence": 0.89
+    },
+    {
+      "id": "sym::order status",
+      "type": "Symptom",
+      "label": "order status",
+      "freq": 7
+    },
+    {
+      "id": "sym::cancel purchase",
+      "type": "Symptom",
+      "label": "cancel purchase",
+      "freq": 6
+    },
+    {
+      "id": "sym::current status of order",
+      "type": "Symptom",
+      "label": "current status of order",
+      "freq": 4
+    },
+    {
+      "id": "sym::eta of purchase",
+      "type": "Symptom",
+      "label": "eta of purchase",
+      "freq": 4
+    },
+    {
+      "id": "sym::purchase status",
+      "type": "Symptom",
+      "label": "purchase status",
+      "freq": 4
+    },
+    {
+      "id": "conv::conv_00216",
+      "type": "Conversation",
+      "label": "conv_00216",
+      "text": "i can no longer afford purchase #80421",
+      "severity": 4
+    },
+    {
+      "id": "conv::conv_00247",
+      "type": "Conversation",
+      "label": "conv_00247",
+      "text": "i dont want order #80421",
+      "severity": 4
+    },
+    {
+      "id": "conv::conv_00991",
+      "type": "Conversation",
+      "label": "conv_00991",
+      "text": "I can no longer afford purchase #80421, cancel it",
+      "severity": 4
+    },
+    {
+      "id": "act::rc_orders",
+      "type": "Action",
+      "label": "Issue",
+      "url": null,
+      "status": "drafted",
+      "title": "[VOC] Order Management System State Synchronization Failure"
+    },
+    {
+      "id": "comp::checkout",
+      "type": "Component",
+      "label": "checkout",
+      "total_conversations": 49
+    },
+    {
+      "id": "rc::rc_checkout",
+      "type": "RootCause",
+      "label": "checkout",
+      "hypothesis": "The checkout component likely has a confusing user interface and inadequate error handling for payment processing, leading to customer frustration and abandonment.",
+      "frequency": 49,
+      "revenue": 2316600,
+      "recoverable": 810810,
+      "severity": 1.98,
+      "confidence": 0.83
+    },
+    {
+      "id": "sym::order from seattle",
+      "type": "Symptom",
+      "label": "order from seattle",
+      "freq": 6
+    },
+    {
+      "id": "sym::order articles",
+      "type": "Symptom",
+      "label": "order articles",
+      "freq": 2
+    },
+    {
+      "id": "sym::do not know what to do",
+      "type": "Symptom",
+      "label": "do not know what to do",
+      "freq": 2
+    },
+    {
+      "id": "sym::buy some of your article",
+      "type": "Symptom",
+      "label": "buy some of your article",
+      "freq": 2
+    },
+    {
+      "id": "sym::how to shop products",
+      "type": "Symptom",
+      "label": "how to shop products",
+      "freq": 2
+    },
+    {
+      "id": "conv::conv_00387",
+      "type": "Conversation",
+      "label": "conv_00387",
+      "text": "I can't pay for purchase #80421",
+      "severity": 4
+    },
+    {
+      "id": "conv::conv_00448",
+      "type": "Conversation",
+      "label": "conv_00448",
+      "text": "i cannot poay for purchase #80421",
+      "severity": 4
+    },
+    {
+      "id": "conv::conv_00223",
+      "type": "Conversation",
+      "label": "conv_00223",
+      "text": "errors with online payments",
+      "severity": 3
+    },
+    {
+      "id": "comp::subscription",
+      "type": "Component",
+      "label": "subscription",
+      "total_conversations": 66
+    },
+    {
+      "id": "rc::rc_subscription",
+      "type": "RootCause",
+      "label": "subscription",
+      "hypothesis": "The underlying root cause is likely a misconfiguration in the subscription management system that fails to properly handle account status changes and newsletter preferences.",
+      "frequency": 66,
+      "revenue": 1925000,
+      "recoverable": 673750,
+      "severity": 2.06,
+      "confidence": 0.89
+    },
+    {
+      "id": "sym::premium account",
+      "type": "Symptom",
+      "label": "premium account",
+      "freq": 10
+    },
+    {
+      "id": "sym::change to premium account",
+      "type": "Symptom",
+      "label": "change to premium account",
+      "freq": 7
+    },
+    {
+      "id": "sym::change to pro account",
+      "type": "Symptom",
+      "label": "change to pro account",
+      "freq": 3
+    },
+    {
+      "id": "sym::cancel premium account",
+      "type": "Symptom",
+      "label": "cancel premium account",
+      "freq": 2
+    },
+    {
+      "id": "sym::unsubscribe to the newsletter",
+      "type": "Symptom",
+      "label": "unsubscribe to the newsletter",
+      "freq": 2
+    },
+    {
+      "id": "conv::conv_00022",
+      "type": "Conversation",
+      "label": "conv_00022",
+      "text": "I don't know what I have to do to cancel my Premium account",
+      "severity": 3
+    },
+    {
+      "id": "conv::conv_00550",
+      "type": "Conversation",
+      "label": "conv_00550",
+      "text": "I need to cancel a Premium account, could you help me?",
+      "severity": 3
+    },
+    {
+      "id": "conv::conv_00016",
+      "type": "Conversation",
+      "label": "conv_00016",
+      "text": "could you help me to unsubscribe to the damn newsletter?",
+      "severity": 3
+    },
+    {
+      "id": "comp::auth",
+      "type": "Component",
+      "label": "auth",
+      "total_conversations": 180
+    },
+    {
+      "id": "rc::rc_auth",
+      "type": "RootCause",
+      "label": "auth",
+      "hypothesis": "The underlying root cause is likely a confusing or poorly designed user interface for managing premium account features and options.",
+      "frequency": 180,
+      "revenue": 1731400,
+      "recoverable": 605990,
+      "severity": 2.34,
+      "confidence": 0.88
+    },
+    {
+      "id": "sym::need help",
+      "type": "Symptom",
+      "label": "need help",
+      "freq": 5
+    },
+    {
+      "id": "sym::create a premium account",
+      "type": "Symptom",
+      "label": "create a premium account",
+      "freq": 4
+    },
+    {
+      "id": "sym::premium account creation",
+      "type": "Symptom",
+      "label": "premium account creation",
+      "freq": 3
+    },
+    {
+      "id": "sym::close the premium account",
+      "type": "Symptom",
+      "label": "close the premium account",
+      "freq": 3
+    },
+    {
+      "id": "conv::conv_00068",
+      "type": "Conversation",
+      "label": "conv_00068",
+      "text": "I don't use the goddamn gold account, I want to delete it",
+      "severity": 4
+    },
+    {
+      "id": "conv::conv_01103",
+      "type": "Conversation",
+      "label": "conv_01103",
+      "text": "I need help retrieving my goddamn account password",
+      "severity": 4
+    },
+    {
+      "id": "conv::conv_00055",
+      "type": "Conversation",
+      "label": "conv_00055",
+      "text": "I don't know what I have to do to close my Premium account",
+      "severity": 3
+    },
+    {
+      "id": "comp::shipping",
+      "type": "Component",
+      "label": "shipping",
+      "total_conversations": 141
+    },
+    {
+      "id": "rc::rc_shipping",
+      "type": "RootCause",
+      "label": "shipping",
+      "hypothesis": "The underlying root cause is likely a misconfiguration in the shipping logistics system that fails to accurately process and update delivery options and estimated arrival times based on customer inputs.",
+      "frequency": 141,
+      "revenue": 944900,
+      "recoverable": 330715,
+      "severity": 2.2,
+      "confidence": 0.89
+    },
+    {
+      "id": "sym::item arrival time",
+      "type": "Symptom",
+      "label": "item arrival time",
+      "freq": 6
+    },
+    {
+      "id": "sym::shipment options",
+      "type": "Symptom",
+      "label": "shipment options",
+      "freq": 5
+    },
+    {
+      "id": "sym::shipping options",
+      "type": "Symptom",
+      "label": "shipping options",
+      "freq": 4
+    },
+    {
+      "id": "sym::new delivery address",
+      "type": "Symptom",
+      "label": "new delivery address",
+      "freq": 4
+    },
+    {
+      "id": "conv::conv_00962",
+      "type": "Conversation",
+      "label": "conv_00962",
+      "text": "my goddamn delivery address has changed, change it",
+      "severity": 4
+    },
+    {
+      "id": "conv::conv_00454",
+      "type": "Conversation",
+      "label": "conv_00454",
+      "text": "how can I check when my bloody product is going to arrive?",
+      "severity": 3
+    },
+    {
+      "id": "conv::conv_00648",
+      "type": "Conversation",
+      "label": "conv_00648",
+      "text": "i need help seeing the goddamn eta of purchae #80421",
+      "severity": 3
+    },
+    {
+      "id": "comp::feedback",
+      "type": "Component",
+      "label": "feedback",
+      "total_conversations": 49
+    },
+    {
+      "id": "rc::rc_feedback",
+      "type": "RootCause",
+      "label": "feedback",
+      "hypothesis": "The feedback submission process is likely failing due to a broken or unresponsive API endpoint.",
+      "frequency": 49,
+      "revenue": 190300,
+      "recoverable": 66605,
+      "severity": 1.96,
+      "confidence": 0.86
+    },
+    {
+      "id": "sym::submit feedback",
+      "type": "Symptom",
+      "label": "submit feedback",
+      "freq": 6
+    },
+    {
+      "id": "sym::send feedback",
+      "type": "Symptom",
+      "label": "send feedback",
+      "freq": 4
+    },
+    {
+      "id": "sym::feedback about services",
+      "type": "Symptom",
+      "label": "feedback about services",
+      "freq": 3
+    },
+    {
+      "id": "sym::help sending feedback",
+      "type": "Symptom",
+      "label": "help sending feedback",
+      "freq": 2
+    },
+    {
+      "id": "sym::submit feedback for a product",
+      "type": "Symptom",
+      "label": "submit feedback for a product",
+      "freq": 2
+    },
+    {
+      "id": "conv::conv_00955",
+      "type": "Conversation",
+      "label": "conv_00955",
+      "text": "I do not know how to leave a goddamn comment about a service",
+      "severity": 3
+    },
+    {
+      "id": "conv::conv_00810",
+      "type": "Conversation",
+      "label": "conv_00810",
+      "text": "I do not know what I need to do to send some damn feedback",
+      "severity": 3
+    },
+    {
+      "id": "conv::conv_01110",
+      "type": "Conversation",
+      "label": "conv_01110",
+      "text": "i do ont know how to send fucking feedback for a service",
+      "severity": 3
+    }
+  ],
+  "edges": [
+    {
+      "source": "comp::support",
+      "target": "rc::rc_support",
+      "type": "CAUSED_BY",
+      "rc": "rc::rc_support"
+    },
+    {
+      "source": "sym::customer reclamation",
+      "target": "comp::support",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_support"
+    },
+    {
+      "source": "sym::trouble with payment",
+      "target": "comp::support",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_support"
+    },
+    {
+      "source": "sym::refund policy",
+      "target": "comp::support",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_support"
+    },
+    {
+      "source": "sym::reimbursement policy",
+      "target": "comp::support",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_support"
+    },
+    {
+      "source": "sym::cases for refund",
+      "target": "comp::support",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_support"
+    },
+    {
+      "source": "conv::conv_00327",
+      "target": "sym::customer reclamation",
+      "type": "MENTIONS",
+      "rc": "rc::rc_support"
+    },
+    {
+      "source": "conv::conv_00853",
+      "target": "sym::customer reclamation",
+      "type": "MENTIONS",
+      "rc": "rc::rc_support"
+    },
+    {
+      "source": "conv::conv_00976",
+      "target": "sym::customer reclamation",
+      "type": "MENTIONS",
+      "rc": "rc::rc_support"
+    },
+    {
+      "source": "rc::rc_support",
+      "target": "act::rc_support",
+      "type": "DISPATCHED_AS",
+      "rc": "rc::rc_support"
+    },
+    {
+      "source": "act::rc_support",
+      "target": "conv::conv_00327",
+      "type": "EVIDENCES",
+      "rc": "rc::rc_support"
+    },
+    {
+      "source": "act::rc_support",
+      "target": "conv::conv_00853",
+      "type": "EVIDENCES",
+      "rc": "rc::rc_support"
+    },
+    {
+      "source": "act::rc_support",
+      "target": "conv::conv_00976",
+      "type": "EVIDENCES",
+      "rc": "rc::rc_support"
+    },
+    {
+      "source": "comp::billing",
+      "target": "rc::rc_billing",
+      "type": "CAUSED_BY",
+      "rc": "rc::rc_billing"
+    },
+    {
+      "source": "sym::payment modalities",
+      "target": "comp::billing",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_billing"
+    },
+    {
+      "source": "sym::bills from alex",
+      "target": "comp::billing",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_billing"
+    },
+    {
+      "source": "sym::download invoice",
+      "target": "comp::billing",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_billing"
+    },
+    {
+      "source": "sym::trouble with payment",
+      "target": "comp::billing",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_billing"
+    },
+    {
+      "source": "sym::payment options",
+      "target": "comp::billing",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_billing"
+    },
+    {
+      "source": "conv::conv_00576",
+      "target": "sym::payment modalities",
+      "type": "MENTIONS",
+      "rc": "rc::rc_billing"
+    },
+    {
+      "source": "conv::conv_00859",
+      "target": "sym::payment modalities",
+      "type": "MENTIONS",
+      "rc": "rc::rc_billing"
+    },
+    {
+      "source": "conv::conv_01022",
+      "target": "sym::payment modalities",
+      "type": "MENTIONS",
+      "rc": "rc::rc_billing"
+    },
+    {
+      "source": "rc::rc_billing",
+      "target": "act::rc_billing",
+      "type": "DISPATCHED_AS",
+      "rc": "rc::rc_billing"
+    },
+    {
+      "source": "act::rc_billing",
+      "target": "conv::conv_00576",
+      "type": "EVIDENCES",
+      "rc": "rc::rc_billing"
+    },
+    {
+      "source": "act::rc_billing",
+      "target": "conv::conv_00859",
+      "type": "EVIDENCES",
+      "rc": "rc::rc_billing"
+    },
+    {
+      "source": "act::rc_billing",
+      "target": "conv::conv_01022",
+      "type": "EVIDENCES",
+      "rc": "rc::rc_billing"
+    },
+    {
+      "source": "comp::orders",
+      "target": "rc::rc_orders",
+      "type": "CAUSED_BY",
+      "rc": "rc::rc_orders"
+    },
+    {
+      "source": "sym::order status",
+      "target": "comp::orders",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_orders"
+    },
+    {
+      "source": "sym::cancel purchase",
+      "target": "comp::orders",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_orders"
+    },
+    {
+      "source": "sym::current status of order",
+      "target": "comp::orders",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_orders"
+    },
+    {
+      "source": "sym::eta of purchase",
+      "target": "comp::orders",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_orders"
+    },
+    {
+      "source": "sym::purchase status",
+      "target": "comp::orders",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_orders"
+    },
+    {
+      "source": "conv::conv_00216",
+      "target": "sym::order status",
+      "type": "MENTIONS",
+      "rc": "rc::rc_orders"
+    },
+    {
+      "source": "conv::conv_00247",
+      "target": "sym::order status",
+      "type": "MENTIONS",
+      "rc": "rc::rc_orders"
+    },
+    {
+      "source": "conv::conv_00991",
+      "target": "sym::order status",
+      "type": "MENTIONS",
+      "rc": "rc::rc_orders"
+    },
+    {
+      "source": "rc::rc_orders",
+      "target": "act::rc_orders",
+      "type": "DISPATCHED_AS",
+      "rc": "rc::rc_orders"
+    },
+    {
+      "source": "act::rc_orders",
+      "target": "conv::conv_00216",
+      "type": "EVIDENCES",
+      "rc": "rc::rc_orders"
+    },
+    {
+      "source": "act::rc_orders",
+      "target": "conv::conv_00247",
+      "type": "EVIDENCES",
+      "rc": "rc::rc_orders"
+    },
+    {
+      "source": "act::rc_orders",
+      "target": "conv::conv_00991",
+      "type": "EVIDENCES",
+      "rc": "rc::rc_orders"
+    },
+    {
+      "source": "comp::checkout",
+      "target": "rc::rc_checkout",
+      "type": "CAUSED_BY",
+      "rc": "rc::rc_checkout"
+    },
+    {
+      "source": "sym::order from seattle",
+      "target": "comp::checkout",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_checkout"
+    },
+    {
+      "source": "sym::order articles",
+      "target": "comp::checkout",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_checkout"
+    },
+    {
+      "source": "sym::do not know what to do",
+      "target": "comp::checkout",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_checkout"
+    },
+    {
+      "source": "sym::buy some of your article",
+      "target": "comp::checkout",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_checkout"
+    },
+    {
+      "source": "sym::how to shop products",
+      "target": "comp::checkout",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_checkout"
+    },
+    {
+      "source": "conv::conv_00387",
+      "target": "sym::order from seattle",
+      "type": "MENTIONS",
+      "rc": "rc::rc_checkout"
+    },
+    {
+      "source": "conv::conv_00448",
+      "target": "sym::order from seattle",
+      "type": "MENTIONS",
+      "rc": "rc::rc_checkout"
+    },
+    {
+      "source": "conv::conv_00223",
+      "target": "sym::order from seattle",
+      "type": "MENTIONS",
+      "rc": "rc::rc_checkout"
+    },
+    {
+      "source": "comp::subscription",
+      "target": "rc::rc_subscription",
+      "type": "CAUSED_BY",
+      "rc": "rc::rc_subscription"
+    },
+    {
+      "source": "sym::premium account",
+      "target": "comp::subscription",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_subscription"
+    },
+    {
+      "source": "sym::change to premium account",
+      "target": "comp::subscription",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_subscription"
+    },
+    {
+      "source": "sym::change to pro account",
+      "target": "comp::subscription",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_subscription"
+    },
+    {
+      "source": "sym::cancel premium account",
+      "target": "comp::subscription",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_subscription"
+    },
+    {
+      "source": "sym::unsubscribe to the newsletter",
+      "target": "comp::subscription",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_subscription"
+    },
+    {
+      "source": "conv::conv_00022",
+      "target": "sym::premium account",
+      "type": "MENTIONS",
+      "rc": "rc::rc_subscription"
+    },
+    {
+      "source": "conv::conv_00550",
+      "target": "sym::premium account",
+      "type": "MENTIONS",
+      "rc": "rc::rc_subscription"
+    },
+    {
+      "source": "conv::conv_00016",
+      "target": "sym::premium account",
+      "type": "MENTIONS",
+      "rc": "rc::rc_subscription"
+    },
+    {
+      "source": "comp::auth",
+      "target": "rc::rc_auth",
+      "type": "CAUSED_BY",
+      "rc": "rc::rc_auth"
+    },
+    {
+      "source": "sym::premium account",
+      "target": "comp::auth",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_auth"
+    },
+    {
+      "source": "sym::need help",
+      "target": "comp::auth",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_auth"
+    },
+    {
+      "source": "sym::create a premium account",
+      "target": "comp::auth",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_auth"
+    },
+    {
+      "source": "sym::premium account creation",
+      "target": "comp::auth",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_auth"
+    },
+    {
+      "source": "sym::close the premium account",
+      "target": "comp::auth",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_auth"
+    },
+    {
+      "source": "conv::conv_00068",
+      "target": "sym::premium account",
+      "type": "MENTIONS",
+      "rc": "rc::rc_auth"
+    },
+    {
+      "source": "conv::conv_01103",
+      "target": "sym::premium account",
+      "type": "MENTIONS",
+      "rc": "rc::rc_auth"
+    },
+    {
+      "source": "conv::conv_00055",
+      "target": "sym::premium account",
+      "type": "MENTIONS",
+      "rc": "rc::rc_auth"
+    },
+    {
+      "source": "comp::shipping",
+      "target": "rc::rc_shipping",
+      "type": "CAUSED_BY",
+      "rc": "rc::rc_shipping"
+    },
+    {
+      "source": "sym::item arrival time",
+      "target": "comp::shipping",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_shipping"
+    },
+    {
+      "source": "sym::shipment options",
+      "target": "comp::shipping",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_shipping"
+    },
+    {
+      "source": "sym::shipping options",
+      "target": "comp::shipping",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_shipping"
+    },
+    {
+      "source": "sym::eta of purchase",
+      "target": "comp::shipping",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_shipping"
+    },
+    {
+      "source": "sym::new delivery address",
+      "target": "comp::shipping",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_shipping"
+    },
+    {
+      "source": "conv::conv_00962",
+      "target": "sym::item arrival time",
+      "type": "MENTIONS",
+      "rc": "rc::rc_shipping"
+    },
+    {
+      "source": "conv::conv_00454",
+      "target": "sym::item arrival time",
+      "type": "MENTIONS",
+      "rc": "rc::rc_shipping"
+    },
+    {
+      "source": "conv::conv_00648",
+      "target": "sym::item arrival time",
+      "type": "MENTIONS",
+      "rc": "rc::rc_shipping"
+    },
+    {
+      "source": "comp::feedback",
+      "target": "rc::rc_feedback",
+      "type": "CAUSED_BY",
+      "rc": "rc::rc_feedback"
+    },
+    {
+      "source": "sym::submit feedback",
+      "target": "comp::feedback",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_feedback"
+    },
+    {
+      "source": "sym::send feedback",
+      "target": "comp::feedback",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_feedback"
+    },
+    {
+      "source": "sym::feedback about services",
+      "target": "comp::feedback",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_feedback"
+    },
+    {
+      "source": "sym::help sending feedback",
+      "target": "comp::feedback",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_feedback"
+    },
+    {
+      "source": "sym::submit feedback for a product",
+      "target": "comp::feedback",
+      "type": "IMPLICATES",
+      "rc": "rc::rc_feedback"
+    },
+    {
+      "source": "conv::conv_00955",
+      "target": "sym::submit feedback",
+      "type": "MENTIONS",
+      "rc": "rc::rc_feedback"
+    },
+    {
+      "source": "conv::conv_00810",
+      "target": "sym::submit feedback",
+      "type": "MENTIONS",
+      "rc": "rc::rc_feedback"
+    },
+    {
+      "source": "conv::conv_01110",
+      "target": "sym::submit feedback",
+      "type": "MENTIONS",
+      "rc": "rc::rc_feedback"
+    }
+  ],
+  "root_causes": [
+    {
+      "rc": "rc::rc_support",
+      "component": "support",
+      "hypothesis": "The underlying root cause is likely a lack of clear communication and transparency regarding payment processes and refund policies, leading to customer confusion and dissatisfaction.",
+      "frequency": 419,
+      "revenue": 6454800,
+      "recoverable": 2259180,
+      "severity": 2.51,
+      "confidence": 0.88,
+      "top_symptoms": [
+        {
+          "freq": 7,
+          "text": "customer reclamation"
+        },
+        {
+          "freq": 7,
+          "text": "trouble with payment"
+        },
+        {
+          "freq": 6,
+          "text": "refund policy"
+        },
+        {
+          "freq": 6,
+          "text": "reimbursement policy"
+        },
+        {
+          "freq": 5,
+          "text": "cases for refund"
+        }
+      ],
+      "sample_conv_ids": [
+        "conv_00327",
+        "conv_00853",
+        "conv_00976"
+      ],
+      "action_url": "https://github.com/kanziman/channel-voc-demo/issues/10",
+      "action_status": "dispatched"
+    },
+    {
+      "rc": "rc::rc_billing",
+      "component": "billing",
+      "hypothesis": "The billing component likely has a misconfiguration in the payment processing system that is causing inconsistent invoice generation and limited payment options.",
+      "frequency": 240,
+      "revenue": 5982900,
+      "recoverable": 2094015,
+      "severity": 2.27,
+      "confidence": 0.89,
+      "top_symptoms": [
+        {
+          "freq": 7,
+          "text": "payment modalities"
+        },
+        {
+          "freq": 7,
+          "text": "bills from alex"
+        },
+        {
+          "freq": 7,
+          "text": "download invoice"
+        },
+        {
+          "freq": 7,
+          "text": "trouble with payment"
+        },
+        {
+          "freq": 6,
+          "text": "payment options"
+        }
+      ],
+      "sample_conv_ids": [
+        "conv_00576",
+        "conv_00859",
+        "conv_01022"
+      ],
+      "action_url": null,
+      "action_status": "drafted"
+    },
+    {
+      "rc": "rc::rc_orders",
+      "component": "orders",
+      "hypothesis": "The underlying root cause is likely a failure in the order management system's state synchronization, leading to outdated or incorrect order status information being displayed to customers.",
+      "frequency": 133,
+      "revenue": 5308600,
+      "recoverable": 1858010,
+      "severity": 2.45,
+      "confidence": 0.89,
+      "top_symptoms": [
+        {
+          "freq": 7,
+          "text": "order status"
+        },
+        {
+          "freq": 6,
+          "text": "cancel purchase"
+        },
+        {
+          "freq": 4,
+          "text": "current status of order"
+        },
+        {
+          "freq": 4,
+          "text": "eta of purchase"
+        },
+        {
+          "freq": 4,
+          "text": "purchase status"
+        }
+      ],
+      "sample_conv_ids": [
+        "conv_00216",
+        "conv_00247",
+        "conv_00991"
+      ],
+      "action_url": null,
+      "action_status": "drafted"
+    },
+    {
+      "rc": "rc::rc_checkout",
+      "component": "checkout",
+      "hypothesis": "The checkout component likely has a confusing user interface and inadequate error handling for payment processing, leading to customer frustration and abandonment.",
+      "frequency": 49,
+      "revenue": 2316600,
+      "recoverable": 810810,
+      "severity": 1.98,
+      "confidence": 0.83,
+      "top_symptoms": [
+        {
+          "freq": 6,
+          "text": "order from seattle"
+        },
+        {
+          "freq": 2,
+          "text": "order articles"
+        },
+        {
+          "freq": 2,
+          "text": "do not know what to do"
+        },
+        {
+          "freq": 2,
+          "text": "buy some of your article"
+        },
+        {
+          "freq": 2,
+          "text": "how to shop products"
+        }
+      ],
+      "sample_conv_ids": [
+        "conv_00387",
+        "conv_00448",
+        "conv_00223"
+      ],
+      "action_url": null,
+      "action_status": null
+    },
+    {
+      "rc": "rc::rc_subscription",
+      "component": "subscription",
+      "hypothesis": "The underlying root cause is likely a misconfiguration in the subscription management system that fails to properly handle account status changes and newsletter preferences.",
+      "frequency": 66,
+      "revenue": 1925000,
+      "recoverable": 673750,
+      "severity": 2.06,
+      "confidence": 0.89,
+      "top_symptoms": [
+        {
+          "freq": 10,
+          "text": "premium account"
+        },
+        {
+          "freq": 7,
+          "text": "change to premium account"
+        },
+        {
+          "freq": 3,
+          "text": "change to pro account"
+        },
+        {
+          "freq": 2,
+          "text": "cancel premium account"
+        },
+        {
+          "freq": 2,
+          "text": "unsubscribe to the newsletter"
+        }
+      ],
+      "sample_conv_ids": [
+        "conv_00022",
+        "conv_00550",
+        "conv_00016"
+      ],
+      "action_url": null,
+      "action_status": null
+    },
+    {
+      "rc": "rc::rc_auth",
+      "component": "auth",
+      "hypothesis": "The underlying root cause is likely a confusing or poorly designed user interface for managing premium account features and options.",
+      "frequency": 180,
+      "revenue": 1731400,
+      "recoverable": 605990,
+      "severity": 2.34,
+      "confidence": 0.88,
+      "top_symptoms": [
+        {
+          "freq": 10,
+          "text": "premium account"
+        },
+        {
+          "freq": 5,
+          "text": "need help"
+        },
+        {
+          "freq": 4,
+          "text": "create a premium account"
+        },
+        {
+          "freq": 3,
+          "text": "premium account creation"
+        },
+        {
+          "freq": 3,
+          "text": "close the premium account"
+        }
+      ],
+      "sample_conv_ids": [
+        "conv_00068",
+        "conv_01103",
+        "conv_00055"
+      ],
+      "action_url": null,
+      "action_status": null
+    },
+    {
+      "rc": "rc::rc_shipping",
+      "component": "shipping",
+      "hypothesis": "The underlying root cause is likely a misconfiguration in the shipping logistics system that fails to accurately process and update delivery options and estimated arrival times based on customer inputs.",
+      "frequency": 141,
+      "revenue": 944900,
+      "recoverable": 330715,
+      "severity": 2.2,
+      "confidence": 0.89,
+      "top_symptoms": [
+        {
+          "freq": 6,
+          "text": "item arrival time"
+        },
+        {
+          "freq": 5,
+          "text": "shipment options"
+        },
+        {
+          "freq": 4,
+          "text": "shipping options"
+        },
+        {
+          "freq": 4,
+          "text": "eta of purchase"
+        },
+        {
+          "freq": 4,
+          "text": "new delivery address"
+        }
+      ],
+      "sample_conv_ids": [
+        "conv_00962",
+        "conv_00454",
+        "conv_00648"
+      ],
+      "action_url": null,
+      "action_status": null
+    },
+    {
+      "rc": "rc::rc_feedback",
+      "component": "feedback",
+      "hypothesis": "The feedback submission process is likely failing due to a broken or unresponsive API endpoint.",
+      "frequency": 49,
+      "revenue": 190300,
+      "recoverable": 66605,
+      "severity": 1.96,
+      "confidence": 0.86,
+      "top_symptoms": [
+        {
+          "freq": 6,
+          "text": "submit feedback"
+        },
+        {
+          "freq": 4,
+          "text": "send feedback"
+        },
+        {
+          "freq": 3,
+          "text": "feedback about services"
+        },
+        {
+          "freq": 2,
+          "text": "help sending feedback"
+        },
+        {
+          "freq": 2,
+          "text": "submit feedback for a product"
+        }
+      ],
+      "sample_conv_ids": [
+        "conv_00955",
+        "conv_00810",
+        "conv_01110"
+      ],
+      "action_url": null,
+      "action_status": null
+    }
+  ],
+  "conversations": {
+    "conv_00387": {
+      "id": "conv_00387",
+      "text": "I can't pay for purchase #80421",
+      "severity": 4
+    },
+    "conv_00216": {
+      "id": "conv_00216",
+      "text": "i can no longer afford purchase #80421",
+      "severity": 4
+    },
+    "conv_00648": {
+      "id": "conv_00648",
+      "text": "i need help seeing the goddamn eta of purchae #80421",
+      "severity": 3
+    },
+    "conv_00853": {
+      "id": "conv_00853",
+      "text": "I do not know what to do to demand my money back",
+      "severity": 4
+    },
+    "conv_00068": {
+      "id": "conv_00068",
+      "text": "I don't use the goddamn gold account, I want to delete it",
+      "severity": 4
+    },
+    "conv_00810": {
+      "id": "conv_00810",
+      "text": "I do not know what I need to do to send some damn feedback",
+      "severity": 3
+    },
+    "conv_00576": {
+      "id": "conv_00576",
+      "text": "i expect a damn restitution of $$64.00",
+      "severity": 4
+    },
+    "conv_00247": {
+      "id": "conv_00247",
+      "text": "i dont want order #80421",
+      "severity": 4
+    },
+    "conv_00955": {
+      "id": "conv_00955",
+      "text": "I do not know how to leave a goddamn comment about a service",
+      "severity": 3
+    },
+    "conv_00327": {
+      "id": "conv_00327",
+      "text": "assistance demanding restitutions of money",
+      "severity": 4
+    },
+    "conv_00022": {
+      "id": "conv_00022",
+      "text": "I don't know what I have to do to cancel my Premium account",
+      "severity": 3
+    },
+    "conv_01110": {
+      "id": "conv_01110",
+      "text": "i do ont know how to send fucking feedback for a service",
+      "severity": 3
+    },
+    "conv_00223": {
+      "id": "conv_00223",
+      "text": "errors with online payments",
+      "severity": 3
+    },
+    "conv_00016": {
+      "id": "conv_00016",
+      "text": "could you help me to unsubscribe to the damn newsletter?",
+      "severity": 3
+    },
+    "conv_00991": {
+      "id": "conv_00991",
+      "text": "I can no longer afford purchase #80421, cancel it",
+      "severity": 4
+    },
+    "conv_01022": {
+      "id": "conv_01022",
+      "text": "i need help demanding restitutions of my money",
+      "severity": 4
+    },
+    "conv_00448": {
+      "id": "conv_00448",
+      "text": "i cannot poay for purchase #80421",
+      "severity": 4
+    },
+    "conv_00962": {
+      "id": "conv_00962",
+      "text": "my goddamn delivery address has changed, change it",
+      "severity": 4
+    },
+    "conv_00454": {
+      "id": "conv_00454",
+      "text": "how can I check when my bloody product is going to arrive?",
+      "severity": 3
+    },
+    "conv_00550": {
+      "id": "conv_00550",
+      "text": "I need to cancel a Premium account, could you help me?",
+      "severity": 3
+    },
+    "conv_00859": {
+      "id": "conv_00859",
+      "text": "I expect a bloody reimbursement of $64.00 dollars",
+      "severity": 4
+    },
+    "conv_00976": {
+      "id": "conv_00976",
+      "text": "I want assistance to request my money back",
+      "severity": 4
+    },
+    "conv_00055": {
+      "id": "conv_00055",
+      "text": "I don't know what I have to do to close my Premium account",
+      "severity": 3
+    },
+    "conv_01103": {
+      "id": "conv_01103",
+      "text": "I need help retrieving my goddamn account password",
+      "severity": 4
+    }
+  },
+  "component_totals": {
+    "support": 419,
+    "billing": 240,
+    "auth": 180,
+    "shipping": 141,
+    "orders": 133,
+    "subscription": 66,
+    "feedback": 49,
+    "checkout": 49
+  },
+  "graph_counts": {
+    "Conversation": 1200,
+    "Customer": 1200,
+    "Symptom": 844,
+    "Intent": 27,
+    "Theme": 11,
+    "RootCause": 8,
+    "Component": 8,
+    "Action": 3
+  },
+  "stages": {
+    "tracer_conv_id": "conv_00327",
+    "stage1_extraction": {
+      "conv_id": "conv_00327",
+      "raw_text": "assistance demanding restitutions of money",
+      "extracted": {
+        "intent": "get_refund",
+        "component": "support",
+        "symptoms": [
+          "restitutions of money"
+        ],
+        "severity": 4,
+        "confidence": 0.9
+      }
+    },
+    "stage2_ingest": {
+      "cypher": "MERGE (conv:Conversation {id})\n  SET conv.embedding = <384d bge-small vector>\nMERGE (conv)-[:EXPRESSES]->(:Intent)-[:ROLLS_UP_TO]->(:Theme)\nMERGE (conv)-[:MENTIONS]->(:Symptom)-[:IMPLICATES]->(:Component)",
+      "counts": {
+        "Conversation": 1200,
+        "Customer": 1200,
+        "Symptom": 844,
+        "Intent": 27,
+        "Theme": 11,
+        "RootCause": 8,
+        "Component": 8,
+        "Action": 3
+      },
+      "embedding": {
+        "model": "BAAI/bge-small-en-v1.5",
+        "dim": 384
+      }
+    },
+    "stage3_traversal": {
+      "cypher": "MATCH (conv)-[:MENTIONS]->(:Symptom)-[:IMPLICATES]->(comp:Component)\nWITH comp, count(DISTINCT conv) AS freq\nWHERE freq >= 8   // promote to RootCause (aggregation, not a label)",
+      "component": "support",
+      "frequency": 419,
+      "revenue": 6454800,
+      "hypothesis": "The underlying root cause is likely a lack of clear communication and transparency regarding payment processes and refund policies, leading to customer confusion and dissatisfaction.",
+      "evidence_ids": [
+        "conv_00327",
+        "conv_00853",
+        "conv_00976"
+      ]
+    },
+    "stage4_graphrag": {
+      "query": "Improve Communication on Payment Processes and Refund Policies",
+      "evidence": [
+        {
+          "id": "conv_01075",
+          "text": "reporting issues with payment",
+          "severity": 3,
+          "intent": "payment_issue",
+          "component": "support",
+          "similarity": 0.8696,
+          "source": "vector"
+        },
+        {
+          "id": "conv_00674",
+          "text": "need help to report an issue with payment",
+          "severity": 3,
+          "intent": "payment_issue",
+          "component": "billing",
+          "similarity": 0.8695,
+          "source": "vector"
+        },
+        {
+          "id": "conv_00267",
+          "text": "want help to report a trouble with payment",
+          "severity": 3,
+          "intent": "payment_issue",
+          "component": "support",
+          "similarity": 0.8623,
+          "source": "vector"
+        },
+        {
+          "id": "conv_01120",
+          "text": "want assistance notifying of an error with payments",
+          "severity": 3,
+          "intent": "payment_issue",
+          "component": "billing",
+          "similarity": 0.8622,
+          "source": "vector"
+        },
+        {
+          "id": "conv_00365",
+          "text": "I want help to notify of an issue with payments",
+          "severity": 3,
+          "intent": "payment_issue",
+          "component": "support",
+          "similarity": 0.8618,
+          "source": "vector"
+        },
+        {
+          "id": "conv_00465",
+          "text": "lodging consumer complaint against your business",
+          "severity": 4,
+          "intent": "complaint",
+          "symptoms": [
+            "consumer complaint"
+          ],
+          "hop": 1,
+          "source": "graph"
+        }
+      ],
+      "n_both": 0
+    },
+    "stage5_gate": {
+      "threshold": 0.7,
+      "require_approval": true,
+      "candidates": [
+        {
+          "key": "rc_support",
+          "title": "Improve Communication on Payment Processes and Refund Policies",
+          "severity": "high",
+          "revenue_at_risk_krw": 6454800,
+          "confidence": 0.88,
+          "cited": 10
+        },
+        {
+          "key": "rc_billing",
+          "title": "Investigate billing component misconfiguration causing payment issues",
+          "severity": "high",
+          "revenue_at_risk_krw": 5982900,
+          "confidence": 0.89,
+          "cited": 10
+        },
+        {
+          "key": "rc_orders",
+          "title": "Order Management System State Synchronization Failure",
+          "severity": "high",
+          "revenue_at_risk_krw": 5308600,
+          "confidence": 0.89,
+          "cited": 10
+        }
+      ],
+      "dispatched": [
+        {
+          "key": "rc_support",
+          "url": "https://github.com/kanziman/channel-voc-demo/issues/10"
+        }
+      ]
+    },
+    "stage6_dispatch": {
+      "issues": [
+        {
+          "component": "support",
+          "url": "https://github.com/kanziman/channel-voc-demo/issues/10",
+          "revenue": 6454800,
+          "evidence_ids": [
+            "conv_00327",
+            "conv_00853",
+            "conv_00976"
+          ]
+        }
+      ]
+    }
+  },
+  "corpus": {
+    "conv_00073": {
+      "text": "could you help me to file a damn consumer complaint?",
+      "severity": 4,
+      "full": "👤 고객: could you help me to file a damn consumer complaint?\n\n🎧 상담원: I'm sorry to hear that you're frustrated and in need of assistance to file a consumer complaint. Your concerns are of great importance to us, and we want to ensure that your experience is addressed appropriately. To assist you further, could you please provide me with the specific details of the complaint? This will allow me to understand the situation better and guide you towards the necessary steps to file your complaint."
+    },
+    "conv_00778": {
+      "text": "where can I edit my delivery address?",
+      "severity": 2,
+      "full": "👤 고객: where can I edit my delivery address?\n\n🎧 상담원: To edit your delivery address, please log in to your account on our website. Once you're logged in, navigate to the \"Account Settings\" or \"My Profile\" section. There, you should find an option to edit your address details. If you need any further assistance, please don't hesitate to reach out to our customer support team."
+    },
+    "conv_00387": {
+      "text": "I can't pay for purchase #80421",
+      "severity": 4,
+      "full": "👤 고객: I can't pay for purchase #80421\n\n🎧 상담원: I've got that you're facing difficulties with making a payment for your purchase with the order number #80421. I apologize for the inconvenience caused by this issue. To assist you further, I recommend the following steps:\n\n1. Check Payment Method: Make sure that the payment method you are using is valid and has sufficient funds or credit available.\n\n2. Clear Cache and Cookies: Clear the cache and cookies on your browser to refresh the payment page and resolve any possible technical issues.\n\n3. Try a Different Browser or Device: If the problem persists, try using a different browser or device to complete the payment process.\n\n4. Contact Customer Support: If none of the above steps work, I recommend reaching out to our dedicated customer support team. They are available during 9am–6pm at 1-800-555-0142 or through the Live Chat on our website at the website. Our support team will assist you in resolving the payment issue and ensuring a smooth transaction.\n\nPlease rest assured that we are here to help you and resolve this matter as quickly as possible. Your satisfaction is our top priority."
+    },
+    "conv_00709": {
+      "text": "I am trying to check order #80421 current status",
+      "severity": 2,
+      "full": "👤 고객: I am trying to check order #80421 current status\n\n🎧 상담원: Thank you for contacting! I certainly recognize that you are trying to check the current status of your order with the order number #80421. To assist you with this, please visit the 'Order Status' section on our website. You should be able to find all the relevant information regarding the status of your order there. If you have any further questions or need additional support, please don't hesitate to ask. I'm here to help you every step of the way!"
+    },
+    "conv_00216": {
+      "text": "i can no longer afford purchase #80421",
+      "severity": 4,
+      "full": "👤 고객: i can no longer afford purchase #80421\n\n🎧 상담원: I truly understand your situation and apologize for any inconvenience this may cause. We are here to assist you with canceling your purchase with the order number #80421. Our main priority is to ensure your satisfaction, so we are more than willing to help find a suitable solution for you. Please follow the cancellation process provided earlier, and if you have any further concerns or questions, feel free to reach out to our dedicated team. We are available during 9am–6pm at 1-800-555-0142 or through the Live Chat on our website at the website. Your happiness is important to us, and we want to ensure that you have the best possible experience with us."
+    },
+    "conv_00648": {
+      "text": "i need help seeing the goddamn eta of purchae #80421",
+      "severity": 3,
+      "full": "👤 고객: i need help seeing the goddamn eta of purchae #80421\n\n🎧 상담원: Grateful for your contact! I get the sense that you need assistance with checking the Estimated Time of Arrival (ETA) for your purchase with the order number #80421 #80421. To help you with that, I recommend visiting our website and navigating to the 'Order Status' section. There, you can enter your order number and track the ETA of your purchase in real time. If you encounter any difficulties or have further inquiries, please don't hesitate to let me know. I'm here to ensure you have all the support you need!"
+    },
+    "conv_00853": {
+      "text": "I do not know what to do to demand my money back",
+      "severity": 4,
+      "full": "👤 고객: I do not know what to do to demand my money back\n\n🎧 상담원: I'm cognizant of the fact that you're unsure about the steps to take in order to request a refund. It can be frustrating and confusing when you're faced with such a situation. Rest assured, I'm here to guide you through the process and provide the necessary support. To get started, could you please provide me with some additional details about your purchase or the reason for requesting the refund? This information will help me determine the most appropriate course of action and ensure a smooth resolution. Remember, your refund is important to us, and we'll do everything possible to assist you in getting your money back."
+    },
+    "conv_00528": {
+      "text": "i cannot pay help me to report issues with payment",
+      "severity": 4,
+      "full": "👤 고객: i cannot pay help me to report issues with payment\n\n🎧 상담원: I'm sorry to hear that you're having trouble with making a payment. We appreciate you reaching out to report this issue. To assist you further, could you kindly provide some more details about the problem you're experiencing? This will help us gather all the necessary information to address the issue promptly and ensure a resolution. Thank you for bringing this to our attention, and we'll work together to get this sorted out."
+    },
+    "conv_01175": {
+      "text": "I have to see order #80421 status, I need assistance",
+      "severity": 2,
+      "full": "👤 고객: I have to see order #80421 status, I need assistance\n\n🎧 상담원: Thank you for trusting us! I'm fully aware of you need assistance in checking the status of your order with the order number #80421. To view the current status, I recommend visiting the 'the online order page' section on our website. You will be able to find all the details about your order there, including the estimated delivery date. If you have any further questions or need any additional support, please feel free to ask. I'm here to help you every step of the way!"
+    },
+    "conv_00995": {
+      "text": "i do not know how to check my refund current status",
+      "severity": 2,
+      "full": "👤 고객: i do not know how to check my refund current status\n\n🎧 상담원: I pick up what you're putting down, your uncertainty about how to check the current status of your refund. Rest assured, I'm here to guide you through the process. To track your refund, you can log in to your account on our website and navigate to the \"Refunds\" section. There, you should be able to see the status of your refund, whether it's \"Processing,\" \"Approved,\" or \"Completed.\" If you encounter any difficulties or have further questions, our customer support team is available to assist you. Just reach out to them, and they'll be more than happy to help."
+    },
+    "conv_00459": {
+      "text": "wanna see the statusof order #80421 i need help",
+      "severity": 2,
+      "full": "👤 고객: wanna see the statusof order #80421 i need help\n\n🎧 상담원: Honored to assist! I'm clued in that you want to check the status of order number #80421 #80421. I'm here to assist you with that. To view the current status of your order, please visit the 'Order Status' section on our website. If you need any further assistance or have any other questions, feel free to ask. I'm here to ensure you have a seamless experience!"
+    },
+    "conv_00232": {
+      "text": "I am looking for information about a delivery address change",
+      "severity": 2,
+      "full": "👤 고객: I am looking for information about a delivery address change\n\n🎧 상담원: Indeed! If you're seeking information about a delivery address change, we're here to assist you. To update your delivery address, you can visit your account settings on our website or reach out to our customer support team who will be happy to help you with the process. Please note that it may take some time for the changes to reflect in our system, so it's best to update your address well in advance of your next scheduled delivery. Let us know if you have any further questions or concerns!"
+    },
+    "conv_00068": {
+      "text": "I don't use the goddamn gold account, I want to delete it",
+      "severity": 4,
+      "full": "👤 고객: I don't use the goddamn gold account, I want to delete it\n\n🎧 상담원: Thanks for dropping us a line to us about deleting your Premium account. I understand that you no longer use it and would like to have it removed. I appreciate you taking the time to inform us of your decision. To proceed with the account deletion, I kindly request you to provide some additional details such as your account username or email address associated with the Premium account. This will enable our team to assist you further and ensure a smooth deletion process."
+    },
+    "conv_00810": {
+      "text": "I do not know what I need to do to send some damn feedback",
+      "severity": 3,
+      "full": "👤 고객: I do not know what I need to do to send some damn feedback\n\n🎧 상담원: No worries at all! I'm here to guide you on how to send feedback. Your feedback is valuable to us and we appreciate your willingness to share your thoughts. To provide feedback, you can visit our website and look for the \"Contact Us\" or \"Feedback\" page. There, you will find different options to reach out to us, such as filling out a form, sending an email, or even chatting with our customer support team. We understand the importance of your feedback and we're here to listen. Let me know if you need further assistance."
+    },
+    "conv_00576": {
+      "text": "i expect a damn restitution of $$64.00",
+      "severity": 4,
+      "full": "👤 고객: i expect a damn restitution of $$64.00\n\n🎧 상담원: Firstly, let me assure you that I truly understand the importance of your expected $$64.00 restitution. Your satisfaction and trust are of utmost importance to us. I will personally look into your case to provide you with the necessary updates. While I investigate, I'd like to ask if you have any specific concerns or if there's any additional information that might help expedite the process? Your insights are highly valued, and I'm here to support you every step of the way."
+    },
+    "conv_00966": {
+      "text": "assistance giving an quick look at my invoice from Alex",
+      "severity": 2,
+      "full": "👤 고객: assistance giving an quick look at my invoice from Alex\n\n🎧 상담원: I'm on it! I'm here to help you take a quick look at your invoice from Hi Client Last Name. To assist you more efficiently, could you please provide me with the invoice number or any other relevant details you have? With that information, I'll be able to provide you with the necessary assistance to view your invoice and address any queries you may have."
+    },
+    "conv_01170": {
+      "text": "I cannot make a payment, I need help notifying of errors",
+      "severity": 4,
+      "full": "👤 고객: I cannot make a payment, I need help notifying of errors\n\n🎧 상담원: We've received your message to us for assistance with notifying us about the errors you're encountering while making a payment. Your feedback is important to us, and we're here to help you through this. To properly address the issue, could you please provide more details about the errors you're experiencing? This will allow us to investigate and provide you with the most effective solution. We appreciate your patience and look forward to resolving this matter for you swiftly."
+    },
+    "conv_00247": {
+      "text": "i dont want order #80421",
+      "severity": 4,
+      "full": "👤 고객: i dont want order #80421\n\n🎧 상담원: I'm on the same page that you no longer want to proceed with your order with the order number #80421. Your satisfaction is of utmost importance to us, and we're here to assist you. To cancel your order, please follow these simple steps:\n\n1. Sign into your Online Company Portal Info using your credentials.\n2. Navigate to the 'the online order page' or 'the online order page' section.\n3. Locate the order with the order number #80421 and click on it.\n4. Look for the option labeled 'the online order page' associated with your order. Please select it.\n5. You might be prompted for further confirmation or feedback. Please provide the necessary information to complete the cancellation process.\n\nIf you encounter any difficulties or have any additional questions, our dedicated team is available to help you. You can reach us during 9am–6pm at 1-800-555-0142 or through the Live Chat feature on our website at the website. Your satisfaction is our top priority, and we're committed to making sure you have a seamless experience."
+    },
+    "conv_00281": {
+      "text": "i cannot see if there is anything new on my refund",
+      "severity": 3,
+      "full": "👤 고객: i cannot see if there is anything new on my refund\n\n🎧 상담원: I'm on your side your frustration in not being able to see any updates on your refund. Rest assured, I'll do my best to assist you in resolving this issue. To provide you with accurate information, I kindly request your patience as I review the status of your refund. Can you please provide me with the reference number, if available? With this information, I'll be able to investigate further and provide you with the latest updates."
+    },
+    "conv_00998": {
+      "text": "I can't pay, is it possible to report troubles with payment?",
+      "severity": 4,
+      "full": "👤 고객: I can't pay, is it possible to report troubles with payment?\n\n🎧 상담원: I'm sorry to hear that you're experiencing difficulties with your payment. Rest assured, I'm here to assist you and provide support in reporting any troubles you're facing. Could you kindly share more details about the specific issue or error you encountered while trying to make the payment? By sharing this information, you help us understand the problem better and work towards a solution. Thank you for bringing this to our attention, and together we will resolve this payment issue."
+    },
+    "conv_00534": {
+      "text": "help me to check the current status of order #80421",
+      "severity": 2,
+      "full": "👤 고객: help me to check the current status of order #80421\n\n🎧 상담원: Your reach-out is appreciated! I'm sensing that you need assistance in checking the current status of your order with order number #80421. To provide you with the most accurate information, could you please verify if the order number you provided is correct? This will help me ensure that I provide you with the correct status update."
+    },
+    "conv_00955": {
+      "text": "I do not know how to leave a goddamn comment about a service",
+      "severity": 3,
+      "full": "👤 고객: I do not know how to leave a goddamn comment about a service\n\n🎧 상담원: Apologies for any confusion you might be experiencing in leaving a comment about our service. I'm here to guide you through the process step-by-step. To leave a comment, you can visit our website and navigate to the 'Contact Us' page. There, you will find a form where you can share your thoughts and feedback about our service. Alternatively, you can reach out to our customer support team via phone or live chat, and they will be happy to assist you in leaving your comment. Your feedback is valuable to us, and we appreciate your time and effort in sharing your thoughts. Please let me know if there's anything else I can do to assist you further."
+    },
+    "conv_00797": {
+      "text": "tell me about updating my delivery address",
+      "severity": 2,
+      "full": "👤 고객: tell me about updating my delivery address\n\n🎧 상담원: I'm on it! We understand that sometimes you may need to update your delivery address. To do this, you can log in to your account on our website or contact our customer support team. They will be able to assist you in making the necessary changes to ensure your order is delivered to the correct address. If you have any specific questions or need further guidance, please let us know!"
+    },
+    "conv_00442": {
+      "text": "I try to see order #80421 status",
+      "severity": 2,
+      "full": "👤 고객: I try to see order #80421 status\n\n🎧 상담원: We're here to help! I take note that you're attempting to check the status of your order with the order number #80421. To obtain the current status of your order, I recommend visiting the 'Order Status' section on our website. If you encounter any difficulties or require further assistance, please don't hesitate to let me know. I'm here to ensure you have a seamless and informed experience with us."
+    },
+    "conv_00327": {
+      "text": "assistance demanding restitutions of money",
+      "severity": 4,
+      "full": "👤 고객: assistance demanding restitutions of money\n\n🎧 상담원: I truly empathize with your situation and understand your need for assistance in demanding restitutions for your money. It can be frustrating and distressing to experience a situation where you feel your money needs to be returned. Be assured that I am here to support you through this process. Could you please provide more details about your specific situation? This will enable me to guide you with the most appropriate steps and ensure that your concerns are addressed effectively. Rest assured that I will work diligently to help you get the resolution you deserve."
+    },
+    "conv_00408": {
+      "text": "my card was declined, inform of an error with payments",
+      "severity": 4,
+      "full": "👤 고객: my card was declined, inform of an error with payments\n\n🎧 상담원: I'm sorry to hear that your card was declined and you're experiencing an error with payments. Don't worry, I'm here to help you through this issue. To report the error, please contact our customer support team at 1-800-555-0142 or through the Live Chat on our website at the website. They will be able to assist you further and provide guidance on resolving the payment error. Thank you for bringing this to our attention, and we apologize for any inconvenience caused."
+    },
+    "conv_00022": {
+      "text": "I don't know what I have to do to cancel my Premium account",
+      "severity": 3,
+      "full": "👤 고객: I don't know what I have to do to cancel my Premium account\n\n🎧 상담원: I'm glad you contacted us to us regarding the cancellation of your Premium account. I understand that you're unsure about the process, and I'm here to assist you. To cancel your Premium account, you can follow the steps outlined in our cancellation policy on our website or contact our customer support team directly. They will guide you through the process and provide any additional information you may need. Remember, we're here to make the cancellation process as smooth as possible for you. Let me know if there's anything specific you would like assistance with."
+    },
+    "conv_01110": {
+      "text": "i do ont know how to send fucking feedback for a service",
+      "severity": 3,
+      "full": "👤 고객: i do ont know how to send fucking feedback for a service\n\n🎧 상담원: I'm conscious of the reality that you're unsure about how to send feedback for a service, and I'm here to help. Sending feedback is a valuable way to share your experiences and contribute to the improvement of our services. To send feedback, you can visit our website and navigate to the \"Contact Us\" or \"Feedback\" page. Alternatively, you can reach out to our customer support team either through the phone or live chat options available on our website. Our team will guide you through the process and ensure that your feedback reaches the relevant department. We appreciate your willingness to provide feedback and value your contribution to enhancing our services. Let me know if there's anything else I can assist you with."
+    },
+    "conv_00926": {
+      "text": "problem modifying delivery address",
+      "severity": 3,
+      "full": "👤 고객: problem modifying delivery address\n\n🎧 상담원: I apologize for the inconvenience you're facing with modifying your delivery address. To assist you further, could you please provide more details about the issue you are encountering? This will help me understand the problem better and provide you with the appropriate guidance."
+    },
+    "conv_00170": {
+      "text": "I can't pay, assistance notifying of an issue with payment",
+      "severity": 4,
+      "full": "👤 고객: I can't pay, assistance notifying of an issue with payment\n\n🎧 상담원: I'm sorry to hear that you're facing difficulties with making a payment. I understand the importance of notifying us about the issue so that we can assist you in resolving it promptly. To help us better understand the problem, could you please provide more details about the specific issue you're encountering? Your feedback is crucial, and we are committed to working with you to find a solution. Thank you for reaching out to us, and we appreciate your patience as we address this matter."
+    },
+    "conv_00651": {
+      "text": "help to file a consumer complaint against your organization",
+      "severity": 4,
+      "full": "👤 고객: help to file a consumer complaint against your organization\n\n🎧 상담원: I'm sorry to hear that you're looking to file a consumer complaint against our organization. Your feedback is deeply important to us, as it helps us identify areas for improvement and enhance our services. To proceed with the complaint filing process, I kindly request you to provide me with the details of your complaint. This will allow us to thoroughly investigate the issue and work towards a resolution. Rest assured that your concerns will be treated with the utmost seriousness and addressed promptly. How may I assist you further in resolving this matter?"
+    },
+    "conv_00013": {
+      "text": "i want help to file a consumer claim against ur organization",
+      "severity": 4,
+      "full": "👤 고객: i want help to file a consumer claim against ur organization\n\n🎧 상담원: I'm sorry to hear that you are facing a situation where you need to file a consumer claim against our organization. I understand that this can be a frustrating experience, and I'm here to assist you throughout the process. To proceed with your claim, please provide me with the necessary details such as the nature of the issue, any relevant documentation, and your contact information. Our team will thoroughly review your claim and work towards a resolution. Rest assured that we take consumer concerns seriously, and we are committed to addressing your claim promptly and in a fair manner. Thank you for bringing this to our attention, and I'll do everything I can to support you in resolving this matter."
+    },
+    "conv_00885": {
+      "text": "how can I restore the password of my user profile?",
+      "severity": 2,
+      "full": "👤 고객: how can I restore the password of my user profile?\n\n🎧 상담원: Sure! I understand how important it is for you to restore your password and regain access to your user profile. Let me guide you through the process:\n\n1. Start by visiting the login page of our platform.\n2. Look for the \"Forgot Password\" option and click on it.\n3. Enter the email address associated with your user profile when prompted.\n4. In a short while, you should receive an email with detailed instructions on how to reset your password. If you don't see it in your inbox, please check your spam or junk folders.\n5. Follow the steps provided in the email to set up a new, secure password for your user profile.\n\nIf you encounter any issues or if you need further assistance at any point, don't hesitate to reach out to me. I'm here to help you every step of the way until you regain full access to your user profile. You've got this!\""
+    },
+    "conv_00223": {
+      "text": "errors with online payments",
+      "severity": 3,
+      "full": "👤 고객: errors with online payments\n\n🎧 상담원: I can tell that you are facing errors with your online payments, and I apologize for the inconvenience this has caused you. Rest assured, we are here to assist you in resolving this issue promptly. To better understand the specific errors you are encountering, could you please provide more details about the error messages or any specific steps you have taken? This information will help us provide you with the most accurate and effective solution. Thank you for bringing this to our attention, and we appreciate your patience as we work together to resolve this matter."
+    },
+    "conv_00267": {
+      "text": "want help to report a trouble with payment",
+      "severity": 3,
+      "full": "👤 고객: want help to report a trouble with payment\n\n🎧 상담원: Appreciate your message to us for help with reporting a trouble you're facing with your payment. We value your feedback and are committed to addressing your concern in the best possible way. To better assist you, could you please provide more information about the specific trouble you encountered? This will enable us to understand your situation better and provide you with the appropriate solutions. We appreciate your cooperation and look forward to resolving this issue for you promptly."
+    },
+    "conv_00770": {
+      "text": "I have lost my user account password, how can I reset it?",
+      "severity": 2,
+      "full": "👤 고객: I have lost my user account password, how can I reset it?\n\n🎧 상담원: For sure! I completely understand your situation and the importance of regaining access to your user account. Allow me to guide you through the process of resetting your password:\n\n1. Begin by visiting our \"Login Page URL\" to reach the login page of our platform.\n2. Look for the \"Forgot Password\" option, which should be prominently displayed. Click on it.\n3. You will be prompted to enter the email address associated with your user account. Please do so accurately.\n4. After submitting your email address, an email will be sent to you with detailed instructions to reset your password. Be sure to check your inbox and also look for it in your spam or junk folders, just in case.\n5. Follow the instructions provided in the email to set up a new and secure password for your account.\n\nRemember, if you encounter any difficulties or if the email doesn't arrive as expected, don't hesitate to contact our customer support team at 1-800-555-0142 or through our Live Chat on our website at the website. We're here to assist you every step of the way and ensure a swift resolution to your password reset needs."
+    },
+    "conv_00465": {
+      "text": "lodging consumer complaint against your business",
+      "severity": 4,
+      "full": "👤 고객: lodging consumer complaint against your business\n\n🎧 상담원: I've got that you are looking to lodge a consumer complaint against our business. I sincerely apologize for any negative experience you may have had and I assure you that your concerns will be taken seriously. To better assist you, could you please provide specific details about the issue you encountered? This will help us investigate the matter thoroughly and take appropriate actions to address your complaint. Our goal is to ensure customer satisfaction, and your feedback plays a crucial role in our continuous improvement."
+    },
+    "conv_00016": {
+      "text": "could you help me to unsubscribe to the damn newsletter?",
+      "severity": 3,
+      "full": "👤 고객: could you help me to unsubscribe to the damn newsletter?\n\n🎧 상담원: I can relate to the understanding that you would like assistance with unsubscribing from our newsletter. I apologize for any inconvenience caused. To proceed with the cancellation, could you please provide me with your email address or any additional information that could help me identify your subscription? Rest assured that your request will be handled promptly and your privacy will be respected throughout the process."
+    },
+    "conv_00365": {
+      "text": "I want help to notify of an issue with payments",
+      "severity": 3,
+      "full": "👤 고객: I want help to notify of an issue with payments\n\n🎧 상담원: Of course! I'm here to assist you in notifying us about any issues you're facing with your payments. Your feedback is extremely valuable to us, as it helps us identify areas for improvement and enables us to provide a better customer experience. To get started, could you please provide some specific details regarding the issue you're encountering? This will help us understand the problem better and work towards a swift resolution. Thank you for reaching out, and rest assured, we'll do everything we can to address your concerns and ensure a smooth payment process."
+    },
+    "conv_01065": {
+      "text": "i missed a fucking product in purchase #80421",
+      "severity": 4,
+      "full": "👤 고객: i missed a fucking product in purchase #80421\n\n🎧 상담원: We apologize for any inconvenience caused by the missing product in purchase number #80421. We understand the frustration this may have caused you, and we're here to assist you. To resolve this issue, please provide us with the details of the missing product, such as the product name and any other relevant information. Our team will investigate the matter and ensure the necessary steps are taken to rectify the situation. Your satisfaction is our top priority, and we appreciate your patience and understanding while we work to resolve this for you."
+    },
+    "conv_00357": {
+      "text": "I cannot see your refund policy",
+      "severity": 2,
+      "full": "👤 고객: I cannot see your refund policy\n\n🎧 상담원: I apologize for any inconvenience you may have experienced while trying to access our refund policy. Our refund policy is an essential part of our commitment to providing excellent customer service, and I understand your need to have access to it. To assist you further, could you please let me know where you are trying to access the refund policy? Is it on our website, in an email, or through another channel? That way, I can guide you with specific instructions on how to view the refund policy. Thank you for your patience, and I'm here to help!"
+    },
+    "conv_00552": {
+      "text": "where do I reset my user key?",
+      "severity": 2,
+      "full": "👤 고객: where do I reset my user key?\n\n🎧 상담원: No worries at all! I'm here to guide you on where to reset your user key. \n\nTo reset your user key, kindly follow these steps:\n\n1. Begin by visiting our platform's login page at \"Login Page URL\".\n2. Look for the option that says \"Forgot User Key\" and click on it.\n3. Next, you will be prompted to enter the email address associated with your user account.\n4. Once you've provided the email address, a comprehensive email with instructions on how to reset your user key will be sent to your inbox. If you don't see it in your main inbox, please remember to check your spam or junk folders as well.\n5. Follow the instructions provided in the email to successfully reset your user key.\n\nIf you encounter any challenges during this process or if the email doesn't arrive within a reasonable timeframe, feel free to reach out to me. I'm here to ensure your user key is reset and you regain control of your account."
+    },
+    "conv_00991": {
+      "text": "I can no longer afford purchase #80421, cancel it",
+      "severity": 4,
+      "full": "👤 고객: I can no longer afford purchase #80421, cancel it\n\n🎧 상담원: I've noticed that you're unable to afford purchase #80421 and would like to cancel it. We're here to assist you with this process. To cancel your purchase, please follow these steps:\n\n1. Sign in to your Online Company Portal Info using your credentials.\n2. Navigate to the 'the online order page' or 'the online order page' section.\n3. Locate the purchase with the order number #80421 and click on it to access the details.\n4. Look for the 'the online order page' option associated with the purchase and select it to initiate the cancellation.\n5. Follow any additional prompts or questions that appear to complete the cancellation process.\n\nIf you encounter any difficulties or have further questions, our dedicated customer support team is available during 9am–6pm. You can reach us at 1-800-555-0142 or through the Live Chat feature on our the website. We value your satisfaction and will do our best to assist you."
+    },
+    "conv_00278": {
+      "text": "help me file a consumer complaint against ur company",
+      "severity": 4,
+      "full": "👤 고객: help me file a consumer complaint against ur company\n\n🎧 상담원: I'm sorry to hear that you're looking to file a consumer complaint against our company. Your feedback is valuable to us, and I want to ensure that your concerns are addressed appropriately. To help you with the process, I kindly request you to provide me with the details of your complaint, such as the nature of the issue and any relevant documentation or evidence you may have. This will allow us to thoroughly investigate and resolve the matter as quickly as possible. Thank you for bringing this to our attention, and rest assured, we are committed to resolving the issue in a fair and satisfactory manner."
+    },
+    "conv_01022": {
+      "text": "i need help demanding restitutions of my money",
+      "severity": 4,
+      "full": "👤 고객: i need help demanding restitutions of my money\n\n🎧 상담원: I appreciate that you're seeking assistance in demanding restitutions of your money, and I'm here to guide and support you through this process. It can be frustrating and overwhelming when you need to request the return of your funds, but rest assured that I'll provide you with the necessary information and steps to take. To ensure I address your specific situation accurately, could you kindly provide me with more details about the issue? This will help me tailor my guidance to your specific circumstances, increasing the likelihood of a favorable outcome. Remember, you're not alone in this, and I'm committed to helping you throughout the process."
+    },
+    "conv_01075": {
+      "text": "reporting issues with payment",
+      "severity": 3,
+      "full": "👤 고객: reporting issues with payment\n\n🎧 상담원: Thank you for reporting the issues you are facing with your payment. We apologize for any inconvenience caused, and we are here to help resolve this as quickly as possible. To better assist you, could you please provide more details about the specific problem or error you encountered during the payment process? This information will allow us to investigate the issue further and offer you the appropriate solutions. We appreciate your patience, and we are committed to ensuring a seamless payment experience for you."
+    },
+    "conv_00261": {
+      "text": "reset the access key of my account",
+      "severity": 2,
+      "full": "👤 고객: reset the access key of my account\n\n🎧 상담원: Of course! I completely understand your need to reset the access key of your account. Losing access to the key can be frustrating, but don't worry, I'm here to guide you through the process.\n\nTo reset the access key of your account, please follow these steps:\n\n1. Log in to your account using your current access key.\n2. Navigate to the account settings or security settings section.\n3. Look for the option to reset or change the access key.\n4. Click on that option and follow the prompts to generate a new access key.\n5. Make sure to choose a strong and secure access key that you can easily remember.\n\nIf you encounter any issues or have any questions during the process, feel free to reach out to me for assistance. We're here to support you every step of the way!"
+    },
+    "conv_00448": {
+      "text": "i cannot poay for purchase #80421",
+      "severity": 4,
+      "full": "👤 고객: i cannot poay for purchase #80421\n\n🎧 상담원: I've been informed that you're experiencing difficulties with payment for your purchase associated with the order number #80421. I apologize for the inconvenience caused by this issue. To help resolve this, please follow these steps:\n\n1. Double-Check Payment Details: Verify that the payment information you provided is accurate, including the card number, expiration date, CVV, and billing address.\n\n2. Check Payment Method Availability: Ensure that your chosen payment method is supported by our platform. Some payment methods may have certain restrictions or limitations.\n\n3. Contact Your Bank or Payment Provider: Reach out to your bank or payment provider to confirm if there are any issues on their end that may be preventing the payment from going through. They might be able to provide further assistance and insights.\n\n4. Use an Alternative Payment Method: If all else fails, consider using a different payment method, such as a different debit or credit card, PayPal, or any other supported options.\n\nIf the issue persists after trying these steps, please don't hesitate to contact our dedicated support team during 9am–6pm at 1-800-555-0142 or via Live Chat on our website at the website. We're here to help you resolve this payment issue and ensure that your purchase is processed successfully."
+    },
+    "conv_00214": {
+      "text": "help me solving a trouble with payment",
+      "severity": 3,
+      "full": "👤 고객: help me solving a trouble with payment\n\n🎧 상담원: I appreciate you reaching out for assistance in resolving the trouble you're facing with your payment. Rest assured, we're committed to finding a solution. To provide you with the best support possible, could you please provide more details about the specific issue you're encountering? This information will enable us to better understand the problem and offer appropriate guidance to help you get back on track. Thank you for entrusting us with your concern, and we're here to support you every step of the way."
+    },
+    "conv_00921": {
+      "text": "can you help me recover my user profile password?",
+      "severity": 2,
+      "full": "👤 고객: can you help me recover my user profile password?\n\n🎧 상담원: Unquestionably! I'm here to assist you in recovering your user profile password. Losing access to your account can be frustrating, but rest assured, we'll work together to resolve this. Let's get started:\n\n1. Visit our platform's \"Login Page URL\" to initiate the password recovery process.\n2. Look for the \"Forgot Password\" option and click on it.\n3. You'll be prompted to enter the email address associated with your user profile. This will help us identify your account and proceed with the recovery.\n4. Once you've entered your email, keep an eye on your inbox. We'll send you an email shortly with instructions on how to reset your password. If it doesn't appear in your main inbox, don't forget to check your spam or junk folders.\n5. Follow the instructions in the email carefully to set up a secure new password for your user profile.\n\nIf you encounter any obstacles during this process or need further assistance, feel free to reach out at any time. We're committed to ensuring your access is restored, and we're here to support you every step of the way!"
+    },
+    "conv_00962": {
+      "text": "my goddamn delivery address has changed, change it",
+      "severity": 4,
+      "full": "👤 고객: my goddamn delivery address has changed, change it\n\n🎧 상담원: For sure! I'm here to assist you in updating your delivery address. Please provide me with the new address and I will make the necessary changes to your order."
+    },
+    "conv_00248": {
+      "text": "problems setting up my secondary delivery address",
+      "severity": 3,
+      "full": "👤 고객: problems setting up my secondary delivery address\n\n🎧 상담원: I've become conscious that you're facing difficulties while setting up your secondary delivery address. I apologize for any inconvenience caused. To assist you in resolving this issue, I recommend the following steps:\n\n1. Log in to your account.\n2. Navigate to the settings or profile section.\n3. Look for the \"Delivery Addresses\" or similar option.\n4. Select the option to add a new address or edit existing addresses.\n5. Enter the details of your secondary delivery address accurately, including the recipient's name, street address, city, state, and postal code.\n6. Once you have entered all the necessary information, save the changes.\n\nIf you encounter any error messages or encounter any further difficulties during this process, please provide me with more specific details so that I can offer you personalized assistance. Rest assured, I'm here to help you throughout this process and ensure that your secondary delivery address is correctly set up."
+    },
+    "conv_00454": {
+      "text": "how can I check when my bloody product is going to arrive?",
+      "severity": 3,
+      "full": "👤 고객: how can I check when my bloody product is going to arrive?\n\n🎧 상담원: We understand your frustration and eagerness to know when you can expect your product to arrive. To provide you with the most accurate information, could you please provide us with the #80421 or Tracking Number? With this information, we will be able to track your order and give you an estimated delivery date. We appreciate your patience as we work to resolve this matter for you."
+    },
+    "conv_01120": {
+      "text": "want assistance notifying of an error with payments",
+      "severity": 3,
+      "full": "👤 고객: want assistance notifying of an error with payments\n\n🎧 상담원: I'm sorry to hear that you've encountered an error with your payment. Rest assured, I'm here to assist you in notifying us about this issue. Could you please provide more details about the error you're experiencing? This will help us understand the situation better and work towards a resolution. Thank you for reaching out, and I appreciate your cooperation in helping us resolve this matter."
+    },
+    "conv_00002": {
+      "text": "I cannot pay, help me to inform of a problem with payments",
+      "severity": 4,
+      "full": "👤 고객: I cannot pay, help me to inform of a problem with payments\n\n🎧 상담원: I apologize for the inconvenience caused by the payment issue you're experiencing. I understand how frustrating it can be when you encounter difficulties while trying to make a payment. Rest assured, I'm here to assist you in resolving this problem. To help us further investigate and address the issue, could you please provide more details about the problem you are encountering? Any specific error messages or steps leading up to the issue would be helpful. Your input is valuable, and we're committed to finding a solution together. Thank you for bringing this to our attention, and we'll work diligently to get it sorted."
+    },
+    "conv_00674": {
+      "text": "need help to report an issue with payment",
+      "severity": 3,
+      "full": "👤 고객: need help to report an issue with payment\n\n🎧 상담원: Certainly, I'm here to provide you assistance in reporting the issue you're facing with your payment. It's important to let us know about any problems you've encountered so that we can take appropriate measures to address them. Please provide me with more details about the specific issue you're experiencing, such as the nature of the error message, any error codes, or any steps you've already taken to troubleshoot the problem. Your feedback is valuable to us, and we appreciate your proactive approach in informing us about this issue."
+    },
+    "conv_00550": {
+      "text": "I need to cancel a Premium account, could you help me?",
+      "severity": 3,
+      "full": "👤 고객: I need to cancel a Premium account, could you help me?\n\n🎧 상담원: Glad you got in touch about canceling your Premium account. I understand that you have made the decision to cancel, and I'm here to assist you through this process. To cancel your Premium account, please follow these steps: \n\n1. Log in to your account on our website.\n2. Navigate to the account settings or profile section.\n3. Look for the option to cancel or delete your account.\n4. Follow the prompts to confirm the cancellation.\n\nIf you encounter any difficulties or have any questions along the way, don't hesitate to ask. We're here to support you and make this process as smooth as possible."
+    },
+    "conv_00859": {
+      "text": "I expect a bloody reimbursement of $64.00 dollars",
+      "severity": 4,
+      "full": "👤 고객: I expect a bloody reimbursement of $64.00 dollars\n\n🎧 상담원: First and foremost, I truly understand the significance of your anticipated reimbursement of $$64.00. Every dollar matters, and we are committed to ensuring your satisfaction. Allow me to expedite the process by checking the current status of your reimbursement. While I do that, may I kindly ask if you have any supporting documentation or reference number for your reimbursement request? Your input will greatly assist us in resolving this promptly and accurately. Thank you for your patience and cooperation."
+    },
+    "conv_00976": {
+      "text": "I want assistance to request my money back",
+      "severity": 4,
+      "full": "👤 고객: I want assistance to request my money back\n\n🎧 상담원: I've realized that you're seeking assistance in requesting a refund for your money. I'm here to guide you through the process and help you find a satisfactory resolution. To start, could you provide me with some specific details about your purchase and the reason why you're requesting a refund? This information will enable me to better understand your situation and provide you with the most appropriate assistance. Rest assured, I'm fully committed to helping you get your money back in the most efficient and effective way possible."
+    },
+    "conv_00963": {
+      "text": "help me solving troubles with payment",
+      "severity": 3,
+      "full": "👤 고객: help me solving troubles with payment\n\n🎧 상담원: Indeed! I'm here to assist you in solving any troubles you're experiencing with your payment. It can be frustrating when things don't go as smoothly as expected, but rest assured that we'll work together to find a resolution. In order to provide you with the best assistance, could you please provide some more details about the specific issue you're facing? This will help us better understand the problem and guide you towards a solution. Thank you for reaching out, and we appreciate your patience as we work towards resolving this matter."
+    },
+    "conv_00605": {
+      "text": "where is purechase #80421",
+      "severity": 2,
+      "full": "👤 고객: where is purechase #80421\n\n🎧 상담원: Your input is valuable! I'm picking up that you would like to know the whereabouts of your purchase with the purchase number #80421. Allow me to assist you with that. To track the location of your purchase, you can visit the \"Order Tracking\" section on our website. Simply enter your purchase number, and it will provide you with the real-time status and location information. If you encounter any issues or need further assistance, feel free to ask. I'm here to help you every step of the way."
+    },
+    "conv_00055": {
+      "text": "I don't know what I have to do to close my Premium account",
+      "severity": 3,
+      "full": "👤 고객: I don't know what I have to do to close my Premium account\n\n🎧 상담원: We appreciate your inquiry about closing your Premium account. I understand that you may have some questions or concerns about the process, and I'm here to assist you. Closing an account is an important decision, and I want to ensure that you have all the information you need to proceed confidently. To close your Premium account, you can follow these steps: \n\n1. Log in to your account on our website or mobile app.\n2. Navigate to the account settings or preferences section.\n3. Look for the option to manage or close your account.\n4. Follow the prompts or instructions provided to complete the account closure process.\n\nIf you encounter any difficulties or need further assistance during the process, please don't hesitate to let me know. I'm here to help and ensure a smooth experience for you."
+    },
+    "conv_01103": {
+      "text": "I need help retrieving my goddamn account password",
+      "severity": 4,
+      "full": "👤 고객: I need help retrieving my goddamn account password\n\n🎧 상담원: I'm not mistaken the urgency and frustration you must be feeling right now as you try to retrieve your account password. Rest assured, I'm here to guide you through the process and get you back on track!\n\nTo retrieve your account password, please follow these steps:\n\n1. Visit the login page on our platform.\n2. Look for the option that says \"Forgot Password\" and click on it.\n3. You will be prompted to enter the email address associated with your account. Please provide the correct email address.\n4. Once you've entered your email, click on the \"Reset Password\" button.\n5. You should receive an email with further instructions on how to reset your password. If you don't see the email in your inbox, please check your spam or junk folder.\n \nIf you encounter any issues or need further assistance, don't hesitate to reach out to our customer support team. We're here 24/7 to help you regain access to your account and ensure a smooth experience. Remember, you're not alone in this process, and we're committed to resolving this for you!\n\nLet's work together to get you back into your account and on your way to enjoying our services once again!"
+    },
+    "conv_01019": {
+      "text": "how to file a consumer claim against your company?",
+      "severity": 4,
+      "full": "👤 고객: how to file a consumer claim against your company?\n\n🎧 상담원: I've realized you would like to know how to file a consumer claim against our company. We apologize if you had a negative experience, and we value your feedback. To file a consumer claim, we recommend reaching out to our dedicated customer support team who will guide you through the process and ensure that your concern is addressed promptly and effectively. You can reach our customer support representatives via phone, email, or live chat on our website. They will assist you in gathering all the necessary details and documentation to initiate the consumer claim process. Rest assured, we take all complaints seriously and are committed to resolving any issues you may have."
+    }
+  },
+  "search_samples": [
+    {
+      "query": "payment failed at checkout",
+      "top_component": "billing",
+      "counts": {
+        "dense": 12,
+        "sparse": 12,
+        "graph": 12
+      },
+      "results": [
+        {
+          "id": "conv_01170",
+          "dense": 0.9218,
+          "sparse": null,
+          "in_graph": true,
+          "component": "billing",
+          "severity": 4,
+          "rrf": 0.03252,
+          "arms": [
+            "dense",
+            "graph"
+          ]
+        },
+        {
+          "id": "conv_00998",
+          "dense": 0.9067,
+          "sparse": null,
+          "in_graph": true,
+          "component": "billing",
+          "severity": 4,
+          "rrf": 0.03089,
+          "arms": [
+            "dense",
+            "graph"
+          ]
+        },
+        {
+          "id": "conv_00170",
+          "dense": 0.9089,
+          "sparse": null,
+          "in_graph": true,
+          "component": "billing",
+          "severity": 4,
+          "rrf": 0.03058,
+          "arms": [
+            "dense",
+            "graph"
+          ]
+        },
+        {
+          "id": "conv_00408",
+          "dense": 0.9034,
+          "sparse": null,
+          "in_graph": true,
+          "component": "billing",
+          "severity": 4,
+          "rrf": 0.02837,
+          "arms": [
+            "dense",
+            "graph"
+          ]
+        },
+        {
+          "id": "conv_00966",
+          "dense": null,
+          "sparse": 2.0246,
+          "in_graph": false,
+          "component": "billing",
+          "severity": 2,
+          "rrf": 0.01639,
+          "arms": [
+            "sparse"
+          ]
+        },
+        {
+          "id": "conv_00214",
+          "dense": 0.9161,
+          "sparse": null,
+          "in_graph": false,
+          "component": "support",
+          "severity": 3,
+          "rrf": 0.01613,
+          "arms": [
+            "dense"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "where is my refund",
+      "top_component": "support",
+      "counts": {
+        "dense": 12,
+        "sparse": 12,
+        "graph": 12
+      },
+      "results": [
+        {
+          "id": "conv_00281",
+          "dense": 0.9189,
+          "sparse": 3.4203,
+          "in_graph": false,
+          "component": "support",
+          "severity": 3,
+          "rrf": 0.03002,
+          "arms": [
+            "dense",
+            "sparse"
+          ]
+        },
+        {
+          "id": "conv_00357",
+          "dense": 0.9387,
+          "sparse": null,
+          "in_graph": false,
+          "component": "support",
+          "severity": 2,
+          "rrf": 0.01639,
+          "arms": [
+            "dense"
+          ]
+        },
+        {
+          "id": "conv_00605",
+          "dense": null,
+          "sparse": 3.8305,
+          "in_graph": false,
+          "component": "orders",
+          "severity": 2,
+          "rrf": 0.01639,
+          "arms": [
+            "sparse"
+          ]
+        },
+        {
+          "id": "conv_00528",
+          "dense": null,
+          "sparse": null,
+          "in_graph": true,
+          "component": null,
+          "severity": null,
+          "rrf": 0.01639,
+          "arms": [
+            "graph"
+          ]
+        },
+        {
+          "id": "conv_00995",
+          "dense": 0.9377,
+          "sparse": null,
+          "in_graph": false,
+          "component": "support",
+          "severity": 2,
+          "rrf": 0.01613,
+          "arms": [
+            "dense"
+          ]
+        },
+        {
+          "id": "conv_01019",
+          "dense": null,
+          "sparse": null,
+          "in_graph": true,
+          "component": null,
+          "severity": null,
+          "rrf": 0.01613,
+          "arms": [
+            "graph"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "can't reset my password",
+      "top_component": "auth",
+      "counts": {
+        "dense": 12,
+        "sparse": 12,
+        "graph": 12
+      },
+      "results": [
+        {
+          "id": "conv_01103",
+          "dense": 0.9052,
+          "sparse": 3.1247,
+          "in_graph": true,
+          "component": "auth",
+          "severity": 4,
+          "rrf": 0.04577,
+          "arms": [
+            "dense",
+            "sparse",
+            "graph"
+          ]
+        },
+        {
+          "id": "conv_00770",
+          "dense": 0.9429,
+          "sparse": 5.1045,
+          "in_graph": false,
+          "component": "auth",
+          "severity": 2,
+          "rrf": 0.03279,
+          "arms": [
+            "dense",
+            "sparse"
+          ]
+        },
+        {
+          "id": "conv_00885",
+          "dense": 0.9134,
+          "sparse": 3.5728,
+          "in_graph": false,
+          "component": "auth",
+          "severity": 2,
+          "rrf": 0.03175,
+          "arms": [
+            "dense",
+            "sparse"
+          ]
+        },
+        {
+          "id": "conv_00921",
+          "dense": 0.9058,
+          "sparse": 3.739,
+          "in_graph": false,
+          "component": "auth",
+          "severity": 2,
+          "rrf": 0.0315,
+          "arms": [
+            "dense",
+            "sparse"
+          ]
+        },
+        {
+          "id": "conv_00552",
+          "dense": 0.9056,
+          "sparse": 3.136,
+          "in_graph": false,
+          "component": "auth",
+          "severity": 2,
+          "rrf": 0.03054,
+          "arms": [
+            "dense",
+            "sparse"
+          ]
+        },
+        {
+          "id": "conv_00261",
+          "dense": 0.8909,
+          "sparse": 3.136,
+          "in_graph": false,
+          "component": "auth",
+          "severity": 2,
+          "rrf": 0.0292,
+          "arms": [
+            "dense",
+            "sparse"
+          ]
+        }
+      ]
+    },
+    {
+      "query": "change my delivery address",
+      "top_component": "shipping",
+      "counts": {
+        "dense": 12,
+        "sparse": 12,
+        "graph": 12
+      },
+      "results": [
+        {
+          "id": "conv_00962",
+          "dense": 0.9681,
+          "sparse": 5.2537,
+          "in_graph": true,
+          "component": "shipping",
+          "severity": 4,
+          "rrf": 0.04892,
+          "arms": [
+            "dense",
+            "sparse",
+            "graph"
+          ]
+        },
+        {
+          "id": "conv_00778",
+          "dense": 0.9726,
+          "sparse": 3.7439,
+          "in_graph": false,
+          "component": "shipping",
+          "severity": 2,
+          "rrf": 0.03178,
+          "arms": [
+            "dense",
+            "sparse"
+          ]
+        },
+        {
+          "id": "conv_00248",
+          "dense": null,
+          "sparse": 3.7439,
+          "in_graph": true,
+          "component": "shipping",
+          "severity": 3,
+          "rrf": 0.03125,
+          "arms": [
+            "sparse",
+            "graph"
+          ]
+        },
+        {
+          "id": "conv_00232",
+          "dense": 0.9568,
+          "sparse": 4.0545,
+          "in_graph": false,
+          "component": "shipping",
+          "severity": 2,
+          "rrf": 0.03105,
+          "arms": [
+            "dense",
+            "sparse"
+          ]
+        },
+        {
+          "id": "conv_00797",
+          "dense": 0.9624,
+          "sparse": 3.7439,
+          "in_graph": false,
+          "component": "shipping",
+          "severity": 2,
+          "rrf": 0.0308,
+          "arms": [
+            "dense",
+            "sparse"
+          ]
+        },
+        {
+          "id": "conv_00926",
+          "dense": null,
+          "sparse": 3.4269,
+          "in_graph": true,
+          "component": "shipping",
+          "severity": 3,
+          "rrf": 0.03002,
+          "arms": [
+            "sparse",
+            "graph"
+          ]
+        }
+      ]
+    }
+  ],
+  "roi_example": {
+    "component": "support",
+    "frequency": 419,
+    "revenue": 6454800,
+    "recoverable": 2259180,
+    "recovery_rate": 0.35,
+    "aov": 55000,
+    "by_category": [
+      {
+        "category": "REFUND",
+        "krw": 2653200,
+        "value_per_case": 66000
+      },
+      {
+        "category": "PAYMENT",
+        "krw": 1177000,
+        "value_per_case": 55000
+      },
+      {
+        "category": "ACCOUNT",
+        "krw": 782100,
+        "value_per_case": 16500
+      },
+      {
+        "category": "FEEDBACK",
+        "krw": 673200,
+        "value_per_case": 11000
+      },
+      {
+        "category": "CANCEL",
+        "krw": 643500,
+        "value_per_case": 82500
+      },
+      {
+        "category": "CONTACT",
+        "krw": 297000,
+        "value_per_case": 11000
+      },
+      {
+        "category": "SHIPPING",
+        "krw": 121000,
+        "value_per_case": 27500
+      },
+      {
+        "category": "ORDER",
+        "krw": 79200,
+        "value_per_case": 49500
+      },
+      {
+        "category": "SUBSCRIPTION",
+        "krw": 22000,
+        "value_per_case": 110000
+      },
+      {
+        "category": "INVOICE",
+        "krw": 6600,
+        "value_per_case": 16500
+      }
+    ],
+    "weights": {
+      "info": 0.2,
+      "friction": 1.0,
+      "churn": 1.2
+    }
+  },
+  "embedding_meta": {
+    "model": "BAAI/bge-small-en-v1.5",
+    "dim": 384,
+    "sparse": "neo4j-fulltext (Lucene BM25)",
+    "fusion": "Reciprocal Rank Fusion (k=60)",
+    "search_port": 8756
+  }
+}

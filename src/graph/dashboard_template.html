@@ -1,0 +1,883 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VOC 인텔리전스 부서 — 루트원인 GraphRAG</title>
+<style>
+:root{
+  color-scheme: light;
+  --bg:#f4f4f1; --surface:#fcfcfb; --surface-2:#f0efec; --border:#e2e1db;
+  --ink:#0b0b0b; --ink-2:#52514e; --muted:#8a897f;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#e87ba4; --s6:#008300; --s7:#4a3aa7; --s8:#e34948;
+  --good:#0ca30c; --warning:#fab219; --serious:#ec835a; --critical:#d03b3b;
+  --shadow:0 1px 3px rgba(0,0,0,.06),0 8px 24px rgba(0,0,0,.05);
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:where(:not([data-theme="light"])){
+  color-scheme:dark;
+  --bg:#111110; --surface:#1a1a19; --surface-2:#232322; --border:#33322f;
+  --ink:#ffffff; --ink-2:#c3c2b7; --muted:#87867c;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181; --s6:#008300; --s7:#9085e9; --s8:#e66767;
+  --shadow:0 1px 3px rgba(0,0,0,.4),0 8px 30px rgba(0,0,0,.35);
+}}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#111110; --surface:#1a1a19; --surface-2:#232322; --border:#33322f;
+  --ink:#ffffff; --ink-2:#c3c2b7; --muted:#87867c;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181; --s6:#008300; --s7:#9085e9; --s8:#e66767;
+  --shadow:0 1px 3px rgba(0,0,0,.4),0 8px 30px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+  line-height:1.55;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:1160px;margin:0 auto;padding:0 20px}
+h1,h2,h3{line-height:1.15;letter-spacing:-.02em;margin:0}
+a{color:var(--s1);text-decoration:none}
+a:hover{text-decoration:underline}
+.mono{font-family:var(--mono)}
+section{padding:56px 0;border-top:1px solid var(--border)}
+.sec-h{display:flex;align-items:baseline;gap:14px;margin-bottom:8px;flex-wrap:wrap}
+.sec-n{font-family:var(--mono);font-size:13px;color:var(--s1);font-weight:600}
+.sec-h h2{font-size:clamp(22px,3vw,30px)}
+.sec-sub{color:var(--ink-2);max-width:70ch;margin:6px 0 28px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  box-shadow:var(--shadow)}
+
+/* Hero */
+.hero{padding:64px 0 48px;background:
+  radial-gradient(1200px 400px at 15% -10%, color-mix(in srgb,var(--s1) 16%,transparent), transparent),
+  radial-gradient(900px 400px at 90% 0%, color-mix(in srgb,var(--s2) 12%,transparent), transparent);}
+.badge{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;
+  color:var(--ink-2);background:var(--surface);border:1px solid var(--border);
+  padding:6px 12px;border-radius:999px;margin-bottom:20px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--good);box-shadow:0 0 0 3px color-mix(in srgb,var(--good) 25%,transparent)}
+.hero h1{font-size:clamp(30px,5.4vw,54px);font-weight:800;letter-spacing:-.035em}
+.hero h1 .g{background:linear-gradient(100deg,var(--s1),var(--s3));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p.lede{font-size:clamp(16px,2vw,20px);color:var(--ink-2);max-width:64ch;margin:16px 0 0}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:14px;margin-top:36px}
+.kpi{padding:18px 14px 16px}
+.kpi .v{font-size:clamp(17px,2vw,21px);font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.kpi .l{color:var(--ink-2);font-size:12.5px;margin-top:2px;font-family:var(--mono);font-weight:600}
+.kpi .kpi-hint{color:var(--muted);font-size:10.5px;margin-top:4px;line-height:1.35}
+.kpi.accent .v{color:var(--s2)}
+.kpi-link{display:inline-block;margin-top:8px;font-family:var(--mono);font-size:10.5px;
+  padding:3px 8px;border-radius:6px;background:color-mix(in srgb,var(--good) 14%,transparent);
+  color:var(--good);border:1px solid color-mix(in srgb,var(--good) 32%,transparent)}
+.kpi-link:hover{text-decoration:none;background:color-mix(in srgb,var(--good) 22%,transparent)}
+
+/* Agent flow */
+.flow{display:flex;flex-wrap:nowrap;gap:0;align-items:stretch;padding:22px 18px;overflow-x:auto}
+.fnode{position:relative;flex:1 0 104px;min-width:104px;padding:13px 9px;border:1px solid var(--border);
+  border-radius:12px;background:var(--surface-2);text-align:center;margin:5px}
+.fnode .fn{font-family:var(--mono);font-size:11.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fnode .fs{font-size:11px;color:var(--muted);margin-top:3px;white-space:nowrap}
+.fnode.exec{background:color-mix(in srgb,var(--s1) 14%,var(--surface));border-color:color-mix(in srgb,var(--s1) 45%,var(--border))}
+.fnode.exec .fn{color:var(--s1)}
+.fnode.interrupt.exec{background:color-mix(in srgb,var(--s2) 16%,var(--surface));border-color:var(--s2);
+  animation:pulse 2s ease-in-out infinite}
+.fnode.interrupt.exec .fn{color:var(--s2)}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--s2) 40%,transparent)}50%{box-shadow:0 0 0 7px transparent}}
+.farrow{align-self:center;color:var(--muted);font-size:18px;padding:0 2px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:16px;font-size:12.5px;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.sw{width:11px;height:11px;border-radius:3px;display:inline-block}
+
+/* Activity feed */
+.feed{padding:10px 6px}
+.frow{display:grid;grid-template-columns:74px 172px 1fr auto;gap:12px;align-items:center;
+  padding:11px 14px;border-bottom:1px solid var(--border)}
+.frow:last-child{border-bottom:0}
+.frow .t{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.frow .n{font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--s1)}
+.frow .m{color:var(--ink-2);font-size:13.5px}
+.frow .d{font-family:var(--mono);font-size:12px;color:var(--ink-2);text-align:right;font-variant-numeric:tabular-nums}
+.frow.intr .n{color:var(--s2)}
+@media(max-width:640px){
+  .frow{grid-template-columns:1fr auto;gap:3px 10px;padding:11px 12px}
+  .frow .t{grid-row:1;grid-column:1}
+  .frow .d{grid-row:1;grid-column:2}
+  .frow .n{grid-row:2;grid-column:1/-1}
+  .frow .m{grid-row:3;grid-column:1/-1}
+}
+
+/* Graph */
+.graph-wrap{display:grid;grid-template-columns:1fr 300px;gap:16px}
+@media(max-width:820px){.graph-wrap{grid-template-columns:1fr}}
+#graph{width:100%;height:520px;border-radius:14px;background:
+  radial-gradient(700px 340px at 30% 20%,color-mix(in srgb,var(--s1) 7%,transparent),transparent),var(--surface);
+  border:1px solid var(--border);touch-action:none;cursor:grab}
+#graph:active{cursor:grabbing}
+.gpanel{padding:18px}
+.gpanel h3{font-size:15px;margin-bottom:6px}
+.gpanel .hint{color:var(--muted);font-size:12.5px}
+.gp-krw{font-size:26px;font-weight:800;color:var(--s2);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.gp-hyp{font-size:13.5px;color:var(--ink-2);margin:10px 0}
+.chip{display:inline-block;font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:999px;
+  background:var(--surface-2);border:1px solid var(--border);color:var(--ink-2);margin:3px 4px 0 0}
+.node-lbl{font-family:var(--mono);font-size:9.5px;fill:var(--ink-2);pointer-events:none}
+.edge{stroke:var(--border);stroke-width:1.2}
+.edge.hi{stroke:var(--s2);stroke-width:2.4}
+.gnode{cursor:pointer}
+.gnode.dim{opacity:.16}
+.edge.dim{opacity:.08}
+
+/* Root causes + provenance */
+.rc-list{display:grid;gap:14px}
+.rc{padding:20px}
+.rc-top{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap}
+.rc h3{font-size:16px}
+.rc .comp{font-family:var(--mono);font-size:12px;color:var(--s1);text-transform:uppercase;letter-spacing:.04em}
+.rc .krw{font-size:20px;font-weight:800;color:var(--s2);font-variant-numeric:tabular-nums;white-space:nowrap}
+.rc .hyp{color:var(--ink-2);font-size:14px;margin:8px 0 12px}
+.meta{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);font-family:var(--mono)}
+.sev{display:inline-flex;align-items:center;gap:6px}
+.sev b{width:8px;height:8px;border-radius:50%}
+.prov{margin-top:14px;border-top:1px dashed var(--border);padding-top:12px}
+.prov summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--ink)}
+.ev{display:grid;grid-template-columns:auto auto 1fr;gap:10px;align-items:center;padding:7px 0;
+  border-bottom:1px solid var(--border);font-size:12.5px}
+.ev:last-child{border-bottom:0}
+.ev .id{font-family:var(--mono);color:var(--s1);font-size:12px}
+.ev .sim{font-family:var(--mono);font-size:11px}
+.pill{font-family:var(--mono);font-size:10px;padding:2px 7px;border-radius:999px;white-space:nowrap}
+.pill.vec{background:color-mix(in srgb,var(--s1) 16%,transparent);color:var(--s1)}
+.pill.graph{background:color-mix(in srgb,var(--s3) 18%,transparent);color:var(--s3)}
+.pill.both{background:color-mix(in srgb,var(--s2) 18%,transparent);color:var(--s2)}
+.ev .snip{color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.issue-link{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:12px;
+  margin-top:10px;padding:5px 10px;border-radius:8px;background:color-mix(in srgb,var(--good) 14%,transparent);
+  color:var(--good);border:1px solid color-mix(in srgb,var(--good) 35%,transparent)}
+
+/* Benchmark */
+.bench{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:760px){.bench{grid-template-columns:1fr}}
+.bench-card{padding:22px}
+.bmetric{margin:18px 0}
+.bm-name{font-family:var(--mono);color:var(--ink-2);font-size:13px;margin-bottom:9px}
+.bmrow{display:grid;grid-template-columns:58px 1fr 52px;gap:10px;align-items:center;margin:6px 0}
+.bmrow .who{font-family:var(--mono);font-size:11.5px;color:var(--ink-2)}
+.bmbar{height:12px;border-radius:99px;background:var(--surface-2);overflow:hidden;position:relative}
+.bmbar i{position:absolute;left:0;top:0;height:100%;border-radius:99px;transition:width 1s cubic-bezier(.2,.7,.2,1)}
+.bmbar.skl i{background:var(--s1)} .bmbar.llm i{background:var(--s2)}
+.bmval{font-family:var(--mono);font-size:12px;text-align:right;font-variant-numeric:tabular-nums;color:var(--ink);font-weight:600}
+.bm-win{font-family:var(--mono);font-size:10.5px;padding:1px 6px;border-radius:5px;margin-left:6px;
+  background:color-mix(in srgb,var(--s1) 16%,transparent);color:var(--s1)}
+.narr{padding:22px;font-size:14px;color:var(--ink-2)}
+.narr b{color:var(--ink)}
+.verdict{font-family:var(--mono);font-size:12px;padding:5px 10px;border-radius:8px;display:inline-block;margin-bottom:12px;
+  background:color-mix(in srgb,var(--s1) 14%,transparent);color:var(--s1)}
+
+/* Sankey */
+#sankey{width:100%;height:auto}
+.sk-node rect{rx:3}
+.sk-lbl{font-size:12px;fill:var(--ink-2);font-family:var(--mono)}
+.sk-val{font-size:11px;fill:var(--muted);font-family:var(--mono)}
+
+/* Stepper */
+.stepbar{display:flex;gap:8px;flex-wrap:wrap;position:sticky;top:0;z-index:10;
+  background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(8px);
+  padding:12px 0;margin-bottom:6px}
+.step{flex:1 1 130px;min-width:120px;text-align:left;padding:10px 12px;border-radius:11px;
+  border:1px solid var(--border);background:var(--surface);cursor:pointer;transition:.18s;color:var(--ink)}
+.step:hover{border-color:color-mix(in srgb,var(--s1) 40%,var(--border))}
+.step .sn{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.step .st{font-size:12.5px;font-weight:600;margin-top:2px;line-height:1.25}
+.step .stech{font-family:var(--mono);font-size:9.5px;color:var(--muted);margin-top:6px;
+  padding-top:5px;border-top:1px solid var(--border);line-height:1.3}
+.step.on .stech{color:var(--s1)}
+.step.on{background:color-mix(in srgb,var(--s1) 14%,var(--surface));border-color:var(--s1)}
+.step.on .sn{color:var(--s1)}
+.step.done{border-color:color-mix(in srgb,var(--s3) 45%,var(--border))}
+.step.done .sn::after{content:" ✓";color:var(--s3)}
+.playbtn{padding:10px 16px;border-radius:11px;border:1px solid var(--s2);background:transparent;
+  color:var(--s2);font-family:var(--mono);font-size:12.5px;cursor:pointer;font-weight:600;white-space:nowrap}
+.panel{min-height:280px}
+.flow2{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center}
+@media(max-width:760px){.flow2{grid-template-columns:1fr}}
+.flow2 .arrow{font-size:24px;color:var(--s2);text-align:center}
+.box{padding:16px 18px}
+.box .bt{font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.raw{font-size:13.5px;color:var(--ink-2);line-height:1.5;max-height:220px;overflow:auto}
+pre.code{margin:0;padding:14px 16px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;
+  font-family:var(--mono);font-size:12px;color:var(--ink-2);overflow:auto;line-height:1.55;white-space:pre-wrap}
+.jkey{color:var(--s1)}.jstr{color:var(--s3)}.jnum{color:var(--s2)}
+.kv{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.kv .chip b{color:var(--ink)}
+/* Approval gate */
+.gate{padding:20px}
+.gate-state{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:13px;
+  padding:7px 14px;border-radius:999px;font-weight:600;margin-bottom:14px}
+.gate-state.pending{background:color-mix(in srgb,var(--warning) 18%,transparent);color:var(--warning)}
+.gate-state.approved{background:color-mix(in srgb,var(--good) 16%,transparent);color:var(--good)}
+.cand{display:grid;grid-template-columns:1fr auto;gap:10px 16px;align-items:center;padding:11px 0;border-bottom:1px solid var(--border)}
+.cand:last-child{border-bottom:0}
+.cand .ct{font-size:13.5px}
+.cand .cm{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-top:3px}
+.confbar{width:120px;height:7px;border-radius:99px;background:var(--surface-2);position:relative;overflow:hidden}
+.confbar i{position:absolute;left:0;top:0;height:100%;background:var(--s1)}
+.confbar .thr{position:absolute;top:-3px;width:2px;height:13px;background:var(--critical)}
+/* Playground */
+.pg-status{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;
+  padding:5px 11px;border-radius:999px;border:1px solid var(--border);margin-bottom:14px}
+.pg-live{color:var(--good)} .pg-off{color:var(--muted)}
+.pg-samples{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.pg-samples button{font-family:var(--mono);font-size:12px;padding:6px 12px;border-radius:8px;
+  border:1px solid var(--border);background:var(--surface-2);color:var(--ink-2);cursor:pointer}
+.pg-samples button:hover{border-color:var(--s1);color:var(--s1)}
+.pg-form{display:flex;gap:8px;margin-bottom:16px}
+.pg-form input{flex:1;padding:11px 14px;border-radius:10px;border:1px solid var(--border);
+  background:var(--surface);color:var(--ink);font-size:14px;font-family:var(--sans)}
+.pg-form button{padding:11px 18px;border-radius:10px;border:0;background:var(--s1);color:#fff;font-weight:600;cursor:pointer}
+.res{padding:14px 16px;border:1px solid var(--border);border-radius:11px;margin-bottom:10px;background:var(--surface)}
+.res-top{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+.res .rid{font-family:var(--mono);font-size:12px;color:var(--s1)}
+.res .rrf{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.arms{display:grid;grid-template-columns:56px 1fr 58px;gap:5px 10px;align-items:center;margin-top:10px;font-size:11.5px}
+.arms .al{font-family:var(--mono);color:var(--ink-2)}
+.arms .av{font-family:var(--mono);font-size:11px;color:var(--ink);text-align:right;font-variant-numeric:tabular-nums}
+.arms .av.na{color:var(--muted)}
+.armbar{height:9px;border-radius:99px;background:var(--surface-2);position:relative;overflow:hidden}
+.armbar i{position:absolute;left:0;top:0;height:100%;border-radius:99px;transition:width .5s}
+.armbar.dense i{background:var(--s1)} .armbar.sparse i{background:var(--s2)} .armbar.graph i{background:var(--s3)}
+.armbar.off{opacity:.4}
+.viewbtn{margin-top:11px;font-family:var(--mono);font-size:12px;padding:5px 11px;border-radius:8px;
+  border:1px solid var(--border);background:transparent;color:var(--ink-2);cursor:pointer}
+.viewbtn:hover{border-color:var(--s1);color:var(--s1)}
+.orig{margin-top:10px;padding:12px 14px;background:var(--surface-2);border-radius:9px;border:1px solid var(--border);
+  font-size:13px;color:var(--ink-2);line-height:1.55;white-space:pre-wrap;display:none}
+.orig.open{display:block}
+
+/* ₩ ROI explainer */
+.roi h3{font-size:15px;margin-bottom:6px}
+.roi .roi-lead{color:var(--ink-2);font-size:13.5px;margin:0 0 14px}
+.roi-consts{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.roi-const{padding:8px 12px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border);font-size:12px}
+.roi-const b{color:var(--ink);font-family:var(--mono)}
+.roi-const span{color:var(--muted);display:block;font-size:10.5px;margin-top:2px}
+.roi-formula{font-family:var(--mono);font-size:12px;color:var(--ink-2);background:var(--surface-2);
+  border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:16px;line-height:1.7}
+.roi-formula b{color:var(--s2)}
+.roi-ex-h{font-size:13px;color:var(--ink);margin:0 0 10px;font-weight:600}
+.roi-cat{display:grid;grid-template-columns:96px 1fr 108px;gap:8px 10px;align-items:center;font-size:12px;margin:6px 0}
+.roi-cat .cn{font-family:var(--mono);color:var(--ink-2)}
+.roi-catbar{height:12px;border-radius:99px;background:var(--surface-2);overflow:hidden;position:relative}
+.roi-catbar i{position:absolute;left:0;top:0;height:100%;border-radius:99px}
+.roi-cat .cv{font-family:var(--mono);text-align:right;color:var(--ink);font-variant-numeric:tabular-nums}
+.roi-cat .cv small{color:var(--muted);font-size:10px}
+.roi-sum{display:flex;justify-content:space-between;align-items:baseline;margin-top:14px;padding-top:14px;
+  border-top:1px solid var(--border);flex-wrap:wrap;gap:8px}
+.roi-sum .eq{font-family:var(--mono);font-size:13px;color:var(--ink-2)}
+.roi-sum .big{font-size:20px;font-weight:800;color:var(--s2);font-variant-numeric:tabular-nums}
+.roi-sum .rec{font-family:var(--mono);font-size:13px;color:var(--good)}
+
+footer{padding:40px 0 60px;color:var(--muted);font-size:12.5px;text-align:center;font-family:var(--mono)}
+.toggle{position:fixed;top:16px;right:16px;z-index:20;width:38px;height:38px;border-radius:10px;
+  background:var(--surface);border:1px solid var(--border);cursor:pointer;font-size:16px;box-shadow:var(--shadow)}
+.tag{font-family:var(--mono);font-size:11px;color:var(--muted)}
+</style>
+</head>
+<body>
+<button class="toggle" id="themeBtn" title="Toggle theme">◐</button>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="badge"><span class="dot"></span> VOC 인텔리전스 부서 · LangGraph · Neo4j · GraphRAG</span>
+    <h1>증상이 아니라,<br><span class="g">근본 원인을 배포한다</span></h1>
+    <p class="lede">실제 고객상담 1,200건을 Neo4j 지식그래프로 엮는다. <span class="mono">증상 → 컴포넌트 → 반복 루트원인</span>을
+      순회하고, 선례를 인용해 GitHub 이슈를 만들고, 사람 승인에서 멈춘 뒤 — 실제로 배포한다.</p>
+    <div class="kpis" id="kpis"></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="stepper" style="border-top:0">
+    <div class="sec-h"><span class="sec-n">01</span><h2>대화 한 건이 이슈가 되기까지</h2></div>
+    <p class="sec-sub">상담 한 건이 6단계를 지나 배포된 이슈가 된다. 단계를 클릭하거나 <b>▶ 재생</b>을 누르면
+      원본 → 추출 → Cypher → 집계 → GraphRAG → 승인 → 배포를 눈으로 따라간다.</p>
+    <div class="stepbar" id="stepbar"></div>
+    <div class="card panel" id="panel" style="padding:22px"></div>
+  </section>
+
+  <section id="flow">
+    <div class="sec-h"><span class="sec-n">02</span><h2>은유가 아닌, 진짜 에이전트</h2></div>
+    <p class="sec-sub">SQLite 체크포인터 · 조건부 엣지 · 진짜 <span class="mono">interrupt()</span> 승인 게이트를 갖춘
+      LangGraph <span class="mono">StateGraph</span>. 강조된 노드가 이번 실행 경로, 주황색 노드가 사람이 멈춘 지점이다.</p>
+    <div class="card"><div class="flow" id="flowGraph"></div></div>
+  </section>
+
+  <section id="activity">
+    <div class="sec-h"><span class="sec-n">03</span><h2>부서가 일한 기록</h2></div>
+    <p class="sec-sub">각 노드가 무엇을, 얼마나 빨리 했는지 스스로 보고한다.</p>
+    <div class="card feed" id="feed"></div>
+  </section>
+
+  <section id="kg">
+    <div class="sec-h"><span class="sec-n">04</span><h2>루트원인은 라벨이 아니라 집계</h2></div>
+    <p class="sec-sub">여러 대화가 독립적으로 지목한 컴포넌트가 루트원인이 된다. <b>루트원인 노드를 클릭</b>하면
+      근거 대화 → 증상 → 컴포넌트 → 이슈로 이어지는 ₩ 경로가 켜진다.</p>
+    <div class="graph-wrap">
+      <svg id="graph"></svg>
+      <div class="card gpanel" id="gpanel">
+        <h3>인터랙티브 지식그래프</h3>
+        <p class="hint">드래그로 재배치 · <span style="color:var(--s2)">루트원인</span>을 클릭하면 ₩ 경로가 켜진다.</p>
+        <div id="gp-detail"></div>
+        <div class="legend" style="margin-top:16px" id="glegend"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="roots">
+    <div class="sec-h"><span class="sec-n">05</span><h2>모든 문장이 실제 대화를 인용</h2></div>
+    <p class="sec-sub">GraphRAG가 <b>벡터 + 그래프</b> 하이브리드로 정확한 대화 id를 찾아 이슈 초안을 쓴다.
+      카드를 펼치면 유사도와 검색 출처가 붙은 근거가 나온다.</p>
+    <div class="rc-list" id="rcList"></div>
+  </section>
+
+  <section id="playground">
+    <div class="sec-h"><span class="sec-n">06</span><h2>하이브리드 검색, 직접 해보기</h2><span class="pg-status" id="pgStatus"></span></div>
+    <p class="sec-sub">쿼리를 입력하면 세 갈래로 채점된다 — <b style="color:var(--s1)">Dense</b>(의미, bge-small 384d) ·
+      <b style="color:var(--s2)">Sparse</b>(키워드, Neo4j 풀텍스트) · <b style="color:var(--s3)">Graph</b>(구조적 이웃) —
+      그리고 RRF로 융합. <span class="mono">[📄 원문 보기]</span>로 대화 전문까지 확인한다.</p>
+    <div class="card" style="padding:20px">
+      <div class="pg-samples" id="pgSamples"></div>
+      <form class="pg-form" id="pgForm" autocomplete="off">
+        <input id="pgInput" placeholder="예: payment failed at checkout" />
+        <button type="submit">검색</button>
+      </form>
+      <div id="pgResults"></div>
+    </div>
+  </section>
+
+  <section id="bench">
+    <div class="sec-h"><span class="sec-n">07</span><h2>업그레이드를 숫자로 증명</h2></div>
+    <p class="sec-sub">같은 held-out 600건, 같은 27-class 인텐트 과제를 Cohen's κ로 채점.</p>
+    <div class="bench">
+      <div class="card bench-card" id="benchBars"></div>
+      <div class="card narr" id="benchNarr"></div>
+    </div>
+  </section>
+
+  <section id="money">
+    <div class="sec-h"><span class="sec-n">08</span><h2>돈이 새는 길목</h2></div>
+    <p class="sec-sub">컴포넌트별 매출 위험액(₩)이 <b>배포됨</b>(실제 이슈) 또는 <b>검토 대기</b>(게이트 미만)로 흐른다.
+      ₩는 투명한 PHASE1 가정 모델로 계산.</p>
+    <div class="card" style="padding:24px"><svg id="sankey"></svg></div>
+    <div class="card roi" id="roiCard" style="padding:24px;margin-top:16px"></div>
+  </section>
+</main>
+
+<footer class="wrap">
+  <div id="foot"></div>
+  PHASE2 · 포트폴리오 빌드 · 캐시된 그래프 스냅샷으로 결정적 재생
+</footer>
+
+<script>
+const DATA = /*__PAYLOAD__*/null;
+const SERIES = ['--s1','--s2','--s3','--s4','--s5','--s6','--s7','--s8'].map(v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim());
+const cssv = n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const krw = n => '₩'+Math.round(n).toLocaleString('en-US');
+const esc = s => (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+/* ---------- theme toggle ---------- */
+document.getElementById('themeBtn').onclick = ()=>{
+  const r=document.documentElement;
+  const dark = r.getAttribute('data-theme')==='dark' ||
+    (!r.getAttribute('data-theme') && matchMedia('(prefers-color-scheme:dark)').matches);
+  r.setAttribute('data-theme', dark?'light':'dark');
+  setTimeout(()=>{drawGraph();drawSankey();},30);
+};
+
+/* ---------- KPIs ---------- */
+(function(){
+  const k=DATA.kpis;
+  const issueNo=k.dispatched_url?('#'+k.dispatched_url.split('/').pop()):'';
+  const items=[
+    {v:krw(k.total_risk),l:'매출 위험액',a:1,h:'이탈로 잃을 수 있는 ₩ 추정'},
+    {v:krw(k.total_recover),l:'회수 가능 예상액',h:'조치 시 되돌릴 ₩ (35%)'},
+    {v:k.n_root_causes,l:'루트원인',h:'여러 대화가 지목한 반복 근본 문제'},
+    {v:k.n_dispatched,l:'배포된 이슈',link:k.dispatched_url,linkLabel:'실제 GitHub 이슈 '+issueNo+' ↗'},
+    {v:k.n_conversations.toLocaleString(),l:'대화',h:'분석한 고객상담 건수'},
+    {v:k.n_components,l:'컴포넌트',h:'제품 영역 · 결제·계정·배송 등'},
+  ];
+  document.getElementById('kpis').innerHTML=items.map(i=>
+    `<div class="kpi card ${i.a?'accent':''}"><div class="v">${i.v}</div><div class="l">${i.l}</div>`+
+    (i.h?`<div class="kpi-hint">${esc(i.h)}</div>`:'')+
+    (i.link?`<a class="kpi-link" href="${i.link}" target="_blank">${esc(i.linkLabel)}</a>`:'')+
+    `</div>`).join('');
+})();
+
+/* ---------- Agent flow ---------- */
+(function(){
+  const {nodes,edges,executed}=DATA.flow;
+  const ex=new Set(executed);
+  const host=document.getElementById('flowGraph');
+  let html='';
+  nodes.forEach((n,i)=>{
+    const on=ex.has(n.id)?'exec':'';
+    html+=`<div class="fnode ${on} ${n.interrupt?'interrupt':''}">
+      <div class="fn">${n.label}</div><div class="fs">${n.sub}</div></div>`;
+    if(i<nodes.length-1) html+='<div class="farrow">→</div>';
+  });
+  host.innerHTML=html;
+  document.getElementById('glegend');
+})();
+
+/* ---------- Activity feed ---------- */
+(function(){
+  const rows=DATA.activity||[];
+  const max=Math.max(1,...rows.map(r=>r.duration_s));
+  document.getElementById('feed').innerHTML=rows.map(r=>{
+    const intr=r.node==='human_approval'?'intr':'';
+    return `<div class="frow ${intr}">
+      <span class="t">${r.ts||''}</span>
+      <span class="n">${r.node}</span>
+      <span class="m">${esc(r.message)}</span>
+      <span class="d">${r.duration_s}s</span></div>`;
+  }).join('');
+})();
+
+/* ---------- Knowledge graph (force sim) ---------- */
+const TYPE_COLOR={Component:'--s1',RootCause:'--s2',Symptom:'--s3',Conversation:'--s5',Action:'--s6'};
+let GN=[],GE=[],selRC=null;
+function initGraph(){
+  const idx={};
+  GN=DATA.graph.nodes.map((n,i)=>{idx[n.id]=i;return {...n,
+    x:Math.cos(i*2.4)*140+300, y:Math.sin(i*2.4)*140+250, vx:0, vy:0};});
+  const maxRev=Math.max(1,...GN.filter(n=>n.type==='RootCause').map(n=>n.revenue||0));
+  const maxTot=Math.max(1,...GN.filter(n=>n.type==='Component').map(n=>n.total_conversations||0));
+  GN.forEach(n=>{
+    n.r = n.type==='RootCause'? 9+22*Math.sqrt((n.revenue||0)/maxRev)
+        : n.type==='Component'? 8+14*Math.sqrt((n.total_conversations||0)/maxTot)
+        : n.type==='Symptom'? 5+Math.min(6,(n.freq||1)) : n.type==='Action'?10:5;
+  });
+  GE=DATA.graph.edges.map(e=>({...e,s:idx[e.source],t:idx[e.target]})).filter(e=>e.s!=null&&e.t!=null);
+  // deterministic force sim
+  for(let it=0;it<320;it++){
+    for(let i=0;i<GN.length;i++)for(let j=i+1;j<GN.length;j++){
+      const a=GN[i],b=GN[j];let dx=a.x-b.x,dy=a.y-b.y,d2=dx*dx+dy*dy||1;
+      const f=1400/d2;const d=Math.sqrt(d2);a.vx+=f*dx/d;a.vy+=f*dy/d;b.vx-=f*dx/d;b.vy-=f*dy/d;}
+    GE.forEach(e=>{const a=GN[e.s],b=GN[e.t];let dx=b.x-a.x,dy=b.y-a.y,d=Math.sqrt(dx*dx+dy*dy)||1;
+      const f=(d-70)*0.03;a.vx+=f*dx/d;a.vy+=f*dy/d;b.vx-=f*dx/d;b.vy-=f*dy/d;});
+    GN.forEach(n=>{n.vx+=(300-n.x)*0.004;n.vy+=(250-n.y)*0.004;
+      n.x+=n.vx*=.82;n.y+=n.vy*=.82;});
+  }
+}
+function drawGraph(){
+  const svg=document.getElementById('graph');
+  const W=svg.clientWidth||600,H=520;
+  const xs=GN.map(n=>n.x),ys=GN.map(n=>n.y);
+  const minx=Math.min(...xs),maxx=Math.max(...xs),miny=Math.min(...ys),maxy=Math.max(...ys);
+  const pad=40,sx=(W-2*pad)/((maxx-minx)||1),sy=(H-2*pad)/((maxy-miny)||1),s=Math.min(sx,sy);
+  const px=n=>pad+(n.x-minx)*s, py=n=>pad+(n.y-miny)*s;
+  const rcEdges = selRC? new Set(GE.filter(e=>e.rc===selRC).flatMap(e=>[e.s,e.t])) : null;
+  let h=`<g>`;
+  GE.forEach(e=>{
+    const hi=selRC&&e.rc===selRC, dim=selRC&&e.rc!==selRC;
+    h+=`<line class="edge ${hi?'hi':''} ${dim?'dim':''}" x1="${px(GN[e.s])}" y1="${py(GN[e.s])}" x2="${px(GN[e.t])}" y2="${py(GN[e.t])}"/>`;
+  });
+  GN.forEach((n,i)=>{
+    const dim=selRC&&!(rcEdges&&rcEdges.has(i))&&n.id!==selRC;
+    const c=cssv(TYPE_COLOR[n.type]||'--muted');
+    h+=`<g class="gnode ${dim?'dim':''}" data-i="${i}">
+      <circle cx="${px(n)}" cy="${py(n)}" r="${n.r}" fill="${c}" stroke="var(--surface)" stroke-width="1.5"/>`;
+    if(n.type==='RootCause'||n.type==='Component'||n.type==='Action')
+      h+=`<text class="node-lbl" x="${px(n)}" y="${py(n)+n.r+10}" text-anchor="middle">${esc(n.label).slice(0,14)}</text>`;
+    h+=`</g>`;
+  });
+  h+=`</g>`;
+  svg.innerHTML=h;
+}
+function nodeAction(i){
+  const n=GN[i]; if(!n)return;
+  if(n.type==='RootCause'){selRC=(selRC===n.id)?null:n.id;drawGraph();showDetail(selRC?n:null);}
+  else if(n.type==='Action'&&n.url){window.open(n.url,'_blank');}
+}
+function showDetail(n){
+  const d=document.getElementById('gp-detail');
+  if(!n){d.innerHTML='';return;}
+  const rc=(DATA.root_causes||[]).find(r=>r.rc===n.id)||{};
+  d.innerHTML=`<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+    <div class="comp mono" style="color:var(--s1);font-size:12px;text-transform:uppercase">${esc(n.label)}</div>
+    <div class="gp-krw">${krw(n.revenue||0)}</div>
+    <div class="tag">위험액 · 대화 ${rc.frequency||0}건 · 심각도 ${rc.severity||'—'}</div>
+    <div class="gp-hyp">${esc(rc.hypothesis||'')}</div>
+    ${(rc.top_symptoms||[]).slice(0,4).map(s=>`<span class="chip">${esc(s.text)}</span>`).join('')}
+    ${rc.action_url?`<div><a class="issue-link" href="${rc.action_url}" target="_blank">✓ 배포된 이슈 ↗</a></div>`:''}
+  </div>`;
+}
+const TYPE_LABEL={Component:'컴포넌트',RootCause:'루트원인',Symptom:'증상',Conversation:'대화',Action:'액션'};
+(function legend(){
+  document.getElementById('glegend').innerHTML=Object.entries(TYPE_COLOR).map(([k,v])=>
+    `<span><span class="sw" style="background:${cssv(v)}"></span>${TYPE_LABEL[k]||k}</span>`).join('');
+})();
+
+/* graph interaction — click (select ₩ path) vs drag (reposition), distinguished
+   by movement. No setPointerCapture (it swallows the native click event). */
+(function(){
+  const svg=document.getElementById('graph');let st=null;
+  const toGraph=(cx,cy)=>{
+    const r=svg.getBoundingClientRect();const W=svg.clientWidth,H=520,pad=40;
+    const xs=GN.map(n=>n.x),ys=GN.map(n=>n.y);
+    const minx=Math.min(...xs),maxx=Math.max(...xs),miny=Math.min(...ys),maxy=Math.max(...ys);
+    const s=Math.min((W-2*pad)/((maxx-minx)||1),(H-2*pad)/((maxy-miny)||1));
+    return {x:minx+((cx-r.left)-pad)/s, y:miny+((cy-r.top)-pad)/s};
+  };
+  svg.addEventListener('pointerdown',e=>{const g=e.target.closest('.gnode');if(!g)return;
+    st={i:+g.dataset.i,x0:e.clientX,y0:e.clientY,moved:false};});
+  svg.addEventListener('pointermove',e=>{if(!st)return;
+    if(!st.moved && Math.abs(e.clientX-st.x0)+Math.abs(e.clientY-st.y0)<5)return;
+    st.moved=true;const p=toGraph(e.clientX,e.clientY);GN[st.i].x=p.x;GN[st.i].y=p.y;drawGraph();});
+  window.addEventListener('pointerup',()=>{if(st&&!st.moved)nodeAction(st.i);st=null;});
+})();
+
+/* ---------- Root cause + provenance cards ---------- */
+(function(){
+  const drafts=DATA.drafts||[];
+  const byKey={};drafts.forEach(d=>byKey[d.root_cause_key]=d);
+  const sevColor=s=>({critical:'--critical',high:'--serious',medium:'--warning',low:'--good'}[s]||'--muted');
+  document.getElementById('rcList').innerHTML=(DATA.root_causes||[]).map(rc=>{
+    const key=rc.rc.replace('rc::','');
+    const d=byKey[key]||{};
+    const ev=(d.evidence||[]).slice(0,6);
+    const evHtml=ev.map(e=>{
+      const src=e.source==='vector+graph'?'both':(e.source||'vector');
+      const pill=src==='both'?'both':(src==='graph'?'graph':'vec');
+      const sim='similarity' in e?(e.similarity*100).toFixed(0)+'%':'—';
+      return `<div class="ev"><span class="id">[${esc(e.id)}]</span>
+        <span class="pill ${pill}">${src} ${sim!=='—'?sim:''}</span>
+        <span class="snip">${esc((e.text||'').slice(0,90))}</span></div>`;
+    }).join('');
+    return `<div class="card rc">
+      <div class="rc-top">
+        <div><div class="comp">${esc(rc.component)}</div>
+          <h3>${esc(d.title||rc.hypothesis)}</h3></div>
+        <div class="krw">${krw(rc.revenue)}</div>
+      </div>
+      <div class="hyp">${esc(rc.hypothesis)}</div>
+      <div class="meta">
+        <span class="sev"><b style="background:${cssv(sevColor(d.severity))}"></b>${d.severity||'—'}</span>
+        <span>빈도 ${rc.frequency}</span><span>신뢰도 ${rc.confidence}</span>
+        <span>인용 ${(d.cited_conv_ids||[]).length}</span>
+        <span>회수가능 ${krw(rc.recoverable)}</span>
+      </div>
+      ${rc.action_url?`<a class="issue-link" href="${rc.action_url}" target="_blank">✓ 배포됨 → ${esc(rc.action_url.split('/').pop())} ↗</a>`:''}
+      ${ev.length?`<details class="prov"><summary>GraphRAG 근거 · 대화 ${ev.length}건 (벡터 + 그래프)</summary>${evHtml}</details>`:''}
+    </div>`;
+  }).join('');
+})();
+
+/* ---------- Benchmark ---------- */
+(function(){
+  const b=DATA.benchmark; if(!b||!b.sklearn){document.getElementById('benchBars').innerHTML='<p class="tag">벤치마크 데이터 없음</p>';return;}
+  const metrics=[['kappa','Cohen κ'],['macro_f1','macro-F1'],['accuracy','accuracy']];
+  let h='';
+  metrics.forEach(([k,lbl])=>{
+    const sv=b.sklearn[k],lv=b.llm[k];
+    h+=`<div class="bar-row"><div class="bl"><span class="metric">${lbl}</span></div>
+      <div class="track">
+        <div class="bar skl" style="width:0" data-w="${sv*100}"></div><span class="bval" style="left:0;top:-2px">sklearn ${sv}</span>
+        <div class="bar llm" style="width:0" data-w="${lv*100}"></div><span class="bval" style="left:0;top:14px">LLM ${lv}</span>
+      </div></div>`;
+  });
+  document.getElementById('benchBars').innerHTML=h;
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)
+    e.target.querySelectorAll('.bar').forEach(bar=>bar.style.width=bar.dataset.w+'%');}),{threshold:.3});
+  io.observe(document.getElementById('benchBars'));
+  document.getElementById('benchNarr').innerHTML=
+    `<div class="verdict">${esc(b.verdict||'')}</div>
+     <p>${esc(b.narrative||'')}</p>
+     <p class="tag" style="margin-top:12px">Δκ ${b.delta.kappa} · Δmacro-F1 ${b.delta.macro_f1} · n=${b.n_heldout} · ${esc(b.model||'')}</p>`;
+})();
+
+/* ---------- Sankey (component → disposition) ---------- */
+function drawSankey(){
+  const rows=(DATA.sankey||[]).slice().sort((a,b)=>b.revenue-a.revenue);
+  const svg=document.getElementById('sankey');
+  const W=svg.clientWidth||900;
+  const total=rows.reduce((s,r)=>s+r.revenue,0)||1;
+  const maxRev=Math.max(...rows.map(r=>r.revenue),1);
+  const minH=28, maxH=66, gap=8, top=16;   // clamp small nodes so labels never overlap
+  const Lx=8, Lw=152, Rw=152, Rx=W-Rw-8, midx1=Lx+Lw, midx2=Rx;
+  const hs=rows.map(r=>Math.max(minH,(r.revenue/maxRev)*maxH));
+  const leftTotal=hs.reduce((a,b)=>a+b,0)+gap*(rows.length-1);
+  const H=top*2+leftTotal;
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);svg.setAttribute('height',H);
+  const dispTotals={};rows.forEach(r=>dispTotals[r.disposition]=(dispTotals[r.disposition]||0)+r.revenue);
+  const order=['배포됨','검토 대기'].filter(d=>dispTotals[d]);
+  const rAvail=leftTotal-gap*(order.length-1);
+  let ry=top, rightY={};
+  order.forEach(d=>{const hh=(dispTotals[d]/total)*rAvail;rightY[d]={y:ry,h:hh};ry+=hh+gap;});
+  const cursor={};order.forEach(d=>cursor[d]=rightY[d].y);
+  let h='',ly=top;
+  rows.forEach((r,i)=>{
+    const hh=hs[i], col=SERIES[i%SERIES.length];
+    const seg=(r.revenue/dispTotals[r.disposition])*rightY[r.disposition].h;
+    const y0=ly+hh/2, ryc=cursor[r.disposition]+seg/2, c=(midx1+midx2)/2;
+    h+=`<path d="M${midx1} ${y0} C ${c} ${y0}, ${c} ${ryc}, ${midx2} ${ryc}" fill="none"
+        stroke="${col}" stroke-width="${Math.max(3,seg)}" opacity="0.26"/>`;
+    h+=`<g class="sk-node"><rect x="${Lx}" y="${ly}" width="${Lw}" height="${hh}" fill="${col}" opacity=".9" rx="3"/>
+        <text class="sk-lbl" x="${Lx+8}" y="${ly+hh/2+4}" fill="#fff">${esc(r.component)}</text>
+        <text class="sk-val" x="${midx1-8}" y="${ly+hh/2+4}" text-anchor="end" fill="#fff">${krw(r.revenue)}</text></g>`;
+    cursor[r.disposition]+=seg;
+    ly+=hh+gap;
+  });
+  order.forEach(d=>{const b=rightY[d];const dcol=d==='배포됨'?cssv('--good'):cssv('--muted');
+    const cy=b.y+Math.max(15,b.h/2);
+    h+=`<g class="sk-node"><rect x="${Rx}" y="${b.y}" width="${Rw}" height="${b.h}" fill="${dcol}" opacity=".92" rx="3"/>
+      <text class="sk-lbl" x="${Rx+8}" y="${cy-3}" fill="#fff">${d}</text>
+      <text class="sk-val" x="${Rx+8}" y="${cy+13}" fill="#fff">${krw(dispTotals[d])}</text></g>`;});
+  svg.innerHTML=h;
+}
+
+/* ---------- 원문 보기 (delegated) ---------- */
+function origHtml(id){
+  const c=(DATA.corpus||{})[id];
+  const t=c?(c.full||c.text):'(원문이 스냅샷에 없음)';
+  return `<button class="viewbtn" data-conv="${id}">📄 원문 보기 / View original</button>
+    <div class="orig" data-orig="${id}">${esc(t)}</div>`;
+}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('.viewbtn'); if(!b)return;
+  const box=b.parentElement.querySelector(`[data-orig="${b.dataset.conv}"]`);
+  if(box){const open=box.classList.toggle('open'); b.textContent=open?'▲ 원문 닫기 / Hide':'📄 원문 보기 / View original';}
+});
+
+/* ---------- JSON pretty (light syntax) ---------- */
+function jsonHtml(obj){
+  const j=JSON.stringify(obj,null,2);
+  return esc(j)
+    .replace(/&quot;([^&]+?)&quot;:/g,'<span class="jkey">"$1"</span>:')
+    .replace(/: &quot;([^&]*?)&quot;/g,': <span class="jstr">"$1"</span>')
+    .replace(/: (\d+(\.\d+)?)/g,': <span class="jnum">$1</span>');
+}
+
+/* ---------- 6-Stage Stepper ---------- */
+const STEPS=[
+  {n:'1단계',t:'LLM 추출',tech:'OpenRouter · GPT-4o-mini'},
+  {n:'2단계',t:'그래프 + 임베딩 적재',tech:'Neo4j · BGE-small 384d'},
+  {n:'3단계',t:'루트원인 순회',tech:'Cypher 집계'},
+  {n:'4단계',t:'하이브리드 GraphRAG',tech:'Dense+Sparse+Graph · RRF'},
+  {n:'5단계',t:'승인 게이트',tech:'LangGraph interrupt()'},
+  {n:'6단계',t:'배포 + Provenance',tech:'GitHub API'},
+];
+let curStep=0, playTimer=null;
+function renderStepbar(){
+  const bar=document.getElementById('stepbar');
+  bar.innerHTML=STEPS.map((s,i)=>
+    `<button class="step ${i===curStep?'on':''} ${i<curStep?'done':''}" data-s="${i}">
+      <div class="sn">${s.n}</div><div class="st">${s.t}</div>
+      <div class="stech">${s.tech}</div></button>`).join('')
+    +`<button class="playbtn" id="playbtn">▶ 재생</button>`;
+  bar.querySelectorAll('.step').forEach(b=>b.onclick=()=>{stopPlay();goStep(+b.dataset.s);});
+  document.getElementById('playbtn').onclick=togglePlay;
+}
+function goStep(i){curStep=i;renderStepbar();renderPanel(i);}
+function togglePlay(){ if(playTimer){stopPlay();} else {startPlay();} }
+function startPlay(){
+  document.getElementById('playbtn').textContent='⏸ 일시정지';
+  playTimer=setInterval(()=>{ if(curStep>=STEPS.length-1){stopPlay();return;} goStep(curStep+1);
+    document.getElementById('playbtn').textContent='⏸ 일시정지'; },1900);
+}
+function stopPlay(){clearInterval(playTimer);playTimer=null;const b=document.getElementById('playbtn');if(b)b.textContent='▶ 재생';}
+function renderPanel(i){
+  const S=DATA.stages||{}; const p=document.getElementById('panel'); let h='';
+  if(i===0){
+    const s=S.stage1_extraction||{};
+    h=`<div class="flow2">
+      <div class="card box"><div class="bt">원본 대화 · ${esc(s.conv_id||'')}</div>
+        <div class="raw">${esc(s.raw_text||'')||'—'}</div></div>
+      <div class="arrow">→</div>
+      <div class="card box"><div class="bt">LLM 구조화 추출 (OpenRouter, temp=0)</div>
+        <pre class="code">${jsonHtml(s.extracted||{})}</pre></div></div>`;
+  } else if(i===1){
+    const s=S.stage2_ingest||{};
+    h=`<div class="box"><div class="bt">Neo4j 멱등 MERGE + 임베딩 upsert</div>
+      <pre class="code">${esc(s.cypher||'')}</pre>
+      <div class="kv">${Object.entries(s.counts||{}).map(([k,v])=>`<span class="chip"><b>${v}</b> ${k}</span>`).join('')}</div>
+      <div class="kv"><span class="chip">임베딩: <b>${esc((s.embedding||{}).model||'')}</b> · ${(s.embedding||{}).dim||''}d</span></div></div>`;
+  } else if(i===2){
+    const s=S.stage3_traversal||{};
+    h=`<div class="box"><div class="bt">Cypher 순회 → 루트원인 승격 (라벨이 아닌 집계)</div>
+      <pre class="code">${esc(s.cypher||'')}</pre>
+      <div class="kv">
+        <span class="chip">컴포넌트 <b>${esc(s.component||'')}</b></span>
+        <span class="chip">대화 <b>${s.frequency||0}</b>건</span>
+        <span class="chip" style="color:var(--s2)"><b>${krw(s.revenue||0)}</b> 위험액</span></div>
+      <p class="gp-hyp" style="margin-top:12px">${esc(s.hypothesis||'')}</p>
+      <div class="kv">${(s.evidence_ids||[]).map(id=>`<span class="chip">${esc(id)}</span>`).join('')}</div></div>`;
+  } else if(i===3){
+    const s=S.stage4_graphrag||{};
+    h=`<div class="box"><div class="bt">벡터 + 그래프 하이브리드 검색 → 인용 근거</div>
+      <p style="font-size:13.5px;color:var(--ink-2);margin:0 0 12px">쿼리: <b>${esc(s.query||'')}</b>
+        &nbsp;·&nbsp; <span class="mono" style="color:var(--s2)">${s.n_both||0}건이 양쪽 검색에서 함께 등장</span></p>
+      ${(s.evidence||[]).map(e=>{
+        const src=e.source==='vector+graph'?'both':(e.source||'vector');
+        const pill=src==='both'?'both':(src==='graph'?'graph':'vec');
+        const sim='similarity' in e?(e.similarity*100).toFixed(0)+'%':'graph';
+        return `<div style="padding:9px 0;border-bottom:1px solid var(--border)">
+          <span class="rid mono" style="color:var(--s1)">[${esc(e.id)}]</span>
+          <span class="pill ${pill}" style="margin:0 8px">${src} ${sim}</span>
+          <span style="color:var(--ink-2);font-size:12.5px">${esc((e.text||'').slice(0,80))}</span>
+          ${origHtml(e.id)}</div>`;}).join('')}</div>`;
+  } else if(i===4){
+    const s=S.stage5_gate||{};
+    const anyDispatched=(s.dispatched||[]).length>0;
+    h=`<div class="gate">
+      <div class="gate-state ${anyDispatched?'approved':'pending'}">
+        ${anyDispatched?'✓ 승인 완료 · 배포됨':'⏸ 사람 승인 대기'}</div>
+      <p style="font-size:13px;color:var(--ink-2);margin:0 0 14px">LangGraph <span class="mono">interrupt()</span> —
+        신뢰도 ≥ <b>${s.threshold}</b> 자동 승인 게이트 (require_approval=${s.require_approval}).</p>
+      ${(s.candidates||[]).map(c=>{
+        const pass=c.confidence>=s.threshold;
+        return `<div class="cand">
+          <div><div class="ct">${esc(c.title)}</div>
+            <div class="cm">${esc(c.key)} · [${c.severity}] · ${krw(c.revenue_at_risk_krw)} · 인용 ${c.cited}</div></div>
+          <div style="text-align:right">
+            <div class="confbar"><i style="width:${(c.confidence*100).toFixed(0)}%"></i>
+              <span class="thr" style="left:${(s.threshold*100).toFixed(0)}%"></span></div>
+            <div class="cm" style="color:${pass?'var(--good)':'var(--warning)'}">신뢰도 ${c.confidence} ${pass?'✓ 통과':'⏸ 보류'}</div>
+          </div></div>`;}).join('')}
+      ${anyDispatched?`<a class="issue-link" href="${s.dispatched[0].url}" target="_blank" style="margin-top:14px">✓ 배포됨 → ${esc((s.dispatched[0].url||'').split('/').pop())} ↗</a>`:''}
+      </div>`;
+  } else if(i===5){
+    const s=S.stage6_dispatch||{};
+    h=`<div class="box"><div class="bt">실제 GitHub 이슈 + provenance 엣지 (Action→EVIDENCES→Conversation)</div>
+      ${(s.issues||[]).map(is=>`<div style="padding:12px 0;border-bottom:1px solid var(--border)">
+        <div class="comp mono" style="color:var(--s1)">${esc(is.component)}</div>
+        <a class="issue-link" href="${is.url}" target="_blank">✓ ${esc(is.url)} ↗</a>
+        <div class="kv" style="margin-top:8px">${(is.evidence_ids||[]).map(id=>`<span class="chip">${esc(id)}</span>`).join('')}</div>
+      </div>`).join('')||'<p class="tag">라이브 이슈 없음 (--live 로 실제 배포)</p>'}</div>`;
+  }
+  p.innerHTML=h;
+}
+renderStepbar();renderPanel(0);
+
+/* ---------- Hybrid Search Playground ---------- */
+const PORT=(DATA.embedding_meta||{}).search_port||8756;
+const SEARCH_URL=`http://127.0.0.1:${PORT}`;
+let liveMode=false;
+// Probe only on explicit user action → a clean first load has 0 console errors
+// (a failed fetch to a down server always logs ERR_CONNECTION_REFUSED).
+async function pgHealth(){
+  const el=document.getElementById('pgStatus');
+  el.className='pg-status'; el.textContent='연결 중…';
+  try{const r=await fetch(SEARCH_URL+'/health',{signal:AbortSignal.timeout(900)});
+    liveMode=r.ok;}catch(e){liveMode=false;}
+  el.className='pg-status '+(liveMode?'pg-live':'pg-off');
+  el.innerHTML=liveMode?'🟢 라이브 검색 연결됨 (serve.py)'
+    :'⚪ 아직 오프라인 — <span class="mono">python -m src.graph.serve</span> 실행';
+}
+function pgStatusInit(){
+  const el=document.getElementById('pgStatus');
+  el.className='pg-status pg-off'; el.style.cursor='pointer';
+  el.innerHTML='⚪ 샘플 모드 · <b>클릭하면 라이브 연결</b>';
+  el.onclick=pgHealth;
+}
+function pgSamplesBar(){
+  const box=document.getElementById('pgSamples');
+  box.innerHTML=(DATA.search_samples||[]).map((s,i)=>`<button data-i="${i}">${esc(s.query)}</button>`).join('');
+  box.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    const s=DATA.search_samples[+b.dataset.i];
+    document.getElementById('pgInput').value=s.query;
+    renderResults(s,'sample');});
+}
+function maxOf(rows,key){return Math.max(1e-9,...rows.map(r=>r[key]||0));}
+function renderResults(obj,mode){
+  const rows=obj.results||[];
+  const maxSparse=maxOf(rows.filter(r=>r.sparse!=null),'sparse');
+  const host=document.getElementById('pgResults');
+  const tag=mode==='live'?'<span class="pill both">라이브</span>':mode==='keyword'?'<span class="pill graph">키워드 (오프라인)</span>':'<span class="pill vec">미리계산 샘플</span>';
+  host.innerHTML=`<p class="tag" style="margin:0 0 10px">결과 ${rows.length}건 · 컴포넌트≈${esc(obj.top_component||'—')} ${tag}</p>`+
+  rows.map(r=>{
+    const dPct=r.dense!=null?Math.round(r.dense*100):0;
+    const sPct=r.sparse!=null?Math.round(r.sparse/maxSparse*100):0;
+    const gOn=r.in_graph;
+    return `<div class="res"><div class="res-top">
+        <span class="rid">[${esc(r.id)}]</span>
+        <span class="rrf">RRF ${(r.rrf||0).toFixed(4)} · ${(r.arms||[]).join(' + ')}</span></div>
+      <div class="arms">
+        <span class="al">Dense</span><div class="armbar dense ${r.dense!=null?'':'off'}"><i style="width:${dPct}%"></i></div>
+        <span class="av ${r.dense!=null?'':'na'}">${r.dense!=null?dPct+'%':'—'}</span>
+        <span class="al">Sparse</span><div class="armbar sparse ${r.sparse!=null?'':'off'}"><i style="width:${sPct}%"></i></div>
+        <span class="av ${r.sparse!=null?'':'na'}">${r.sparse!=null?sPct+'%':'—'}</span>
+        <span class="al">Graph</span><div class="armbar graph ${gOn?'':'off'}"><i style="width:${gOn?100:0}%"></i></div>
+        <span class="av ${gOn?'':'na'}">${gOn?'1-hop':'—'}</span>
+      </div>
+      ${origHtml(r.id)}</div>`;
+  }).join('');
+}
+function keywordFallback(q){
+  const terms=q.toLowerCase().match(/[a-z0-9]+/g)||[];
+  const rows=Object.entries(DATA.corpus||{}).map(([id,c])=>{
+    const t=(c.text||'').toLowerCase();
+    const score=terms.reduce((a,tm)=>a+(t.includes(tm)?1:0),0);
+    return {id,sparse:score,dense:null,in_graph:false,rrf:0,arms:score?['sparse']:[]};
+  }).filter(r=>r.sparse>0).sort((a,b)=>b.sparse-a.sparse).slice(0,6);
+  return {query:q,top_component:null,results:rows};
+}
+async function pgSearch(q){
+  q=q.trim(); if(!q)return;
+  const host=document.getElementById('pgResults');
+  // exact sample match → precomputed
+  const sample=(DATA.search_samples||[]).find(s=>s.query.toLowerCase()===q.toLowerCase());
+  if(sample && !liveMode){renderResults(sample,'sample');return;}
+  if(liveMode){
+    host.innerHTML='<p class="tag">검색 중…</p>';
+    try{const r=await fetch(SEARCH_URL+'/search',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({query:q,k:6})});
+      const d=await r.json(); if(d.error)throw new Error(d.error);
+      renderResults(d,'live');return;
+    }catch(e){/* fall through to keyword */}
+  }
+  renderResults(keywordFallback(q),'keyword');
+}
+document.getElementById('pgForm').addEventListener('submit',e=>{e.preventDefault();pgSearch(document.getElementById('pgInput').value);});
+pgSamplesBar();pgStatusInit();
+if((DATA.search_samples||[]).length)renderResults(DATA.search_samples[0],'sample');
+
+/* ---------- ₩ 산정 근거 (검산 가능) ---------- */
+(function(){
+  const e=DATA.roi_example; const host=document.getElementById('roiCard');
+  if(!e||!e.by_category){host.style.display='none';return;}
+  const wt=e.weights||{info:0.2,friction:1.0,churn:1.2};
+  const maxC=Math.max(...e.by_category.map(c=>c.krw),1);
+  const cats=e.by_category.map((c,i)=>{
+    const col=SERIES[i%SERIES.length];
+    return `<div class="roi-cat">
+      <span class="cn">${esc(c.category)}</span>
+      <div class="roi-catbar"><i style="width:${Math.max(3,c.krw/maxC*100)}%;background:${col}"></i></div>
+      <span class="cv">${krw(c.krw)} <small>(건당 ${krw(c.value_per_case)})</small></span></div>`;
+  }).join('');
+  host.innerHTML=`
+    <h3>₩ 산정 근거 — 검산 가능</h3>
+    <p class="roi-lead">AI가 임의로 만든 숫자가 아닙니다. 공개된 4개 기준값으로 <b>대화 한 건마다</b> 위험액을 계산해 합산합니다.</p>
+    <div class="roi-consts">
+      <div class="roi-const"><b>₩${e.aov.toLocaleString()}</b><span>평균 주문금액(AOV)</span></div>
+      <div class="roi-const"><b>${Math.round(e.recovery_rate*100)}%</b><span>서비스 회복율(회수)</span></div>
+      <div class="roi-const"><b>${wt.info} · ${wt.friction} · ${wt.churn}</b><span>의도 가중치(정보·마찰·이탈)</span></div>
+      <div class="roi-const"><b>AOV×0.2~2.0</b><span>카테고리별 건당가치</span></div>
+    </div>
+    <div class="roi-formula">
+      대화별 위험액 = <b>[카테고리 건당가치]</b> × <b>[의도 가중치]</b><br>
+      루트원인 위험액 = Σ (대화별 위험액) &nbsp;·&nbsp; 회수 가능 = 위험액 × ${Math.round(e.recovery_rate*100)}%
+    </div>
+    <p class="roi-ex-h">예시 · <b>${esc(e.component)}</b> 컴포넌트 ${e.frequency}건을 카테고리별로 합산</p>
+    ${cats}
+    <div class="roi-sum">
+      <span class="eq">합계 = ${e.frequency}건의 대화별 위험액 총합</span>
+      <span><span class="big">${krw(e.revenue)}</span> &nbsp;→ 회수 가능 <span class="rec">×${Math.round(e.recovery_rate*100)}% = ${krw(e.recoverable)}</span></span>
+    </div>`;
+})();
+
+/* footer */
+document.getElementById('foot').textContent=DATA.briefing||'';
+
+/* init */
+initGraph();drawGraph();drawSankey();
+addEventListener('resize',()=>{drawGraph();drawSankey();});
+</script>
+</body>
+</html>

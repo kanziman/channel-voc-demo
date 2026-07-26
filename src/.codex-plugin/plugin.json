@@ -1,0 +1,15 @@
+{
+  "name": "channeltalk-voc-intelligence",
+  "version": "1.0.0",
+  "description": "Channel VOC Intelligence Dept. — reads a full day of ChannelTalk conversations, quantifies revenue-at-risk in ₩ with a held-out-validated model, and dispatches real GitHub Issues/PRs and Jira tickets. One invocation returns a visual HTML dashboard (for people) and a structured manifest (for agents).",
+  "author": "kanziman",
+  "repository": "https://github.com/kanziman/channel-voc-demo",
+  "license": "MIT",
+  "keywords": ["channeltalk", "voc", "customer-support", "cx", "codex", "mcp", "revenue-at-risk"],
+  "entry": "../skills/channeltalk-solver/SKILL.md",
+  "skills": [
+    "../skills/channeltalk-solver",
+    "../skills/review-ai-rubric",
+    "../skills/review-human-rubric"
+  ]
+}

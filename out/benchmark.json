@@ -1,0 +1,26 @@
+{
+  "generated_at": "2026-07-26T21:46:50",
+  "n_heldout": 600,
+  "n_classes": 27,
+  "model": "openai/gpt-4o-mini",
+  "sklearn": {
+    "kappa": 0.9705,
+    "macro_f1": 0.9716,
+    "accuracy": 0.9717,
+    "latency_s": 0.11
+  },
+  "llm": {
+    "kappa": 0.8613,
+    "macro_f1": 0.8473,
+    "accuracy": 0.8667,
+    "latency_s": 0.1
+  },
+  "delta": {
+    "kappa": -0.1092,
+    "macro_f1": -0.1243,
+    "accuracy": -0.105
+  },
+  "verdict": "인텐트: sklearn 우세 (빠른 라벨러로 유지)",
+  "llm_wins_intent": false,
+  "narrative": "좁은 인분포 27-class 인텐트 과제에서는 튜닝된 TF-IDF 분류기가 우세하다 (κ 0.9705 vs 0.8613) — 처리량 ~700배, API 비용 0 (로컬 vs 건당 API). 그래서 이것을 빠른 인텐트 라벨러로 그대로 유지한다. LLM의 가치는 다른 데 있다: 증상 → 컴포넌트 → 심각도 → 신뢰도(TF-IDF가 만들 수 없는 그래프-구조 신호)를 추출해 지식그래프와 루트원인 순회를 가능하게 한다. 우위와 트레이드오프를 모두 정직하게 측정했다."
+}

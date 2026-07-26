@@ -1,0 +1,426 @@
+[
+  {
+    "key": "rc_support",
+    "component": "support",
+    "frequency": 419,
+    "revenue_at_risk_krw": 6454800,
+    "projected_recoverable_krw": 2259180,
+    "severity_avg": 2.51,
+    "confidence_avg": 0.88,
+    "top_symptoms": [
+      [
+        "trouble with payment",
+        7
+      ],
+      [
+        "customer reclamation",
+        7
+      ],
+      [
+        "reimbursement policy",
+        6
+      ],
+      [
+        "refund policy",
+        6
+      ],
+      [
+        "customer claim",
+        5
+      ],
+      [
+        "need help",
+        5
+      ],
+      [
+        "cases for refund",
+        5
+      ],
+      [
+        "hours to call customer service",
+        4
+      ]
+    ],
+    "cooccurring": [],
+    "sample_conv_ids": [
+      "conv_00327",
+      "conv_00853",
+      "conv_00976",
+      "conv_01022",
+      "conv_01049",
+      "conv_00528"
+    ],
+    "hypothesis": "The underlying root cause is likely a lack of clear communication and transparency regarding payment processes and refund policies, leading to customer confusion and dissatisfaction."
+  },
+  {
+    "key": "rc_billing",
+    "component": "billing",
+    "frequency": 240,
+    "revenue_at_risk_krw": 5982900,
+    "projected_recoverable_krw": 2094015,
+    "severity_avg": 2.27,
+    "confidence_avg": 0.89,
+    "top_symptoms": [
+      [
+        "bills from alex",
+        7
+      ],
+      [
+        "download invoice",
+        7
+      ],
+      [
+        "trouble with payment",
+        7
+      ],
+      [
+        "payment modalities",
+        7
+      ],
+      [
+        "bill from alex",
+        6
+      ],
+      [
+        "payment options",
+        6
+      ],
+      [
+        "available payment modalities",
+        5
+      ],
+      [
+        "allowed payment options",
+        5
+      ]
+    ],
+    "cooccurring": [],
+    "sample_conv_ids": [
+      "conv_00576",
+      "conv_00859",
+      "conv_01022",
+      "conv_00002",
+      "conv_00170",
+      "conv_00408"
+    ],
+    "hypothesis": "The billing component likely has a misconfiguration in the payment processing system that is causing inconsistent invoice generation and limited payment options."
+  },
+  {
+    "key": "rc_orders",
+    "component": "orders",
+    "frequency": 133,
+    "revenue_at_risk_krw": 5308600,
+    "projected_recoverable_krw": 1858010,
+    "severity_avg": 2.45,
+    "confidence_avg": 0.89,
+    "top_symptoms": [
+      [
+        "order status",
+        7
+      ],
+      [
+        "cancel purchase",
+        6
+      ],
+      [
+        "eta of purchase",
+        4
+      ],
+      [
+        "current status of order",
+        4
+      ],
+      [
+        "purchase status",
+        4
+      ],
+      [
+        "cancel order",
+        3
+      ],
+      [
+        "eta of the order",
+        3
+      ],
+      [
+        "current status",
+        3
+      ]
+    ],
+    "cooccurring": [],
+    "sample_conv_ids": [
+      "conv_00216",
+      "conv_00247",
+      "conv_00991",
+      "conv_01065",
+      "conv_00034",
+      "conv_00098"
+    ],
+    "hypothesis": "The underlying root cause is likely a failure in the order management system's state synchronization, leading to outdated or incorrect order status information being displayed to customers."
+  },
+  {
+    "key": "rc_checkout",
+    "component": "checkout",
+    "frequency": 49,
+    "revenue_at_risk_krw": 2316600,
+    "projected_recoverable_krw": 810810,
+    "severity_avg": 1.98,
+    "confidence_avg": 0.83,
+    "top_symptoms": [
+      [
+        "order from seattle",
+        6
+      ],
+      [
+        "do not know what to do",
+        2
+      ],
+      [
+        "buy some of your article",
+        2
+      ],
+      [
+        "order articles",
+        2
+      ],
+      [
+        "how to shop products",
+        2
+      ],
+      [
+        "purchase several items",
+        2
+      ],
+      [
+        "errors with online payments",
+        1
+      ],
+      [
+        "can't pay for purchase",
+        1
+      ]
+    ],
+    "cooccurring": [],
+    "sample_conv_ids": [
+      "conv_00387",
+      "conv_00448",
+      "conv_00223",
+      "conv_00867",
+      "conv_00091",
+      "conv_01000"
+    ],
+    "hypothesis": "The checkout component likely has a confusing user interface and inadequate error handling for payment processing, leading to customer frustration and abandonment."
+  },
+  {
+    "key": "rc_subscription",
+    "component": "subscription",
+    "frequency": 66,
+    "revenue_at_risk_krw": 1925000,
+    "projected_recoverable_krw": 673750,
+    "severity_avg": 2.06,
+    "confidence_avg": 0.89,
+    "top_symptoms": [
+      [
+        "premium account",
+        10
+      ],
+      [
+        "change to premium account",
+        7
+      ],
+      [
+        "change to pro account",
+        3
+      ],
+      [
+        "unsubscribe to the newsletter",
+        2
+      ],
+      [
+        "unsubscribe from newsletter",
+        2
+      ],
+      [
+        "unsubscribe from the company newsletter",
+        2
+      ],
+      [
+        "cancel premium account",
+        2
+      ],
+      [
+        "sign up to the company newsletter",
+        1
+      ]
+    ],
+    "cooccurring": [],
+    "sample_conv_ids": [
+      "conv_00022",
+      "conv_00550",
+      "conv_00016",
+      "conv_00384",
+      "conv_00687",
+      "conv_00690"
+    ],
+    "hypothesis": "The underlying root cause is likely a misconfiguration in the subscription management system that fails to properly handle account status changes and newsletter preferences."
+  },
+  {
+    "key": "rc_auth",
+    "component": "auth",
+    "frequency": 180,
+    "revenue_at_risk_krw": 1731400,
+    "projected_recoverable_krw": 605990,
+    "severity_avg": 2.34,
+    "confidence_avg": 0.88,
+    "top_symptoms": [
+      [
+        "premium account",
+        10
+      ],
+      [
+        "need help",
+        5
+      ],
+      [
+        "create a premium account",
+        4
+      ],
+      [
+        "close the premium account",
+        3
+      ],
+      [
+        "sign-up problem",
+        3
+      ],
+      [
+        "premium account creation",
+        3
+      ],
+      [
+        "delete my platinum account",
+        2
+      ],
+      [
+        "removal of premium account",
+        2
+      ]
+    ],
+    "cooccurring": [],
+    "sample_conv_ids": [
+      "conv_00068",
+      "conv_01103",
+      "conv_00055",
+      "conv_00059",
+      "conv_00066",
+      "conv_00108"
+    ],
+    "hypothesis": "The underlying root cause is likely a confusing or poorly designed user interface for managing premium account features and options."
+  },
+  {
+    "key": "rc_shipping",
+    "component": "shipping",
+    "frequency": 141,
+    "revenue_at_risk_krw": 944900,
+    "projected_recoverable_krw": 330715,
+    "severity_avg": 2.2,
+    "confidence_avg": 0.89,
+    "top_symptoms": [
+      [
+        "item arrival time",
+        6
+      ],
+      [
+        "shipment options",
+        5
+      ],
+      [
+        "eta of purchase",
+        4
+      ],
+      [
+        "new delivery address",
+        4
+      ],
+      [
+        "shipping options",
+        4
+      ],
+      [
+        "shipment methods",
+        4
+      ],
+      [
+        "secondary shipping address",
+        3
+      ],
+      [
+        "methods for delivery",
+        3
+      ]
+    ],
+    "cooccurring": [],
+    "sample_conv_ids": [
+      "conv_00962",
+      "conv_00454",
+      "conv_00648",
+      "conv_00464",
+      "conv_00063",
+      "conv_00111"
+    ],
+    "hypothesis": "The underlying root cause is likely a misconfiguration in the shipping logistics system that fails to accurately process and update delivery options and estimated arrival times based on customer inputs."
+  },
+  {
+    "key": "rc_feedback",
+    "component": "feedback",
+    "frequency": 49,
+    "revenue_at_risk_krw": 190300,
+    "projected_recoverable_krw": 66605,
+    "severity_avg": 1.96,
+    "confidence_avg": 0.86,
+    "top_symptoms": [
+      [
+        "submit feedback",
+        6
+      ],
+      [
+        "send feedback",
+        4
+      ],
+      [
+        "feedback about services",
+        3
+      ],
+      [
+        "leave feedback",
+        2
+      ],
+      [
+        "submit feedback for a product",
+        2
+      ],
+      [
+        "help sending feedback",
+        2
+      ],
+      [
+        "assistance submitting feedback",
+        2
+      ],
+      [
+        "write a comment about a product",
+        2
+      ]
+    ],
+    "cooccurring": [],
+    "sample_conv_ids": [
+      "conv_00955",
+      "conv_00810",
+      "conv_01110",
+      "conv_00587",
+      "conv_00751",
+      "conv_00863"
+    ],
+    "hypothesis": "The feedback submission process is likely failing due to a broken or unresponsive API endpoint."
+  }
+]
