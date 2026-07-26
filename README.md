@@ -2,12 +2,15 @@
 
 > **인사이트에서 실전 액션 배포까지.** 하루 수천 건의 [채널톡(ChannelTalk)](https://channel.io) 고객 상담 대화를 자동으로 수집하고, **Neo4j 지식그래프**로 엮어 ₩ 매출 손실액과 루트원인을 탐지한 뒤, **LangGraph 인간 승인 게이트**를 거쳐 **실시간 GitHub Issue/PR 및 Jira 티켓**을 자동 발행하는 에이전틱 AI 부서 시스템.
 
+[![Live Dashboard](https://img.shields.io/badge/📊_Live_Dashboard-channel--voc--demo.vercel.app-000000?style=for-the-badge&logo=vercel)](https://channel-voc-demo.vercel.app/)
 [![Python 3.12](https://img.shields.io/badge/python-3.12-3776AB.svg?style=flat&logo=python)](pyproject.toml)
 [![LangGraph](https://img.shields.io/badge/LangGraph-StateGraph-orange.svg)](src/graph/agent.py)
 [![Neo4j](https://img.shields.io/badge/Neo4j-Knowledge_Graph-008CC1.svg?logo=neo4j)](src/graph/schema.cypher)
 [![FastEmbed](https://img.shields.io/badge/FastEmbed-bge--small--en-00A86B.svg)](src/graph/llm.py)
 [![OpenRouter](https://img.shields.io/badge/OpenRouter-GPT--4o--mini-6366F1.svg)](src/graph/llm.py)
 [![AX Hackathon](https://img.shields.io/badge/AX_Hackathon-Submission-FF6B6B.svg)](src/docs/handoff.md)
+
+> 🌐 **[실시간 대시보드 리포트 바로가기 (Vercel Live)](https://channel-voc-demo.vercel.app/)**: 설치 없이 브라우저에서 6가지 비주얼 대시보드, 6단계 인터랙티브 스테퍼, 하이브리드 검색을 바로 체험해보세요!
 
 ---
 
