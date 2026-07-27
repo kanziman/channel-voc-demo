@@ -28,7 +28,7 @@
 ```mermaid
 flowchart TD
     subgraph Phase1 ["PHASE 1: AX 해커톤 제출작"]
-        P1_1["5-Arm 파이프라인 (Listen → Analyst → Triage/QA)"]
+        P1_1["단계별 순차 파이프라인 (수집 → 분석 → 티켓 생성)"]
         P1_2["Scikit-Learn 기반 의도 분류 (Cohen's κ = 0.971)"]
         P1_3["단순 GitHub / Jira 티켓 연동"]
     end
@@ -49,7 +49,7 @@ flowchart TD
 
 | 축 | PHASE 1 (해커톤 제출작) | PHASE 2 (포트폴리오 고도화) |
 |---|---|---|
-| **시스템 아키텍처** | 선형 스크립트 파이프라인 (5-Arm Orchestrator) | **LangGraph StateGraph** + SQLite 체크포인터 + `interrupt()` 게이트 |
+| **시스템 아키텍처** | 단방향 선형 파이프라인 (수집 · 분석 · 발급 등 5개 모듈) | **LangGraph StateGraph** + SQLite 체크포인터 + `interrupt()` 게이트 |
 | **신호 추출 방식** | TF-IDF + Scikit-Learn (단순 의도 분류) | **LLM Function Calling**: Intent, Symptoms, Component, Severity |
 | **지식 저장소** | 정적 JSON 파일 (`analysis.json`) | **Neo4j 지식그래프** (Customer $\rightarrow$ Conv $\rightarrow$ Symptom $\rightarrow$ Component) |
 | **루트원인 탐지** | 대표 문장 3건 추론 | **Cypher 순회 집계**: 동일 Component를 지목하는 대화 8건+ $\rightarrow$ `RootCause` 승격 |
