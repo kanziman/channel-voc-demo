@@ -21,42 +21,42 @@
 
 ---
 
-## 1. 핵심 개요: Dual Phase Evolution
+## 1. 프로젝트 발전 과정 (해커톤 제출작 → GraphRAG 고도화)
 
-본 프로젝트는 **AX 해커톤 제출작 (PHASE 1)**과 이를 바탕으로 고도화한 **포트폴리오 고도화 엔진 (PHASE 2)**을 포함하고 있습니다.
+초기 AX 해커톤 제출작(PHASE 1)을 바탕으로, 지식그래프와 AI 에이전트를 도입하여 고도화된 엔진(PHASE 2)으로 발전시킨 프로젝트입니다.
 
 ```mermaid
 flowchart TD
     subgraph Phase1 ["PHASE 1: AX 해커톤 제출작"]
-        P1_1["단계별 순차 파이프라인 (수집 → 분석 → 티켓 생성)"]
-        P1_2["Scikit-Learn 기반 의도 분류 (Cohen's κ = 0.971)"]
-        P1_3["단순 GitHub / Jira 티켓 연동"]
+        P1_1["순차적 자동 분석 (대화 수집 → 분석 → 개발 티켓 발행)"]
+        P1_2["머신러닝 기반 의도 분류 (Scikit-Learn)"]
+        P1_3["기본 GitHub Issue / Jira 연동"]
     end
 
-    Phase1 -->|"포트폴리오 고도화 승격"| Phase2
+    Phase1 -->|"지식그래프 및 에이전트 도입"| Phase2
 
     subgraph Phase2 ["PHASE 2: 루트원인 GraphRAG 엔진"]
-        P2_1["LLM Function Calling 신호 추출 (Intent · Component · Severity)"]
-        P2_2["Neo4j 지식그래프 순회 & 8건 이상 중복 시 RootCause 승격"]
-        P2_3["3중 하이브리드 GraphRAG & LangGraph interrupt() 승인 게이트"]
+        P2_1["AI 기반 핵심 신호 추출 (증상 · 문제 부품 · 심각도)"]
+        P2_2["지식그래프 순회 (동일 문제 8건 이상 시 루트원인 승격 및 손실액 계산)"]
+        P2_3["3중 하이브리드 검색 & 사람 승인 후 안전 배포 (LangGraph Gate)"]
     end
 
     style Phase1 fill:#f8fafc,stroke:#cbd5e1
     style Phase2 fill:#f0fdf4,stroke:#86efac
 ```
 
-### Before (PHASE 1) vs. After (PHASE 2) 비교표
+### PHASE 1 vs. PHASE 2 핵심 비교
 
-| 축 | PHASE 1 (해커톤 제출작) | PHASE 2 (포트폴리오 고도화) |
+| 비교 항목 | PHASE 1 (해커톤 제출작) | PHASE 2 (고도화 엔진) |
 |---|---|---|
-| **시스템 아키텍처** | 단방향 선형 파이프라인 (수집 · 분석 · 발급 등 5개 모듈) | **LangGraph StateGraph** + SQLite 체크포인터 + `interrupt()` 게이트 |
-| **신호 추출 방식** | TF-IDF + Scikit-Learn (단순 의도 분류) | **LLM Function Calling**: Intent, Symptoms, Component, Severity |
-| **지식 저장소** | 정적 JSON 파일 (`analysis.json`) | **Neo4j 지식그래프** (Customer $\rightarrow$ Conv $\rightarrow$ Symptom $\rightarrow$ Component) |
-| **루트원인 탐지** | 대표 문장 3건 추론 | **Cypher 순회 집계**: 동일 Component를 지목하는 대화 8건+ $\rightarrow$ `RootCause` 승격 |
-| **검색 및 근거** | 정적 키워드 / 문자열 매칭 | **3중 하이브리드 검색**: BGE-Small Dense + Lucene Sparse + Graph 1-hop (RRF) |
-| **안전 승인 장치** | 스크립트 임계치 조건문 | **LangGraph `interrupt()`**: 사람의 최종 승인 전까지 실행 일시정지 |
-| **감사 추적성** | JSON 대화 ID 정적 참 | **Cypher 그래프 감사추적**: `(Action)-[:EVIDENCES]->(Conversation)` 엣지 연결 |
-| **사용자 인터페이스** | 정적 HTML 대시보드 | **6가지 인터랙티브 대시보드** (6단계 스테퍼, 원문 보기, 라이브 검색) |
+| **아키텍처** | 순차 실행 스크립트 | **LangGraph AI 에이전트** (승인 대기 및 상태 관리) |
+| **분석 방식** | 키워드 중심 단순 분류 | **LLM 구조화 추출**: 대화 내용에서 증상·부품·심각도 정밀 분석 |
+| **데이터 저장** | 정적 JSON 파일 | **Neo4j 지식그래프**: 고객-대화-증상-부품 연결 관계망 구축 |
+| **문제 탐지** | 대표 문장 3건 추론 | **그래프 자동 집계**: 동일 부품 문제 8건 이상 시 루트원인 자동 지정 및 손실액 추정 |
+| **근거 검색** | 문자열 매칭 | **3중 하이브리드 검색**: 의미 검색 + 키워드 검색 + 그래프 연관 검색 융합 |
+| **안전 장치** | 조건문 검사 | **인간 승인 게이트**: 사람의 최종 승인 전까지 배포 일시정지 |
+| **추적성** | 대화 ID 단순 기록 | **그래프 추적**: 생성된 이슈와 원본 대화 간 연관 관계 형성 |
+| **화면 구성** | 정적 HTML 대시보드 | **6가지 인터랙티브 대시보드** (6단계 프로세스 뷰어, 원문 보기, 실시간 검색) |
 
 ---
 
