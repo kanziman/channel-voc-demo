@@ -25,22 +25,24 @@
 
 본 프로젝트는 **AX 해커톤 제출작 (PHASE 1)**과 이를 바탕으로 고도화한 **포트폴리오 고도화 엔진 (PHASE 2)**을 포함하고 있습니다.
 
-```
-┌────────────────────────────────────────────────────────────────────────────────────────┐
-│  PHASE 1: AX 해커톤 제출작 (Scikit-Learn 기반 룰베이스 파이프라인)                          │
-│  - 5-Arm 파이프라인: Listen → Analyst → Triage/QA → Growth Ops → CSM Ops                 │
-│  - 격리 데이터셋 검증 (Cohen's κ = 0.971) 및 근거 기반 ₩ 매출 손실 추정 모델                │
-│  - 실제 GitHub Issue (#6), PR (#7), Jira 티켓 (KAN-2) MCP 실연동 배포                    │
-└───────────────────────────────────────────┬────────────────────────────────────────────┘
-                                            │  (포트폴리오 고도화 승격)
-                                            ▼
-┌────────────────────────────────────────────────────────────────────────────────────────┐
-│  PHASE 2: 루트원인 GraphRAG 엔진 (LangChain · LangGraph · Neo4j · GraphRAG)              │
-│  - LLM 구조화 추출 (Intent · Symptoms · Component · Severity · Confidence)              │
-│  - Neo4j 지식그래프 순회 및 8건 이상 중복 지목 시 `RootCause` 승격 & ₩ 손실액 자동 집계      │
-│  - 3중 하이브리드 GraphRAG (BGE-Small Dense + Lucene Sparse + Graph 1-hop) & RRF 융합     │
-│  - LangGraph interrupt() 인간 승인 게이트 & 6가지 인터랙티브 대시보드 (`out/dashboard.html`) │
-└────────────────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    subgraph Phase1 ["PHASE 1: AX 해커톤 제출작"]
+        P1_1["5-Arm 파이프라인 (Listen → Analyst → Triage/QA)"]
+        P1_2["Scikit-Learn 기반 의도 분류 (Cohen's κ = 0.971)"]
+        P1_3["단순 GitHub / Jira 티켓 연동"]
+    end
+
+    Phase1 -->|"포트폴리오 고도화 승격"| Phase2
+
+    subgraph Phase2 ["PHASE 2: 루트원인 GraphRAG 엔진"]
+        P2_1["LLM Function Calling 신호 추출 (Intent · Component · Severity)"]
+        P2_2["Neo4j 지식그래프 순회 & 8건 이상 중복 시 RootCause 승격"]
+        P2_3["3중 하이브리드 GraphRAG & LangGraph interrupt() 승인 게이트"]
+    end
+
+    style Phase1 fill:#f8fafc,stroke:#cbd5e1
+    style Phase2 fill:#f0fdf4,stroke:#86efac
 ```
 
 ### Before (PHASE 1) vs. After (PHASE 2) 비교표
