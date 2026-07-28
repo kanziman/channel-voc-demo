@@ -25,6 +25,24 @@ dependencies = [
     "joblib>=1.4",
 ]
 
+[dependency-groups]
+# ── PHASE3: TDD toolchain (pytest 스택) + FastAPI 테스트 클라이언트 ──
+dev = [
+    "pytest>=8.3",
+    "pytest-asyncio>=0.24",   # async FastAPI route/agent 테스트
+    "httpx>=0.27",            # httpx.AsyncClient / TestClient
+    "pytest-cov>=5.0",        # 커버리지 (tdd-green 8단계)
+    "mypy>=1.11",             # security-review 타입 검사
+    "pip-audit>=2.7",         # security-review 취약점 스캔
+]
+
+[tool.pytest.ini_options]
+# PHASE3 TDD: pytest 스택. FastAPI async 라우트/agent 테스트를 위해 asyncio auto 모드.
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+asyncio_mode = "auto"
+addopts = "-q"
+
 [tool.uv]
 # Single unified py3.12 environment (supersedes the PHASE1 py3.11 .venv and the
 # neo4j-graphrag learning scaffold). See src/docs/PHASE2_PLAN.md §2.0, §6.

@@ -21,3 +21,6 @@ dist/
 .vscode/
 .idea/
 .gstack/
+
+# Claude Code session logs
+logs/
