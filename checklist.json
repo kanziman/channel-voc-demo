@@ -162,11 +162,11 @@
             "src/graph/dispatch.py",
             "src/graph/rootcause.py"
           ],
-          "status": "pending",
+          "status": "completed",
           "dependsOn": [
             "checkpoint-spike-test"
           ],
-          "description": "GET /api/agent/rootcauses → rootcause.compute(write=False). POST /api/agent/run(그래프 시작, thread_id+interrupt 반환). POST /api/agent/dispatch(thread_id+결정 → Command(resume) → dispatch.dispatch_issue())."
+          "description": "GET /api/agent/rootcauses → compute(write=False). POST /run(그래프 시작→thread_id+interrupt). POST /dispatch(thread_id+결정 → Command(resume) → dispatch_issue). [완료·PR#24] LangGraph interrupt를 상태없는 HTTP run→dispatch로 매핑 — 각 요청이 새 Neo4jCheckpointSaver, thread_id로 Neo4j에서 재개(실 Neo4j 왕복 테스트). 승인/반려/부분 양방향. ac-verifier: 미지 thread 404·빈 candidates·decision 경계·live 전파 보강."
         },
         {
           "id": "backend-roundtrip-tests",
