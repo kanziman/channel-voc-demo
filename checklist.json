@@ -147,11 +147,11 @@
             "src/graph/export.py",
             "src/graph/schema.cypher"
           ],
-          "status": "pending",
+          "status": "completed",
           "dependsOn": [
             "serve-fastapi-migration"
           ],
-          "description": "GET /api/graph/schema(정적 메타), GET /api/graph/subgraph?expand=<id>&hops=1|2 (신규 Cypher MATCH (n)-[r*1..2]-(m), §0-9). 기본 응답은 build_snapshot() 재사용."
+          "description": "GET /api/graph/schema(정적 온톨로지 메타) + GET /api/graph/subgraph(expand 없으면 build_snapshot 재사용, expand=<prefix::key>&hops=1|2는 신규 Cypher MATCH (n)-[rel*1..H]-(m)). [완료·PR#23] Pydantic 노드/엣지 모델(extra 허용), build_snapshot id 규칙 재구성·엣지 방향 보존. ac-verifier: GraphEdge rc 손실 + Action id 불일치(act_ prefix) 2건 수정."
         },
         {
           "id": "router-agent",
