@@ -23,6 +23,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from . import config
 from .retriever import hybrid_search
+from ..server.routers import agent as agent_router
 from ..server.routers import chat as chat_router
 from ..server.routers import graph as graph_router
 from ..server.routers import search as search_router
@@ -39,6 +40,7 @@ app.add_middleware(
 app.include_router(search_router.router)
 app.include_router(chat_router.router)
 app.include_router(graph_router.router)
+app.include_router(agent_router.router)
 
 
 # Keep the stdlib server's {"error": ...} envelope for every failure path so the
