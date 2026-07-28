@@ -30,6 +30,7 @@ import base64
 from collections.abc import AsyncIterator, Iterator, Sequence
 from typing import Any
 
+from langchain_core.runnables import RunnableConfig
 from langgraph.checkpoint.base import (
     WRITES_IDX_MAP,
     BaseCheckpointSaver,
@@ -77,11 +78,11 @@ class Neo4jCheckpointSaver(BaseCheckpointSaver):
     # ── sync API ──────────────────────────────────────────────────────────────
     def put(
         self,
-        config: dict,
+        config: RunnableConfig,
         checkpoint: Checkpoint,
         metadata: CheckpointMetadata,
         new_versions: ChannelVersions,
-    ) -> dict:
+    ) -> RunnableConfig:
         cfg = config["configurable"]
         tid, ns = cfg["thread_id"], cfg.get("checkpoint_ns", "")
         cid = checkpoint["id"]
@@ -110,7 +111,7 @@ class Neo4jCheckpointSaver(BaseCheckpointSaver):
 
     def put_writes(
         self,
-        config: dict,
+        config: RunnableConfig,
         writes: Sequence[tuple[str, Any]],
         task_id: str,
         task_path: str = "",
@@ -139,7 +140,7 @@ class Neo4jCheckpointSaver(BaseCheckpointSaver):
                 rows=rows,
             ).consume()
 
-    def get_tuple(self, config: dict) -> CheckpointTuple | None:
+    def get_tuple(self, config: RunnableConfig) -> CheckpointTuple | None:
         cfg = config["configurable"]
         tid, ns = cfg["thread_id"], cfg.get("checkpoint_ns", "")
         cid = get_checkpoint_id(config)
@@ -183,10 +184,10 @@ class Neo4jCheckpointSaver(BaseCheckpointSaver):
 
     def list(
         self,
-        config: dict | None,
+        config: RunnableConfig | None,
         *,
         filter: dict[str, Any] | None = None,
-        before: dict | None = None,
+        before: RunnableConfig | None = None,
         limit: int | None = None,
     ) -> Iterator[CheckpointTuple]:
         tid = config["configurable"]["thread_id"] if config else None
@@ -210,12 +211,17 @@ class Neo4jCheckpointSaver(BaseCheckpointSaver):
                 {"configurable": {"thread_id": k["tid"], "checkpoint_ns": k["ns"],
                                   "checkpoint_id": k["cid"]}}
             )
-            if tup is not None:
-                yield tup
+            if tup is None:
+                continue
+            # metadata filter (post-fetch): blobs are serialised, so match in Python
+            # rather than silently ignoring the arg. All items must match.
+            if filter and not all(tup.metadata.get(fk) == fv for fk, fv in filter.items()):
+                continue
+            yield tup
 
     # ── async API (delegate to sync in a worker thread; sync neo4j driver is
     #     safe there and keeps a single code path for the spike) ───────────────
-    async def aput(self, config, checkpoint, metadata, new_versions) -> dict:
+    async def aput(self, config, checkpoint, metadata, new_versions) -> RunnableConfig:
         return await asyncio.to_thread(self.put, config, checkpoint, metadata, new_versions)
 
     async def aput_writes(self, config, writes, task_id, task_path="") -> None:
