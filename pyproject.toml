@@ -12,6 +12,9 @@ dependencies = [
     "langchain-community>=0.3.0",      # SQLite LLM cache
     "langgraph>=0.2.0",               # StateGraph + interrupt + checkpointer
     "langgraph-checkpoint-sqlite>=2.0.0",
+    # ── PHASE3: FastAPI server wrapping the existing modules (§3.1, §5-2) ──
+    "fastapi>=0.115",                 # /api/chat /api/graph /api/search /api/agent
+    "uvicorn>=0.30",                  # ASGI server (local dev; Vercel wraps the app)
     "fastembed>=0.4.0",               # local ONNX embeddings (bge-small-en-v1.5, 384d)
     "neo4j>=5.28.0",
     "python-dotenv>=1.0.0",

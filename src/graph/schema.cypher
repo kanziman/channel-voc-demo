@@ -23,3 +23,12 @@ OPTIONS { indexConfig: {
 // ── Full-text (Lucene BM25) index for the lexical / "sparse" retrieval arm ────
 CREATE FULLTEXT INDEX conversation_fulltext IF NOT EXISTS
 FOR (c:Conversation) ON EACH [c.text];
+
+// ── PHASE3 §5-3: LangGraph checkpointer nodes (NOT part of the VOC ontology —
+// operational store so the agent resumes across a stateless HTTP run→dispatch).
+// Single synthetic `uid` key so MERGE needs only single-property uniqueness
+// (no Enterprise-only composite/node-key constraint). See checkpoint_neo4j.py.
+CREATE CONSTRAINT agent_checkpoint_uid IF NOT EXISTS
+FOR (n:AgentCheckpoint) REQUIRE n.uid IS UNIQUE;
+CREATE CONSTRAINT agent_checkpoint_write_uid IF NOT EXISTS
+FOR (w:AgentCheckpointWrite) REQUIRE w.uid IS UNIQUE;

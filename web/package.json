@@ -1,0 +1,27 @@
+{
+  "name": "voc-copilot-web",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "PHASE3 frontend — VOC Copilot chatbot + 3-tab evidence console. Design tokens: ../tokens.css (SoT: ../DESIGN.md).",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "cytoscape": "^3.30.4",
+    "lucide-react": "^0.454.0",
+    "react": "^18.3.1",
+    "react-cytoscapejs": "^2.0.0",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/cytoscape": "^3.21.9",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.3",
+    "typescript": "^5.6.3",
+    "vite": "^6.0.1"
+  }
+}
