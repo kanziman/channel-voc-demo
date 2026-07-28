@@ -1,9 +1,14 @@
 {
   "project": "channeltalk-voc-copilot",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "updatedAt": "2026-07-28",
   "spec": "src/docs/PHASE3_PLAN.md",
-  "statusOptions": ["pending", "in-progress", "blocked", "completed"],
+  "statusOptions": [
+    "pending",
+    "in-progress",
+    "blocked",
+    "completed"
+  ],
   "phases": [
     {
       "id": "design-system",
@@ -15,19 +20,13 @@
           "id": "design-tokens",
           "feature": "디자인 토큰 정의 (DESIGN.md)",
           "path": "DESIGN.md",
-          "relatedPaths": ["web/src/styles/tokens.css"],
-          "status": "pending",
+          "relatedPaths": [
+            "tokens.css",
+            "CLAUDE.md"
+          ],
+          "status": "completed",
           "dependsOn": [],
-          "description": "웜 팔레트 계승 + 다크 운영 콘솔 톤 확장. 그라데이션 제외, 솔리드 색 토큰만. severity 색(good/warning/serious/critical) 포함."
-        },
-        {
-          "id": "design-tokens-preview",
-          "feature": "폰트·컬러 프리뷰 페이지",
-          "path": "web/src/styles/preview.html",
-          "relatedPaths": [],
-          "status": "pending",
-          "dependsOn": ["design-tokens"],
-          "description": "토큰 확정용 프리뷰. 목업(out/phase3_chatbot_mockup.html)의 색을 토큰으로 정규화."
+          "description": "웜 팔레트 계승 + 다크 운영 콘솔 톤 확장. 그라데이션 제외, 솔리드 색 토큰만. severity 색(good/warning/serious/critical) 포함. [완료] 두 목업 팔레트를 단일 정본으로 통합, tokens.css는 repo 루트(web/src/styles 아님)에 두고 프론트가 import. 콘솔 그라데이션 7개 솔리드 치환 매핑표 확정. CLAUDE.md에 준수 규칙 포인터 추가."
         }
       ]
     },
@@ -42,17 +41,21 @@
           "feature": "FastAPI/uvicorn 의존성 추가",
           "path": "pyproject.toml",
           "relatedPaths": [],
-          "status": "pending",
+          "status": "completed",
           "dependsOn": [],
-          "description": "fastapi, uvicorn 추가. 기존 .env(OPENROUTER_API_KEY, NEO4J_*) 재사용, 신규 시크릿 없음."
+          "description": "fastapi, uvicorn 추가. 기존 .env(OPENROUTER_API_KEY, NEO4J_*) 재사용, 신규 시크릿 없음. [완료] fastapi 0.140.8 / uvicorn 0.51.0, uv sync 설치 확인."
         },
         {
           "id": "serve-fastapi-migration",
           "feature": "serve.py FastAPI 마이그레이션",
           "path": "src/graph/serve.py",
-          "relatedPaths": ["pyproject.toml"],
+          "relatedPaths": [
+            "pyproject.toml"
+          ],
           "status": "pending",
-          "dependsOn": ["deps-fastapi"],
+          "dependsOn": [
+            "deps-fastapi"
+          ],
           "description": "stdlib http.server → FastAPI 앱. 기존 /search·/health 라우트 이전(회귀 테스트 필수 — 정적 대시보드 플레이그라운드 의존). 진입점 1개, vercel entrypoint 재사용."
         }
       ]
@@ -67,28 +70,38 @@
           "id": "checkpoint-neo4j-impl",
           "feature": "Neo4jCheckpointSaver 구현",
           "path": "src/graph/checkpoint_neo4j.py",
-          "relatedPaths": ["src/graph/schema.cypher"],
-          "status": "pending",
-          "dependsOn": ["deps-fastapi"],
-          "description": "BaseCheckpointSaver의 put/put_writes/get_tuple/list(+async) 구현. (:AgentCheckpoint {thread_id, checkpoint_ns, checkpoint_id, parent_checkpoint_id, ts, checkpoint_blob, metadata_blob}), blob은 Base64 직렬화."
+          "relatedPaths": [
+            "src/graph/schema.cypher"
+          ],
+          "status": "completed",
+          "dependsOn": [
+            "deps-fastapi"
+          ],
+          "description": "BaseCheckpointSaver의 put/put_writes/get_tuple/list(+async) 구현. (:AgentCheckpoint {thread_id, checkpoint_ns, checkpoint_id, parent_checkpoint_id, ts, checkpoint_blob, metadata_blob}), blob은 Base64 직렬화. [완료] 노드당 단일 checkpoint_blob(전체 checkpoint whole-serialize), synthetic uid 단일 유니크 제약으로 Enterprise 불필요."
         },
         {
           "id": "checkpoint-schema-constraint",
           "feature": "AgentCheckpoint 유니크 제약",
           "path": "src/graph/schema.cypher",
           "relatedPaths": [],
-          "status": "pending",
-          "dependsOn": ["checkpoint-neo4j-impl"],
-          "description": "thread_id + checkpoint_id 유니크 제약 추가. 온톨로지 다이어그램(탭1)엔 미노출."
+          "status": "completed",
+          "dependsOn": [
+            "checkpoint-neo4j-impl"
+          ],
+          "description": "thread_id + checkpoint_id 유니크 제약 추가. 온톨로지 다이어그램(탭1)엔 미노출. [완료] synthetic uid(thread_id|ns|checkpoint_id) 단일 유니크로 구현 — agent_checkpoint_uid / agent_checkpoint_write_uid 제약."
         },
         {
           "id": "checkpoint-spike-test",
           "feature": "체크포인터 왕복 스파이크 검증",
-          "path": "tests/test_checkpoint_neo4j.py",
-          "relatedPaths": ["src/graph/checkpoint_neo4j.py"],
-          "status": "pending",
-          "dependsOn": ["checkpoint-neo4j-impl"],
-          "description": "put→get_tuple 왕복 + interrupt()→프로세스 재시작→Command(resume=...) 재개 실동작 검증. 이 게이트 통과가 나머지 agent 작업의 선행 조건."
+          "path": "scripts/spike_checkpoint_neo4j.py",
+          "relatedPaths": [
+            "src/graph/checkpoint_neo4j.py"
+          ],
+          "status": "completed",
+          "dependsOn": [
+            "checkpoint-neo4j-impl"
+          ],
+          "description": "put→get_tuple 왕복 + interrupt()→프로세스 재시작→Command(resume=...) 재개 실동작 검증. 이 게이트 통과가 나머지 agent 작업의 선행 조건. [완료·PASS] pytest 미설치로 standalone 스파이크 스크립트로 검증(새 saver/app 인스턴스로 프로세스 경계 시뮬레이션). §5-3 결정 유효 확인. 후속: dev 그룹 pytest로 tests/test_checkpoint_neo4j.py 정식 포팅."
         }
       ]
     },
@@ -102,45 +115,70 @@
           "id": "router-search",
           "feature": "하이브리드 서치 라우터 [WRAP]",
           "path": "src/server/routers/search.py",
-          "relatedPaths": ["src/graph/retriever.py"],
+          "relatedPaths": [
+            "src/graph/retriever.py"
+          ],
           "status": "pending",
-          "dependsOn": ["serve-fastapi-migration"],
+          "dependsOn": [
+            "serve-fastapi-migration"
+          ],
           "description": "POST /api/search/hybrid → retriever.hybrid_search(query, k). 신규 로직 없음, 응답 스키마만 정리(arms/rrf 포함)."
         },
         {
           "id": "router-chat",
           "feature": "코파일럿 챗 라우터 [NEW] + retrieval-gating",
           "path": "src/server/routers/chat.py",
-          "relatedPaths": ["src/graph/retriever.py", "src/graph/rootcause.py"],
+          "relatedPaths": [
+            "src/graph/retriever.py",
+            "src/graph/rootcause.py"
+          ],
           "status": "pending",
-          "dependsOn": ["router-search"],
+          "dependsOn": [
+            "router-search"
+          ],
           "description": "POST /api/chat → hybrid_search 근거 조회 → RRF 상위 점수 판정(미만=거절 / 경계=확신낮음 / 충분=근거 컨텍스트로 답변). 응답에 답변·arms·서브그래프 참조·(해당시)interrupt payload."
         },
         {
           "id": "router-graph",
           "feature": "그래프 라우터 [WRAP+NEW]",
           "path": "src/server/routers/graph.py",
-          "relatedPaths": ["src/graph/export.py", "src/graph/schema.cypher"],
+          "relatedPaths": [
+            "src/graph/export.py",
+            "src/graph/schema.cypher"
+          ],
           "status": "pending",
-          "dependsOn": ["serve-fastapi-migration"],
+          "dependsOn": [
+            "serve-fastapi-migration"
+          ],
           "description": "GET /api/graph/schema(정적 메타), GET /api/graph/subgraph?expand=<id>&hops=1|2 (신규 Cypher MATCH (n)-[r*1..2]-(m), §0-9). 기본 응답은 build_snapshot() 재사용."
         },
         {
           "id": "router-agent",
           "feature": "에이전트 라우터 [WRAP+신규설계]",
           "path": "src/server/routers/agent.py",
-          "relatedPaths": ["src/graph/agent.py", "src/graph/dispatch.py", "src/graph/rootcause.py"],
+          "relatedPaths": [
+            "src/graph/agent.py",
+            "src/graph/dispatch.py",
+            "src/graph/rootcause.py"
+          ],
           "status": "pending",
-          "dependsOn": ["checkpoint-spike-test"],
+          "dependsOn": [
+            "checkpoint-spike-test"
+          ],
           "description": "GET /api/agent/rootcauses → rootcause.compute(write=False). POST /api/agent/run(그래프 시작, thread_id+interrupt 반환). POST /api/agent/dispatch(thread_id+결정 → Command(resume) → dispatch.dispatch_issue())."
         },
         {
           "id": "backend-roundtrip-tests",
           "feature": "API 왕복 시나리오 테스트",
           "path": "tests/test_api_agent_roundtrip.py",
-          "relatedPaths": ["tests/test_api_chat.py"],
+          "relatedPaths": [
+            "tests/test_api_chat.py"
+          ],
           "status": "pending",
-          "dependsOn": ["router-agent", "router-chat"],
+          "dependsOn": [
+            "router-agent",
+            "router-chat"
+          ],
           "description": "run→interrupt 수신→dispatch(thread_id)→resume 성공 왕복(checkpointer 재개 정합성). chat 3분기(충분/0hits/경계) 검증. 단순 200 체크 금지."
         }
       ]
@@ -155,63 +193,98 @@
           "id": "web-scaffold",
           "feature": "web/ 스캐폴딩 (Vite+React)",
           "path": "web/package.json",
-          "relatedPaths": ["web/vite.config.ts", "web/tsconfig.json"],
-          "status": "pending",
-          "dependsOn": ["design-tokens"],
-          "description": "npm create vite@latest + cytoscape, react-cytoscapejs, lucide-react, tailwindcss. 토큰(design-tokens) 확정 후 착수."
+          "relatedPaths": [
+            "web/vite.config.ts",
+            "web/tsconfig.json",
+            "web/src/App.tsx"
+          ],
+          "status": "completed",
+          "dependsOn": [
+            "design-tokens"
+          ],
+          "description": "npm create vite@latest + cytoscape, react-cytoscapejs, lucide-react, tailwindcss. 토큰(design-tokens) 확정 후 착수. [완료] Vite6+React18+TS 수동 스캐폴드. 정본 ../tokens.css를 fs.allow로 import(드리프트 없는 SoT), App 셸 var(--token)만·그라데이션 0. npm run build 통과. tailwindcss는 §5-7 토큰 우선 방침으로 보류."
         },
         {
           "id": "chat-stream",
           "feature": "대화 스트림 + retrieval trace",
           "path": "web/src/components/ChatStream.tsx",
-          "relatedPaths": ["web/src/api/chat.ts"],
+          "relatedPaths": [
+            "web/src/api/chat.ts"
+          ],
           "status": "pending",
-          "dependsOn": ["web-scaffold", "router-chat"],
+          "dependsOn": [
+            "web-scaffold",
+            "router-chat"
+          ],
           "description": "운영자 질문→답변. 답변 전 D/S/G arm 순차 점등(hybrid_search arms 시각화). 실제 그래프 값으로 답변 구성."
         },
         {
           "id": "chat-cite-drilldown",
           "feature": "인라인 링크(cite) 드릴다운",
           "path": "web/src/components/CiteLink.tsx",
-          "relatedPaths": ["web/src/components/ChatStream.tsx"],
+          "relatedPaths": [
+            "web/src/components/ChatStream.tsx"
+          ],
           "status": "pending",
-          "dependsOn": ["chat-stream"],
+          "dependsOn": [
+            "chat-stream"
+          ],
           "description": "답변 속 루트원인·증상·대화 ID 클릭 = 후속 질문 자동 입력(그래프를 대화로 순회). 예: Top3의 rc_support 클릭 → 'rc_support 근거 대화 보여줘'."
         },
         {
           "id": "chat-related-chips",
           "feature": "연관 질문 chips (항상 표시)",
           "path": "web/src/components/RelatedChips.tsx",
-          "relatedPaths": ["web/src/components/ChatStream.tsx"],
+          "relatedPaths": [
+            "web/src/components/ChatStream.tsx"
+          ],
           "status": "pending",
-          "dependsOn": ["chat-stream"],
+          "dependsOn": [
+            "chat-stream"
+          ],
           "description": "답변마다 맥락형 후속 질문 chips 갱신. 첫 화면부터 시드 chips 제공(비어있지 않게)."
         },
         {
           "id": "evidence-panel",
           "feature": "근거 패널 — GraphRAG 서브그래프 드로잉",
           "path": "web/src/components/EvidencePanel.tsx",
-          "relatedPaths": ["web/src/api/graph.ts"],
+          "relatedPaths": [
+            "web/src/api/graph.ts"
+          ],
           "status": "pending",
-          "dependsOn": ["chat-stream", "router-graph"],
+          "dependsOn": [
+            "chat-stream",
+            "router-graph"
+          ],
           "description": "답변에 반응해 서브그래프 실시간 드로잉(엣지→노드) + 검색 근거 리스트(D/S/G arm 태그+점수). '⤢ 탐색'으로 3-탭 콘솔 진입."
         },
         {
           "id": "approval-gate-inchat",
           "feature": "채팅 내 승인 게이트 (interrupt-in-chat)",
           "path": "web/src/components/ApprovalCard.tsx",
-          "relatedPaths": ["web/src/api/agent.ts", "src/server/routers/agent.py"],
+          "relatedPaths": [
+            "web/src/api/agent.ts",
+            "src/server/routers/agent.py"
+          ],
           "status": "pending",
-          "dependsOn": ["chat-stream", "router-agent"],
+          "dependsOn": [
+            "chat-stream",
+            "router-agent"
+          ],
           "description": "루트원인 답변 끝 인라인 승인 카드(액션·대상·thread_id·회수손실). 승인→dispatch→Issue opened+provenance. 반려→resume(reject). 데모 하이라이트."
         },
         {
           "id": "retrieval-gate-ui",
           "feature": "신뢰도 게이트 UI (거절 / 확신 낮음)",
           "path": "web/src/components/ConfidenceGate.tsx",
-          "relatedPaths": ["web/src/components/ChatStream.tsx"],
+          "relatedPaths": [
+            "web/src/components/ChatStream.tsx"
+          ],
           "status": "pending",
-          "dependsOn": ["chat-stream", "router-chat"],
+          "dependsOn": [
+            "chat-stream",
+            "router-chat"
+          ],
           "description": "0 hits→정직한 거절+답가능 질문 chips. 경계선→⚠확신낮음 배너(confidence)+헤지답변+재질문 chips. §5-6."
         }
       ]
@@ -226,27 +299,39 @@
           "id": "console-ontology-tab",
           "feature": "탭1 온톨로지 & 그래프 탐색",
           "path": "web/src/console/OntologyGraphTab.tsx",
-          "relatedPaths": ["web/src/api/graph.ts"],
+          "relatedPaths": [
+            "web/src/api/graph.ts"
+          ],
           "status": "pending",
-          "dependsOn": ["evidence-panel"],
+          "dependsOn": [
+            "evidence-panel"
+          ],
           "description": "Customer→Conversation→Symptom→Component→RootCause→Action. 노드 클릭 1/2-hop 확장(신규 Cypher §0-9)."
         },
         {
           "id": "console-search-tab",
           "feature": "탭2 3-컬럼 하이브리드 서치",
           "path": "web/src/console/HybridSearchTab.tsx",
-          "relatedPaths": ["web/src/api/search.ts"],
+          "relatedPaths": [
+            "web/src/api/search.ts"
+          ],
           "status": "pending",
-          "dependsOn": ["router-search"],
+          "dependsOn": [
+            "router-search"
+          ],
           "description": "Dense / Sparse BM25 / Graph 3컬럼 → RRF 융합. hybrid_search()의 arms/rrf 그대로 시각화."
         },
         {
           "id": "console-gate-tab",
           "feature": "탭3 루트원인 승인 센터",
           "path": "web/src/console/RootCauseGateTab.tsx",
-          "relatedPaths": ["web/src/api/agent.ts"],
+          "relatedPaths": [
+            "web/src/api/agent.ts"
+          ],
           "status": "pending",
-          "dependsOn": ["router-agent"],
+          "dependsOn": [
+            "router-agent"
+          ],
           "description": "rootcause.compute() 집계 카드(₩위험/회수/frequency/confidence) + 일괄 승인/반려."
         }
       ]
@@ -263,7 +348,9 @@
           "path": "study/KG_P3_voc_graphrag_tutorial.ipynb",
           "relatedPaths": [],
           "status": "pending",
-          "dependsOn": ["router-chat"],
+          "dependsOn": [
+            "router-chat"
+          ],
           "description": "온톨로지·3중 하이브리드·RRF·LangGraph 승인·retrieval gating. jupyter execute 셀 에러 없이 실행 검증."
         }
       ]
@@ -278,18 +365,27 @@
           "id": "host-selection",
           "feature": "Vercel Python 함수 배포 설정",
           "path": "vercel.json",
-          "relatedPaths": ["pyproject.toml"],
+          "relatedPaths": [
+            "pyproject.toml"
+          ],
           "status": "pending",
-          "dependsOn": ["backend-roundtrip-tests"],
+          "dependsOn": [
+            "backend-roundtrip-tests"
+          ],
           "description": "[확정] Vercel Python 함수. 기존 [tool.vercel].entrypoint(serve.py) 재사용, 프론트(Vite/React)도 동일 Vercel 프로젝트에 배포. 콜드스타트 간 thread_id 재개는 Neo4j checkpointer가 보장."
         },
         {
           "id": "regression-static",
           "feature": "기존 정적 대시보드 회귀 확인",
           "path": "out/dashboard.html",
-          "relatedPaths": ["src/graph/run.py", "out/benchmark.json"],
+          "relatedPaths": [
+            "src/graph/run.py",
+            "out/benchmark.json"
+          ],
           "status": "pending",
-          "dependsOn": ["serve-fastapi-migration"],
+          "dependsOn": [
+            "serve-fastapi-migration"
+          ],
           "description": "python -m src.graph.run 전체 파이프라인 + out/dashboard.html(벤치마크 서사)이 Phase3 이후에도 유지되는지. 정적 배포 링크 유지."
         }
       ]
