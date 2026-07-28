@@ -52,11 +52,11 @@
           "relatedPaths": [
             "pyproject.toml"
           ],
-          "status": "in-progress",
+          "status": "completed",
           "dependsOn": [
             "deps-fastapi"
           ],
-          "description": "stdlib http.server → FastAPI 앱. 기존 /search·/health 라우트 이전(회귀 테스트 필수 — 정적 대시보드 플레이그라운드 의존). 진입점 1개, vercel entrypoint 재사용. [PR #19 리뷰 대기] FastAPI 전환·CORS·{\"error\"} 봉투·포트 8756 유지, tests/test_serve.py 14 pass. vercel.json 정적 빌드라 entrypoint 변경 불필요 확인."
+          "description": "stdlib http.server → FastAPI 앱. 기존 /search·/health 라우트 이전(회귀 테스트 필수 — 정적 대시보드 플레이그라운드 의존). 진입점 1개, vercel entrypoint 재사용. [완료·PR#19 머지] FastAPI 전환·CORS·{\"error\"} 봉투·포트 8756 유지, tests/test_serve.py 14 pass. vercel.json 정적 빌드라 entrypoint 변경 불필요 확인."
         }
       ]
     },
@@ -119,11 +119,11 @@
           "relatedPaths": [
             "src/graph/retriever.py"
           ],
-          "status": "pending",
+          "status": "completed",
           "dependsOn": [
             "serve-fastapi-migration"
           ],
-          "description": "POST /api/search/hybrid → retriever.hybrid_search(query, k). 신규 로직 없음, 응답 스키마만 정리(arms/rrf 포함)."
+          "description": "POST /api/search/hybrid → retriever.hybrid_search(query, k). 신규 로직 없음, 응답 스키마만 정리(arms/rrf 포함). [완료·PR#21 머지] APIRouter를 serve.app에 마운트, Pydantic 응답모델 무손실. ac-verifier가 500 plain-text 갭 발견→serve.py 전역 {\"error\"} 핸들러 추가(모든 라우터 공통)."
         },
         {
           "id": "router-chat",
@@ -133,11 +133,11 @@
             "src/graph/retriever.py",
             "src/graph/rootcause.py"
           ],
-          "status": "pending",
+          "status": "completed",
           "dependsOn": [
             "router-search"
           ],
-          "description": "POST /api/chat → hybrid_search 근거 조회 → RRF 상위 점수 판정(미만=거절 / 경계=확신낮음 / 충분=근거 컨텍스트로 답변). 응답에 답변·arms·서브그래프 참조·(해당시)interrupt payload."
+          "description": "POST /api/chat → hybrid_search 근거 조회 → retrieval-gating 3분기. [완료·PR#22] 경계=§5-6대로 '루트원인 승격 임계값(ROOTCAUSE_MIN_CONVERSATIONS)'을 신뢰 경계로 사용: 0 hits=거절 / 근거有·승격X=확신낮음(참고용) / 승격O=실제 ₩값 답변. 응답 {answer,arms,subgraph_ref,confidence,gate,related_questions,interrupt_payload}. 답변은 LLM 아닌 실제 그래프 값으로 결정론적 구성(할루시네이션 방지). ac-verifier가 arm-기반 divergence 지적→승격-기반 재설계."
         },
         {
           "id": "router-graph",

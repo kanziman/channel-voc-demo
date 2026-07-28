@@ -23,6 +23,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from . import config
 from .retriever import hybrid_search
+from ..server.routers import chat as chat_router
 from ..server.routers import search as search_router
 
 app = FastAPI(title="VOC live hybrid search")
@@ -35,6 +36,7 @@ app.add_middleware(
 
 # PHASE3 API routers (thin wrappers over existing modules) mounted on the same app.
 app.include_router(search_router.router)
+app.include_router(chat_router.router)
 
 
 # Keep the stdlib server's {"error": ...} envelope for every failure path so the
