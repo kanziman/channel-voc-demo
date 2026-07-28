@@ -52,11 +52,11 @@
           "relatedPaths": [
             "pyproject.toml"
           ],
-          "status": "pending",
+          "status": "in-progress",
           "dependsOn": [
             "deps-fastapi"
           ],
-          "description": "stdlib http.server → FastAPI 앱. 기존 /search·/health 라우트 이전(회귀 테스트 필수 — 정적 대시보드 플레이그라운드 의존). 진입점 1개, vercel entrypoint 재사용."
+          "description": "stdlib http.server → FastAPI 앱. 기존 /search·/health 라우트 이전(회귀 테스트 필수 — 정적 대시보드 플레이그라운드 의존). 진입점 1개, vercel entrypoint 재사용. [PR #19 리뷰 대기] FastAPI 전환·CORS·{\"error\"} 봉투·포트 8756 유지, tests/test_serve.py 14 pass. vercel.json 정적 빌드라 entrypoint 변경 불필요 확인."
         }
       ]
     },
@@ -95,13 +95,14 @@
           "feature": "체크포인터 왕복 스파이크 검증",
           "path": "scripts/spike_checkpoint_neo4j.py",
           "relatedPaths": [
-            "src/graph/checkpoint_neo4j.py"
+            "src/graph/checkpoint_neo4j.py",
+            "tests/test_checkpoint_neo4j.py"
           ],
           "status": "completed",
           "dependsOn": [
             "checkpoint-neo4j-impl"
           ],
-          "description": "put→get_tuple 왕복 + interrupt()→프로세스 재시작→Command(resume=...) 재개 실동작 검증. 이 게이트 통과가 나머지 agent 작업의 선행 조건. [완료·PASS] pytest 미설치로 standalone 스파이크 스크립트로 검증(새 saver/app 인스턴스로 프로세스 경계 시뮬레이션). §5-3 결정 유효 확인. 후속: dev 그룹 pytest로 tests/test_checkpoint_neo4j.py 정식 포팅."
+          "description": "put→get_tuple 왕복 + interrupt()→프로세스 재시작→Command(resume=...) 재개 실동작 검증. 이 게이트 통과가 나머지 agent 작업의 선행 조건. [완료·PASS] §5-3 결정 유효 확인. [PR #20] standalone 스파이크를 pytest로 정식 포팅 완료(tests/test_checkpoint_neo4j.py, 실 Neo4j 9 pass — 왕복·프로세스경계·async·limit/before·filter·base64). ac-verifier가 list(filter=) no-op 결함 발견→수정, 타입 RunnableConfig 정합화."
         }
       ]
     },
