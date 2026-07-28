@@ -175,12 +175,12 @@
           "relatedPaths": [
             "tests/test_api_chat.py"
           ],
-          "status": "pending",
+          "status": "completed",
           "dependsOn": [
             "router-agent",
             "router-chat"
           ],
-          "description": "run→interrupt 수신→dispatch(thread_id)→resume 성공 왕복(checkpointer 재개 정합성). chat 3분기(충분/0hits/경계) 검증. 단순 200 체크 금지."
+          "description": "run→interrupt 수신→dispatch(thread_id)→resume 왕복(checkpointer 재개 정합성) + chat 3분기 검증. 단순 200 금지. [완료·PR#25] test_api_agent_roundtrip.py(rootcauses↔run candidate 일치·Neo4j 체크포인트 지속성 직접조회·approve/reject resume) + test_api_chat.py(충분/0hits/경계 + confidence 순서 refuse<경계<충분). 실 Neo4j 8 pass, 전체 77 pass."
         }
       ]
     },
