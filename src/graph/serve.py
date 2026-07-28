@@ -23,6 +23,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from . import config
 from .retriever import hybrid_search
+from ..server.routers import search as search_router
 
 app = FastAPI(title="VOC live hybrid search")
 app.add_middleware(
@@ -31,6 +32,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# PHASE3 API routers (thin wrappers over existing modules) mounted on the same app.
+app.include_router(search_router.router)
 
 
 # Keep the stdlib server's {"error": ...} envelope for every failure path so the
@@ -44,6 +48,13 @@ def _http_error(request: Request, exc: StarletteHTTPException) -> JSONResponse:
 @app.exception_handler(RequestValidationError)
 def _validation_error(request: Request, exc: RequestValidationError) -> JSONResponse:
     return JSONResponse(status_code=422, content={"error": "invalid request"})
+
+
+@app.exception_handler(Exception)
+def _unhandled_error(request: Request, exc: Exception) -> JSONResponse:
+    # Uniform {"error": ...} envelope for every router's runtime failures
+    # (routers call Neo4j/fastembed) — never leak plain-text "Internal Server Error".
+    return JSONResponse(status_code=500, content={"error": str(exc)})
 
 
 class SearchRequest(BaseModel):
