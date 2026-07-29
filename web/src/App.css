@@ -134,6 +134,78 @@
   color: var(--accent-hi);
 }
 
+/* 3-tab evidence console — shared tab shell + ontology graph tab (tab 1). */
+.console-tab {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  background: var(--surface-2);
+}
+.ct-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-xs);
+  padding: var(--sp-sm) var(--sp-md);
+  border-bottom: 1px solid var(--border);
+}
+.ct-label {
+  font-size: var(--fs-label);
+  letter-spacing: var(--tracking-label);
+  color: var(--muted);
+}
+.ct-hop {
+  border: 1px solid var(--border-2);
+  background: var(--surface-3);
+  color: var(--ink);
+  border-radius: var(--r-pill);
+  padding: 4px 12px;
+  font-size: var(--fs-sm);
+  cursor: pointer;
+}
+.ct-hop.is-active {
+  border-color: var(--accent);
+  color: var(--accent-hi);
+}
+.ct-canvas {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+.ct-nodes {
+  list-style: none;
+  margin: 0;
+  padding: var(--sp-xs) var(--sp-md);
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-xs);
+  max-height: 96px;
+  overflow-y: auto;
+}
+.ct-node {
+  border: 1px solid var(--border-2);
+  background: var(--surface-3);
+  color: var(--dim);
+  border-radius: var(--r-sm);
+  padding: 3px 8px;
+  font-size: var(--fs-label);
+  cursor: pointer;
+}
+.ct-node:hover {
+  border-color: var(--accent);
+  color: var(--accent-hi);
+}
+.ct-error,
+.ct-loading {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  color: var(--dim);
+  font-size: var(--fs-sm);
+  padding: var(--sp-xl);
+}
+
 /* Retrieval-trust gate (ConfidenceGate) — refuse / low-confidence banners. */
 .gate {
   padding: var(--sp-xs) var(--sp-md);
