@@ -7,6 +7,7 @@ import { postChat } from "../api/chat";
 import type { ChatRequest, ChatResponse } from "../api/chat";
 import { CiteText, citeQuestion } from "./CiteLink";
 import { RelatedChips } from "./RelatedChips";
+import { ConfidenceGate } from "./ConfidenceGate";
 
 export const ARM_ORDER = ["D", "S", "G"] as const;
 type ArmKey = (typeof ARM_ORDER)[number];
@@ -112,6 +113,11 @@ export function ChatStream({ postChatFn = postChat, armStepMs = 220 }: ChatStrea
   // Clicking a cite link traverses the graph by auto-submitting a follow-up.
   const handleCite = (id: string) => runQuestion(citeQuestion(id));
 
+  // Latest non-error bot turn drives the retrieval-trust gate (§5-6).
+  const lastBot = [...messages].reverse().find((m) => m.role === "bot" && !m.error);
+  const lastGate = lastBot?.gate;
+  const lastConfidence = lastBot?.confidence ?? 0;
+
   return (
     <section className="chat">
       <div className="stream">
@@ -183,11 +189,18 @@ export function ChatStream({ postChatFn = postChat, armStepMs = 220 }: ChatStrea
         )}
       </div>
 
-      <RelatedChips
-        questions={relatedQuestions}
-        onPick={runQuestion}
-        disabled={tracing}
-      />
+      {lastGate === "refuse" || lastGate === "low_confidence" ? (
+        // Gated turn: the confidence gate carries its own (answerable/re-ask) chips.
+        <ConfidenceGate
+          gate={lastGate}
+          confidence={lastConfidence}
+          relatedQuestions={relatedQuestions}
+          onPick={runQuestion}
+          disabled={tracing}
+        />
+      ) : (
+        <RelatedChips questions={relatedQuestions} onPick={runQuestion} disabled={tracing} />
+      )}
 
       <form className="composer" onSubmit={handleSubmit}>
         <div className="box">
