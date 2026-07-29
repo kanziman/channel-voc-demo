@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 
 // Design tokens live at the repo root (../tokens.css) as the single source of
@@ -8,5 +8,11 @@ export default defineConfig({
   plugins: [react()],
   server: {
     fs: { allow: [".."] },
+  },
+  test: {
+    globals: true,
+    environment: "jsdom",
+    setupFiles: ["./src/test/setup.ts"],
+    css: false,
   },
 });

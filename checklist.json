@@ -212,12 +212,12 @@
           "relatedPaths": [
             "web/src/api/chat.ts"
           ],
-          "status": "pending",
+          "status": "completed",
           "dependsOn": [
             "web-scaffold",
             "router-chat"
           ],
-          "description": "운영자 질문→답변. 답변 전 D/S/G arm 순차 점등(hybrid_search arms 시각화). 실제 그래프 값으로 답변 구성."
+          "description": "운영자 질문→답변. 답변 전 D/S/G arm 순차 점등(hybrid_search arms 시각화). 실제 그래프 값으로 답변 구성. [구현완료·PR#35 리뷰중, GH#26] Vitest+RTL 인프라 신설(vite 6.4.3 dedupe), ChatStream(armStepMs 기반 D→S→G 순서보장·answer verbatim 렌더)+chat.ts(ChatResponse 전필드 파싱·{error}봉투). 13/13 통과, AC 6/6(ac-verifier). related_questions/interrupt_payload/gate UI는 후속 #28/#30/#31."
         },
         {
           "id": "chat-cite-drilldown",
