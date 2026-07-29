@@ -267,12 +267,12 @@
             "web/src/api/agent.ts",
             "src/server/routers/agent.py"
           ],
-          "status": "pending",
+          "status": "completed",
           "dependsOn": [
             "chat-stream",
             "router-agent"
           ],
-          "description": "루트원인 답변 끝 인라인 승인 카드(액션·대상·thread_id·회수손실). 승인→dispatch→Issue opened+provenance. 반려→resume(reject). 데모 하이라이트."
+          "description": "루트원인 답변 끝 인라인 승인 카드(액션·대상·thread_id·회수손실). 승인→dispatch→Issue opened+provenance. 반려→resume(reject). 데모 하이라이트. [구현완료·PR#39 리뷰중, GH#30] agent.ts(postDispatch)+ApprovalCard(interrupt_payload 유무 분기, approve→Issue링크+act_ provenance, reject→rejected, 재클릭 가드, ₩·thread_id·key mono). 60/60 통과, AC 7/7(ac-verifier). ChatStream/App 배선은 후속."
         },
         {
           "id": "retrieval-gate-ui",
