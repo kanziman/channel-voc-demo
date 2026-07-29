@@ -348,7 +348,7 @@
             "web/src/console/HybridSearchTab.tsx",
             "web/src/console/RootCauseGateTab.tsx"
           ],
-          "status": "pending",
+          "status": "completed",
           "dependsOn": [
             "evidence-panel",
             "approval-gate-inchat",
@@ -357,7 +357,7 @@
             "console-search-tab",
             "console-gate-tab"
           ],
-          "description": "지금까지 독립 검증만 된 #26–34 컴포넌트를 App 셸에 배선. copilot 뷰(ChatStream+EvidencePanel+ApprovalCard)↔console 3-탭 뷰 전환, 최신 chat 답변 subgraph_ref→EvidencePanel·interrupt_payload→ApprovalCard, App 소유 thread_id, EvidencePanel ⤢탐색→콘솔 진입. GH#44."
+          "description": "지금까지 독립 검증만 된 #26–34 컴포넌트를 App 셸에 배선. copilot 뷰(ChatStream+EvidencePanel+ApprovalCard)↔console 3-탭 뷰 전환, 최신 chat 답변 subgraph_ref→EvidencePanel·interrupt_payload→ApprovalCard, App 소유 thread_id, EvidencePanel ⤢탐색→콘솔 진입. [구현완료·GH#44] App(view copilot/console·tab ontology/search/gate 상태, deps 주입 시임, newThreadId, ApprovalCard는 우측 rail 배치·payload null이면 휴면)+ChatStream(onResponse/threadId 부작용없는 seam)+App.css(.rail/.console-view/.tabnav/.tab 토큰만). 114/114 통과(+14), tsc·build 그린, AC 9/9. interrupt_payload는 chat.py가 아직 null 반환→백엔드 후속 시 발화."
         }
       ]
     },
