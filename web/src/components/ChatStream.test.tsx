@@ -133,13 +133,16 @@ describe("ChatStream", () => {
   });
 
   it("should render response.answer verbatim (exact ₩ text, no client-side regeneration)", async () => {
+    // Contains an id token (rc_order_gateway) that cite-drilldown linkifies, so the
+    // content is split across nodes — assert the *content* is preserved verbatim.
     const answer = "루트원인 rc_order_gateway — 위험 ₩6,484,500, 회수가능 ₩3,306,600";
     const postChatFn = vi.fn().mockResolvedValue(makeResponse({ answer }));
     render(<ChatStream postChatFn={postChatFn} armStepMs={0} />);
 
     ask("ORDER 실패 원인?");
 
-    await waitFor(() => expect(screen.getByText(answer)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByTestId("answer")).toBeInTheDocument());
+    expect(screen.getByTestId("answer")).toHaveTextContent(answer);
   });
 
   it("should mark arms present in response.arms as hit and absent ones as dim", async () => {
@@ -184,5 +187,63 @@ describe("ChatStream", () => {
     );
     // the user message is still present → no crash / unmount
     expect(screen.getByText("결제 실패 원인?")).toBeInTheDocument();
+  });
+
+  it("should render an rc_ id in the answer as a clickable cite link", async () => {
+    const answer = "루트원인 rc_ORDER 를 확인하세요";
+    const postChatFn = vi.fn().mockResolvedValue(makeResponse({ answer }));
+    render(<ChatStream postChatFn={postChatFn} armStepMs={0} />);
+
+    ask("ORDER 실패 원인?");
+
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: "rc_ORDER" })).toBeInTheDocument(),
+    );
+  });
+
+  it("should auto-submit the follow-up question when a cite link is clicked", async () => {
+    const postChatFn = vi
+      .fn()
+      .mockResolvedValueOnce(makeResponse({ answer: "루트원인 rc_ORDER 확인" }))
+      .mockResolvedValueOnce(makeResponse({ answer: "rc_ORDER 근거 대화 6건" }));
+    render(<ChatStream postChatFn={postChatFn} armStepMs={0} />);
+
+    ask("ORDER 실패 원인?");
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: "rc_ORDER" })).toBeInTheDocument(),
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "rc_ORDER" }));
+
+    // second call dispatched with the follow-up question
+    await waitFor(() => expect(postChatFn).toHaveBeenCalledTimes(2));
+    expect(postChatFn).toHaveBeenLastCalledWith(
+      expect.objectContaining({ message: "rc_ORDER 근거 대화 보여줘" }),
+    );
+    // and that follow-up shows up as a user turn
+    expect(screen.getByText("rc_ORDER 근거 대화 보여줘")).toBeInTheDocument();
+  });
+
+  it("should disable cite links and ignore clicks while a question is in flight", async () => {
+    const postChatFn = vi
+      .fn()
+      .mockResolvedValueOnce(makeResponse({ answer: "루트원인 rc_ORDER 확인" }))
+      .mockReturnValueOnce(new Promise<ChatResponse>(() => {})); // second turn never resolves
+    render(<ChatStream postChatFn={postChatFn} armStepMs={0} />);
+
+    ask("ORDER 실패 원인?");
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: "rc_ORDER" })).toBeInTheDocument(),
+    );
+
+    // start a second question → stream stays tracing (pending promise)
+    ask("다른 질문");
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: "rc_ORDER" })).toBeDisabled(),
+    );
+
+    // clicking the now-disabled cite must not dispatch a third call
+    fireEvent.click(screen.getByRole("button", { name: "rc_ORDER" }));
+    expect(postChatFn).toHaveBeenCalledTimes(2);
   });
 });

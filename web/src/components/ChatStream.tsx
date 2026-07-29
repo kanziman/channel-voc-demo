@@ -5,6 +5,7 @@
 import { useState } from "react";
 import { postChat } from "../api/chat";
 import type { ChatRequest, ChatResponse } from "../api/chat";
+import { CiteText, citeQuestion } from "./CiteLink";
 
 export const ARM_ORDER = ["D", "S", "G"] as const;
 type ArmKey = (typeof ARM_ORDER)[number];
@@ -48,12 +49,11 @@ export function ChatStream({ postChatFn = postChat, armStepMs = 220 }: ChatStrea
   const [litCount, setLitCount] = useState(0);
   const [tracing, setTracing] = useState(false);
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const q = input.trim();
+  // Shared submit pipeline for both typed questions and cite-drilldown clicks.
+  function runQuestion(raw: string) {
+    const q = raw.trim();
     if (!q || tracing) return;
 
-    setInput("");
     setMessages((m) => [...m, { id: uid(), role: "user", text: q }]);
     setTracing(true);
     setLitCount(0);
@@ -98,37 +98,60 @@ export function ChatStream({ postChatFn = postChat, armStepMs = 220 }: ChatStrea
       });
   }
 
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const q = input.trim();
+    if (!q) return;
+    setInput("");
+    runQuestion(q);
+  }
+
+  // Clicking a cite link traverses the graph by auto-submitting a follow-up.
+  const handleCite = (id: string) => runQuestion(citeQuestion(id));
+
   return (
     <section className="chat">
       <div className="stream">
-        {messages.map((msg) => (
-          <div key={msg.id} className={`msg ${msg.role}`} data-role={msg.role}>
-            {msg.role === "bot" && <div className="av bot mono">VC</div>}
-            <div className="bubble">
-              <div className="answer">{msg.text}</div>
-              {msg.role === "bot" && msg.arms !== undefined && !msg.error && (
-                <div className="trace mono">
-                  {ARM_ORDER.map((k) => {
-                    const hit = msg.arms!.includes(ARM_META[k].backend);
-                    return (
-                      <span
-                        key={k}
-                        className="arm"
-                        data-testid={`arm-hit-${k}`}
-                        data-arm={k}
-                        data-hit={hit ? "true" : "false"}
-                        title={ARM_META[k].label}
-                        style={armStyle(k, hit)}
-                      >
-                        {k}
-                      </span>
-                    );
-                  })}
-                </div>
-              )}
+        {messages.map((msg) =>
+          msg.role === "user" ? (
+            <div key={msg.id} className="msg user" data-role="user">
+              <div className="bubble">{msg.text}</div>
             </div>
-          </div>
-        ))}
+          ) : (
+            <div key={msg.id} className="msg bot" data-role="bot">
+              <div className="av bot mono">VC</div>
+              <div className="bubble">
+                <div className="answer" data-testid="answer">
+                  {msg.error ? (
+                    msg.text
+                  ) : (
+                    <CiteText text={msg.text} onCite={handleCite} disabled={tracing} />
+                  )}
+                </div>
+                {msg.arms !== undefined && !msg.error && (
+                  <div className="trace mono">
+                    {ARM_ORDER.map((k) => {
+                      const hit = msg.arms!.includes(ARM_META[k].backend);
+                      return (
+                        <span
+                          key={k}
+                          className="arm"
+                          data-testid={`arm-hit-${k}`}
+                          data-arm={k}
+                          data-hit={hit ? "true" : "false"}
+                          title={ARM_META[k].label}
+                          style={armStyle(k, hit)}
+                        >
+                          {k}
+                        </span>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
+          ),
+        )}
 
         {tracing && (
           <div className="msg bot" data-role="trace">
