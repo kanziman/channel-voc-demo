@@ -372,11 +372,11 @@
           "feature": "GraphRAG 튜토리얼 노트북",
           "path": "study/KG_P3_voc_graphrag_tutorial.ipynb",
           "relatedPaths": [],
-          "status": "pending",
+          "status": "completed",
           "dependsOn": [
             "router-chat"
           ],
-          "description": "온톨로지·3중 하이브리드·RRF·LangGraph 승인·retrieval gating. jupyter execute 셀 에러 없이 실행 검증."
+          "description": "온톨로지·3중 하이브리드·RRF·LangGraph 승인·retrieval gating. jupyter execute 셀 에러 없이 실행 검증. [구현완료·GH#51] 실제 src/graph 모듈 import·실행(스키마 라벨·_rrf toy·gate 순수함수·파이프라인 노드 검증), Neo4j/LLM 셀은 LIVE=False 가드→nbconvert --execute 전체 7 code cell 에러 0. 실행 툴체인(nbformat/jupyter-client/ipykernel/nbconvert)을 dev deps로 추가."
         }
       ]
     },
