@@ -316,11 +316,11 @@
           "relatedPaths": [
             "web/src/api/search.ts"
           ],
-          "status": "pending",
+          "status": "completed",
           "dependsOn": [
             "router-search"
           ],
-          "description": "Dense / Sparse BM25 / Graph 3컬럼 → RRF 융합. hybrid_search()의 arms/rrf 그대로 시각화."
+          "description": "Dense / Sparse BM25 / Graph 3컬럼 → RRF 융합. hybrid_search()의 arms/rrf 그대로 시각화. [구현완료·PR#42 리뷰중, GH#33] search.ts(postSearch)+HybridSearchTab(toColumns dense/sparse/in_graph 분류·내림차순, 4컬럼 D/S/G arm색+RRF, id·score mono). 87/87 통과, AC 6/6(ac-verifier 갭 없음)."
         },
         {
           "id": "console-gate-tab",
