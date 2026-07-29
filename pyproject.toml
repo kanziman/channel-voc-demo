@@ -12,6 +12,9 @@ dependencies = [
     "langchain-community>=0.3.0",      # SQLite LLM cache
     "langgraph>=0.2.0",               # StateGraph + interrupt + checkpointer
     "langgraph-checkpoint-sqlite>=2.0.0",
+    # ── PHASE3: FastAPI server wrapping the existing modules (§3.1, §5-2) ──
+    "fastapi>=0.115",                 # /api/chat /api/graph /api/search /api/agent
+    "uvicorn>=0.30",                  # ASGI server (local dev; Vercel wraps the app)
     "fastembed>=0.4.0",               # local ONNX embeddings (bge-small-en-v1.5, 384d)
     "neo4j>=5.28.0",
     "python-dotenv>=1.0.0",
@@ -21,6 +24,28 @@ dependencies = [
     "scikit-learn>=1.5",
     "joblib>=1.4",
 ]
+
+[dependency-groups]
+# ── PHASE3: TDD toolchain (pytest 스택) + FastAPI 테스트 클라이언트 ──
+dev = [
+    "pytest>=8.3",
+    "pytest-asyncio>=0.24",   # async FastAPI route/agent 테스트
+    "httpx>=0.27",            # httpx.AsyncClient / TestClient
+    "pytest-cov>=5.0",        # 커버리지 (tdd-green 8단계)
+    "mypy>=1.11",             # security-review 타입 검사
+    "pip-audit>=2.7",         # security-review 취약점 스캔
+    "nbformat>=5.10.4",
+    "jupyter-client>=8.9.1",
+    "ipykernel>=7.3.0",
+    "nbconvert>=7.17.1",
+]
+
+[tool.pytest.ini_options]
+# PHASE3 TDD: pytest 스택. FastAPI async 라우트/agent 테스트를 위해 asyncio auto 모드.
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+asyncio_mode = "auto"
+addopts = "-q"
 
 [tool.uv]
 # Single unified py3.12 environment (supersedes the PHASE1 py3.11 .venv and the

@@ -1,0 +1,796 @@
+/* App shell — tokens only (var(--*) from ../../tokens.css). No gradients (§5-7). */
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  max-width: var(--app-max);
+  margin: 0 auto;
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-sm);
+  padding: var(--sp-sm) var(--sp-md);
+  background: var(--surface-1);
+  border-bottom: 1px solid var(--border);
+}
+.brandmark {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--r-md);
+  background: var(--brand);
+  color: #fff;
+  display: grid;
+  place-items: center;
+}
+.top-title b {
+  letter-spacing: -0.01em;
+}
+.sub {
+  color: var(--dim);
+  font-size: var(--fs-sm);
+}
+.badge {
+  margin-left: auto;
+  font-size: var(--fs-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--accent-hi);
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-pill);
+  padding: 5px 10px;
+}
+
+.body {
+  display: grid;
+  grid-template-columns: 1fr var(--evidence-w);
+  flex: 1;
+  min-height: 0;
+}
+@media (max-width: 860px) {
+  .body {
+    grid-template-columns: 1fr;
+  }
+  .rail {
+    display: none;
+  }
+}
+
+/* Right rail (#44) — approval gate stacked above the evidence subgraph. */
+.rail {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-left: 1px solid var(--border);
+}
+.rail .evidence {
+  flex: 1;
+  border-left: 0;
+}
+.rail .approval-card {
+  margin: var(--sp-sm);
+}
+
+.chat {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--surface-2);
+}
+.stream {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--sp-lg);
+}
+.msg {
+  display: flex;
+  gap: 11px;
+  max-width: 92%;
+}
+.av {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--r-md);
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  font-weight: var(--fw-bold);
+  font-size: 13px;
+}
+.av.bot {
+  background: var(--accent);
+  color: var(--accent-wash);
+}
+.bubble {
+  padding: 12px 15px;
+  background: var(--raised);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  border-bottom-left-radius: var(--r-tail);
+}
+
+.trace {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-xs);
+  margin-top: var(--sp-sm);
+  font-size: var(--fs-meta);
+  font-weight: var(--fw-medium);
+  color: var(--dim);
+}
+.arm {
+  width: 20px;
+  height: 20px;
+  border-radius: var(--r-sm);
+  display: grid;
+  place-items: center;
+  font-size: 9px;
+  font-weight: var(--fw-bold);
+  color: var(--bg);
+}
+
+/* Inline cite drilldown link inside an answer (CiteText). Button reset + accent. */
+.cite {
+  border: 0;
+  background: none;
+  padding: 0 2px;
+  margin: 0;
+  color: var(--accent);
+  font-size: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.cite:hover {
+  color: var(--accent-hi);
+}
+
+/* Console view (#44) — tab-nav shell that hosts the 3 evidence-console tabs. */
+.console-view {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+.console-view > .console-tab {
+  flex: 1;
+}
+.tabnav {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-xs);
+  padding: var(--sp-sm) var(--sp-md);
+  background: var(--surface-1);
+  border-bottom: 1px solid var(--border);
+}
+.tab-back {
+  margin-right: var(--sp-sm);
+  border: 0;
+  background: none;
+  color: var(--dim);
+  font-family: var(--font-sans);
+  font-size: var(--fs-sm);
+  cursor: pointer;
+}
+.tab-back:hover {
+  color: var(--accent-hi);
+}
+.tab {
+  border: 1px solid var(--border-2);
+  background: var(--surface-3);
+  color: var(--ink);
+  border-radius: var(--r-pill);
+  padding: 6px 12px;
+  font-size: var(--fs-sm);
+  font-family: var(--font-sans);
+  cursor: pointer;
+}
+.tab:hover[aria-selected="false"] {
+  border-color: var(--accent);
+  color: var(--accent-hi);
+}
+.tab[aria-selected="true"] {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--bg);
+}
+
+/* 3-tab evidence console — shared tab shell + ontology graph tab (tab 1). */
+.console-tab {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  background: var(--surface-2);
+}
+.ct-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-xs);
+  padding: var(--sp-sm) var(--sp-md);
+  border-bottom: 1px solid var(--border);
+}
+.ct-label {
+  font-size: var(--fs-label);
+  letter-spacing: var(--tracking-label);
+  color: var(--muted);
+}
+.ct-hop {
+  border: 1px solid var(--border-2);
+  background: var(--surface-3);
+  color: var(--ink);
+  border-radius: var(--r-pill);
+  padding: 4px 12px;
+  font-size: var(--fs-sm);
+  cursor: pointer;
+}
+.ct-hop.is-active {
+  border-color: var(--accent);
+  color: var(--accent-hi);
+}
+.ct-canvas {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+.ct-nodes {
+  list-style: none;
+  margin: 0;
+  padding: var(--sp-xs) var(--sp-md);
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-xs);
+  max-height: 96px;
+  overflow-y: auto;
+}
+.ct-node {
+  border: 1px solid var(--border-2);
+  background: var(--surface-3);
+  color: var(--dim);
+  border-radius: var(--r-sm);
+  padding: 3px 8px;
+  font-size: var(--fs-label);
+  cursor: pointer;
+}
+.ct-node:hover {
+  border-color: var(--accent);
+  color: var(--accent-hi);
+}
+.ct-error,
+.ct-loading {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  color: var(--dim);
+  font-size: var(--fs-sm);
+  padding: var(--sp-xl);
+}
+
+/* Console tab 3 — root-cause approval center. */
+.gate-tab {
+  padding: 0;
+}
+.rc-bulk {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-xs);
+  padding: var(--sp-sm) var(--sp-md);
+  border-bottom: 1px solid var(--border);
+}
+.rc-bulk .ct-label {
+  flex: 1;
+  font-size: var(--fs-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.rc-approve-all,
+.rc-reject-all {
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-pill);
+  padding: 5px 12px;
+  font-size: var(--fs-sm);
+  cursor: pointer;
+}
+.rc-approve-all {
+  background: var(--accent);
+  color: var(--accent-wash);
+  border-color: var(--accent);
+}
+.rc-reject-all {
+  background: var(--surface-3);
+  color: var(--muted);
+}
+.rc-approve-all:disabled,
+.rc-reject-all:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.rc-cards {
+  list-style: none;
+  margin: 0;
+  padding: var(--sp-sm) var(--sp-md);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-sm);
+}
+.rc-card {
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface-3);
+  padding: var(--sp-sm) var(--sp-md);
+}
+.rc-card-h {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-xs);
+}
+.rc-sev {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.rc-sev.sev-good { background: var(--good); }
+.rc-sev.sev-warning { background: var(--warning); }
+.rc-sev.sev-serious { background: var(--serious); }
+.rc-sev.sev-critical { background: var(--critical); }
+.rc-comp {
+  font-weight: var(--fw-medium);
+  color: var(--ink);
+}
+.rc-key {
+  color: var(--dim);
+  font-size: var(--fs-label);
+  margin-left: auto;
+}
+.rc-hyp {
+  margin: var(--sp-xs) 0;
+  font-size: var(--fs-sm);
+  color: var(--muted);
+}
+.rc-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--sp-xs);
+  margin: 0 0 var(--sp-xs);
+}
+.rc-metrics div {
+  display: flex;
+  flex-direction: column;
+}
+.rc-metrics dt {
+  font-size: var(--fs-label);
+  color: var(--dim);
+}
+.rc-metrics dd {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--ink);
+}
+.rc-actions {
+  display: flex;
+  gap: var(--sp-xs);
+}
+.rc-approve,
+.rc-reject {
+  flex: 1;
+  border-radius: var(--r-md);
+  padding: 6px;
+  font-size: var(--fs-sm);
+  cursor: pointer;
+  border: 1px solid var(--border-2);
+}
+.rc-approve {
+  background: var(--accent);
+  color: var(--accent-wash);
+  border-color: var(--accent);
+}
+.rc-reject {
+  background: var(--surface-2);
+  color: var(--muted);
+}
+.rc-approve:disabled,
+.rc-reject:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.rc-state {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--muted);
+}
+.rc-error,
+.rc-loading {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  color: var(--dim);
+  font-size: var(--fs-sm);
+  padding: var(--sp-xl);
+}
+
+/* Console tab 2 — 3-column hybrid search + RRF fusion. */
+.search-tab {
+  padding: 0;
+}
+.st-search {
+  display: flex;
+  gap: var(--sp-xs);
+  padding: var(--sp-sm) var(--sp-md);
+  border-bottom: 1px solid var(--border);
+}
+.st-input {
+  flex: 1;
+  background: var(--sunken);
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-md);
+  color: var(--ink);
+  padding: 8px 12px;
+  font-size: var(--fs-sm);
+  outline: none;
+}
+.st-input::placeholder {
+  color: var(--dim);
+}
+.st-go {
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: var(--accent-wash);
+  border-radius: var(--r-md);
+  padding: 8px 16px;
+  font-size: var(--fs-sm);
+  cursor: pointer;
+}
+.st-cols {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  overflow: hidden;
+}
+.st-col {
+  background: var(--surface-2);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.st-col-h {
+  padding: 8px var(--sp-sm);
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+}
+.st-col--dense .st-col-h { color: var(--arm-dense); }
+.st-col--sparse .st-col-h { color: var(--arm-sparse); }
+.st-col--graph .st-col-h { color: var(--arm-graph); }
+.st-col--rrf .st-col-h { color: var(--accent-hi); }
+.st-col-list {
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+  overflow-y: auto;
+  flex: 1;
+}
+.st-row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--sp-xs);
+  padding: 4px 6px;
+  font-size: var(--fs-label);
+}
+.st-id {
+  color: var(--dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.st-score {
+  color: var(--ink);
+}
+.st-placeholder,
+.st-error {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  color: var(--dim);
+  font-size: var(--fs-sm);
+  padding: var(--sp-xl);
+  text-align: center;
+}
+
+/* Retrieval-trust gate (ConfidenceGate) — refuse / low-confidence banners. */
+.gate {
+  padding: var(--sp-xs) var(--sp-md);
+  border-top: 1px solid var(--border);
+}
+.gate-banner {
+  font-size: var(--fs-sm);
+  margin-bottom: var(--sp-xs);
+  padding: 6px 10px;
+  border-radius: var(--r-md);
+}
+.gate-refuse .gate-banner {
+  color: var(--critical);
+  border: 1px solid var(--critical);
+  background: var(--surface-3);
+}
+.gate-low .gate-banner {
+  color: var(--warning);
+  border: 1px solid var(--warning);
+  background: var(--surface-3);
+}
+.gate-conf {
+  color: var(--ink);
+}
+
+/* Related-question chips (RelatedChips) — always-visible follow-up suggestions. */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-xs);
+  padding: 0 var(--sp-md);
+}
+.chip {
+  border: 1px solid var(--border-2);
+  background: var(--surface-3);
+  color: var(--ink);
+  border-radius: var(--r-pill);
+  padding: 6px 12px;
+  font-size: var(--fs-sm);
+  font-family: var(--font-sans);
+  cursor: pointer;
+}
+.chip:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent-hi);
+}
+.chip:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* In-chat approval gate (ApprovalCard) — HITL interrupt card. */
+.approval-card {
+  margin-top: var(--sp-sm);
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-lg);
+  background: var(--surface-3);
+  padding: var(--sp-sm) var(--sp-md);
+}
+.ac-h {
+  font-size: var(--fs-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--accent-hi);
+}
+.ac-msg {
+  margin: var(--sp-xs) 0;
+  font-size: var(--fs-sm);
+  color: var(--ink);
+}
+.ac-candidates,
+.ac-dispatched {
+  list-style: none;
+  margin: var(--sp-xs) 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-xs);
+}
+.ac-candidate {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-sm);
+  font-size: var(--fs-sm);
+}
+.ac-action {
+  flex: 1;
+  color: var(--ink);
+}
+.ac-target {
+  /* Approval target is a Component → use the Component-node color (== --arm-dense
+     #5b9bd5), not the D/S/G arm token, so the arm visual language isn't reused
+     for a non-arm meaning (#30 QA flag, user-approved). */
+  color: var(--node-component);
+}
+.ac-risk {
+  color: var(--serious);
+}
+.ac-actions {
+  display: flex;
+  gap: var(--sp-xs);
+  margin-top: var(--sp-xs);
+}
+.ac-approve,
+.ac-reject {
+  flex: 1;
+  border-radius: var(--r-md);
+  padding: 7px;
+  font-size: var(--fs-sm);
+  cursor: pointer;
+  border: 1px solid var(--border-2);
+}
+.ac-approve {
+  background: var(--accent);
+  color: var(--accent-wash);
+  border-color: var(--accent);
+}
+.ac-reject {
+  background: var(--surface-2);
+  color: var(--muted);
+}
+.ac-approve:disabled,
+.ac-reject:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.ac-issue {
+  display: flex;
+  gap: var(--sp-sm);
+  align-items: center;
+  font-size: var(--fs-sm);
+}
+.ac-prov {
+  color: var(--muted);
+}
+.ac-link {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  word-break: break-all;
+}
+.ac-result {
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+.ac-error {
+  color: var(--critical);
+  font-size: var(--fs-sm);
+}
+
+.composer {
+  padding: var(--sp-sm) var(--sp-md) var(--sp-md);
+}
+.box {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-xs);
+  background: var(--sunken);
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-lg);
+  padding: 10px 14px;
+}
+.prompt {
+  color: var(--dim);
+}
+.box input {
+  flex: 1;
+  background: none;
+  border: 0;
+  color: var(--ink);
+  outline: none;
+  font-size: var(--fs-body);
+  font-family: var(--font-sans);
+}
+.box input::placeholder {
+  color: var(--dim);
+}
+
+.evidence {
+  border-left: 1px solid var(--border);
+  background: var(--surface-2);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.ev-h {
+  padding: 13px var(--sp-md);
+  border-bottom: 1px solid var(--border);
+  font-size: var(--fs-meta);
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.ev-canvas {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+.ev-placeholder {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  color: var(--dim);
+  font-size: var(--fs-sm);
+  padding: var(--sp-xl);
+  text-align: center;
+}
+/* Evidence list — each retrieval hit with its D/S/G arm tags + score. */
+.ev-list {
+  list-style: none;
+  margin: 0;
+  padding: var(--sp-sm) var(--sp-md);
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-xs);
+}
+.ev-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-sm);
+  font-size: var(--fs-sm);
+}
+.ev-id {
+  color: var(--muted);
+  flex: 1;
+}
+.ev-arms {
+  display: flex;
+  gap: 3px;
+}
+.ev-arm {
+  width: 16px;
+  height: 16px;
+  border-radius: var(--r-sm);
+  display: grid;
+  place-items: center;
+  font-size: 9px;
+  font-weight: var(--fw-bold);
+  color: var(--bg);
+}
+.ev-arm[data-arm="D"] { background: var(--arm-dense); }
+.ev-arm[data-arm="S"] { background: var(--arm-sparse); }
+.ev-arm[data-arm="G"] { background: var(--arm-graph); }
+.ev-score {
+  color: var(--ink);
+}
+.ev-actions {
+  padding: 10px var(--sp-md);
+  border-top: 1px solid var(--border);
+}
+.ev-explore {
+  width: 100%;
+  border: 1px solid var(--border-2);
+  background: var(--surface-3);
+  color: var(--accent-hi);
+  border-radius: var(--r-md);
+  padding: 8px;
+  font-size: var(--fs-sm);
+  cursor: pointer;
+}
+.ev-explore:hover {
+  border-color: var(--accent);
+}
+.ev-legend {
+  display: flex;
+  gap: var(--sp-sm);
+  flex-wrap: wrap;
+  padding: 10px var(--sp-md);
+  border-top: 1px solid var(--border);
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
+  color: var(--muted);
+}
+.ev-legend span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.ev-legend i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}

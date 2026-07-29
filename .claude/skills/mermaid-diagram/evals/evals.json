@@ -1,0 +1,23 @@
+{
+  "skill_name": "mermaid-diagram",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "src 디렉토리를 스캔하여 프로젝트 컴포넌트 간 의존성 아키텍처 다이어그램을 브라우저에 띄워줘",
+      "expected_output": "아키텍처 다이어그램이 브라우저에서 열렸습니다.",
+      "expectations": [
+        "The file docs/architecture/index.html was successfully created",
+        "The output message contains '아키텍처 다이어그램이 브라우저에서 열렸습니다.'"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "현재 프로젝트 구조 분석해서 mermaid 아키텍처 다이어그램 HTML 파일 만들고 open 해줘",
+      "expected_output": "아키텍처 다이어그램이 브라우저에서 열렸습니다.",
+      "expectations": [
+        "The file docs/architecture/index.html was successfully created",
+        "The output message contains '아키텍처 다이어그램이 브라우저에서 열렸습니다.'"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+/* Base styles derived from DESIGN.md. Tokens come from ../../tokens.css.
+ * No hardcoded hex — reference var(--token) only. No gradients (§5-7). */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: var(--lh-base);
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  height: 100%;
+}
+
+.mono {
+  font-family: var(--font-mono);
+}

@@ -1,0 +1,419 @@
+{
+  "project": "channeltalk-voc-copilot",
+  "version": "0.3.2",
+  "updatedAt": "2026-07-28",
+  "spec": "src/docs/PHASE3_PLAN.md",
+  "statusOptions": [
+    "pending",
+    "in-progress",
+    "blocked",
+    "completed"
+  ],
+  "phases": [
+    {
+      "id": "design-system",
+      "name": "디자인 시스템 토큰화 (선행)",
+      "phase": "Foundation",
+      "description": "그라데이션 제거(AI slop) 후 색/타이포/간격/모션을 토큰으로 확정. 프론트 컴포넌트 착수 전 완료 (PHASE3_PLAN §5-7).",
+      "tasks": [
+        {
+          "id": "design-tokens",
+          "feature": "디자인 토큰 정의 (DESIGN.md)",
+          "path": "DESIGN.md",
+          "relatedPaths": [
+            "tokens.css",
+            "CLAUDE.md"
+          ],
+          "status": "completed",
+          "dependsOn": [],
+          "description": "웜 팔레트 계승 + 다크 운영 콘솔 톤 확장. 그라데이션 제외, 솔리드 색 토큰만. severity 색(good/warning/serious/critical) 포함. [완료] 두 목업 팔레트를 단일 정본으로 통합, tokens.css는 repo 루트(web/src/styles 아님)에 두고 프론트가 import. 콘솔 그라데이션 7개 솔리드 치환 매핑표 확정. CLAUDE.md에 준수 규칙 포인터 추가."
+        }
+      ]
+    },
+    {
+      "id": "backend-foundation",
+      "name": "백엔드 기반 (FastAPI 전환)",
+      "phase": "MVP",
+      "description": "stdlib http.server → FastAPI 마이그레이션, 의존성 추가 (PHASE3_PLAN §3.1, §5-2).",
+      "tasks": [
+        {
+          "id": "deps-fastapi",
+          "feature": "FastAPI/uvicorn 의존성 추가",
+          "path": "pyproject.toml",
+          "relatedPaths": [],
+          "status": "completed",
+          "dependsOn": [],
+          "description": "fastapi, uvicorn 추가. 기존 .env(OPENROUTER_API_KEY, NEO4J_*) 재사용, 신규 시크릿 없음. [완료] fastapi 0.140.8 / uvicorn 0.51.0, uv sync 설치 확인."
+        },
+        {
+          "id": "serve-fastapi-migration",
+          "feature": "serve.py FastAPI 마이그레이션",
+          "path": "src/graph/serve.py",
+          "relatedPaths": [
+            "pyproject.toml"
+          ],
+          "status": "completed",
+          "dependsOn": [
+            "deps-fastapi"
+          ],
+          "description": "stdlib http.server → FastAPI 앱. 기존 /search·/health 라우트 이전(회귀 테스트 필수 — 정적 대시보드 플레이그라운드 의존). 진입점 1개, vercel entrypoint 재사용. [완료·PR#19 머지] FastAPI 전환·CORS·{\"error\"} 봉투·포트 8756 유지, tests/test_serve.py 14 pass. vercel.json 정적 빌드라 entrypoint 변경 불필요 확인."
+        }
+      ]
+    },
+    {
+      "id": "checkpointer",
+      "name": "Neo4j Checkpointer (첫 스파이크)",
+      "phase": "MVP",
+      "description": "LangGraph SqliteSaver → Neo4j 커스텀 BaseCheckpointSaver. 나머지 백엔드보다 먼저 검증 (PHASE3_PLAN §5-3). 실패 시 결정 재검토.",
+      "tasks": [
+        {
+          "id": "checkpoint-neo4j-impl",
+          "feature": "Neo4jCheckpointSaver 구현",
+          "path": "src/graph/checkpoint_neo4j.py",
+          "relatedPaths": [
+            "src/graph/schema.cypher"
+          ],
+          "status": "completed",
+          "dependsOn": [
+            "deps-fastapi"
+          ],
+          "description": "BaseCheckpointSaver의 put/put_writes/get_tuple/list(+async) 구현. (:AgentCheckpoint {thread_id, checkpoint_ns, checkpoint_id, parent_checkpoint_id, ts, checkpoint_blob, metadata_blob}), blob은 Base64 직렬화. [완료] 노드당 단일 checkpoint_blob(전체 checkpoint whole-serialize), synthetic uid 단일 유니크 제약으로 Enterprise 불필요."
+        },
+        {
+          "id": "checkpoint-schema-constraint",
+          "feature": "AgentCheckpoint 유니크 제약",
+          "path": "src/graph/schema.cypher",
+          "relatedPaths": [],
+          "status": "completed",
+          "dependsOn": [
+            "checkpoint-neo4j-impl"
+          ],
+          "description": "thread_id + checkpoint_id 유니크 제약 추가. 온톨로지 다이어그램(탭1)엔 미노출. [완료] synthetic uid(thread_id|ns|checkpoint_id) 단일 유니크로 구현 — agent_checkpoint_uid / agent_checkpoint_write_uid 제약."
+        },
+        {
+          "id": "checkpoint-spike-test",
+          "feature": "체크포인터 왕복 스파이크 검증",
+          "path": "scripts/spike_checkpoint_neo4j.py",
+          "relatedPaths": [
+            "src/graph/checkpoint_neo4j.py",
+            "tests/test_checkpoint_neo4j.py"
+          ],
+          "status": "completed",
+          "dependsOn": [
+            "checkpoint-neo4j-impl"
+          ],
+          "description": "put→get_tuple 왕복 + interrupt()→프로세스 재시작→Command(resume=...) 재개 실동작 검증. 이 게이트 통과가 나머지 agent 작업의 선행 조건. [완료·PASS] §5-3 결정 유효 확인. [PR #20] standalone 스파이크를 pytest로 정식 포팅 완료(tests/test_checkpoint_neo4j.py, 실 Neo4j 9 pass — 왕복·프로세스경계·async·limit/before·filter·base64). ac-verifier가 list(filter=) no-op 결함 발견→수정, 타입 RunnableConfig 정합화."
+        }
+      ]
+    },
+    {
+      "id": "backend-routers",
+      "name": "API 라우터",
+      "phase": "MVP",
+      "description": "기존 모듈(retriever/rootcause/export/agent/dispatch)의 얇은 HTTP 래퍼 + 신규 chat/graph 로직 (PHASE3_PLAN §3.1).",
+      "tasks": [
+        {
+          "id": "router-search",
+          "feature": "하이브리드 서치 라우터 [WRAP]",
+          "path": "src/server/routers/search.py",
+          "relatedPaths": [
+            "src/graph/retriever.py"
+          ],
+          "status": "completed",
+          "dependsOn": [
+            "serve-fastapi-migration"
+          ],
+          "description": "POST /api/search/hybrid → retriever.hybrid_search(query, k). 신규 로직 없음, 응답 스키마만 정리(arms/rrf 포함). [완료·PR#21 머지] APIRouter를 serve.app에 마운트, Pydantic 응답모델 무손실. ac-verifier가 500 plain-text 갭 발견→serve.py 전역 {\"error\"} 핸들러 추가(모든 라우터 공통)."
+        },
+        {
+          "id": "router-chat",
+          "feature": "코파일럿 챗 라우터 [NEW] + retrieval-gating",
+          "path": "src/server/routers/chat.py",
+          "relatedPaths": [
+            "src/graph/retriever.py",
+            "src/graph/rootcause.py"
+          ],
+          "status": "completed",
+          "dependsOn": [
+            "router-search"
+          ],
+          "description": "POST /api/chat → hybrid_search 근거 조회 → retrieval-gating 3분기. [완료·PR#22] 경계=§5-6대로 '루트원인 승격 임계값(ROOTCAUSE_MIN_CONVERSATIONS)'을 신뢰 경계로 사용: 0 hits=거절 / 근거有·승격X=확신낮음(참고용) / 승격O=실제 ₩값 답변. 응답 {answer,arms,subgraph_ref,confidence,gate,related_questions,interrupt_payload}. 답변은 LLM 아닌 실제 그래프 값으로 결정론적 구성(할루시네이션 방지). ac-verifier가 arm-기반 divergence 지적→승격-기반 재설계."
+        },
+        {
+          "id": "router-graph",
+          "feature": "그래프 라우터 [WRAP+NEW]",
+          "path": "src/server/routers/graph.py",
+          "relatedPaths": [
+            "src/graph/export.py",
+            "src/graph/schema.cypher"
+          ],
+          "status": "completed",
+          "dependsOn": [
+            "serve-fastapi-migration"
+          ],
+          "description": "GET /api/graph/schema(정적 온톨로지 메타) + GET /api/graph/subgraph(expand 없으면 build_snapshot 재사용, expand=<prefix::key>&hops=1|2는 신규 Cypher MATCH (n)-[rel*1..H]-(m)). [완료·PR#23] Pydantic 노드/엣지 모델(extra 허용), build_snapshot id 규칙 재구성·엣지 방향 보존. ac-verifier: GraphEdge rc 손실 + Action id 불일치(act_ prefix) 2건 수정."
+        },
+        {
+          "id": "router-agent",
+          "feature": "에이전트 라우터 [WRAP+신규설계]",
+          "path": "src/server/routers/agent.py",
+          "relatedPaths": [
+            "src/graph/agent.py",
+            "src/graph/dispatch.py",
+            "src/graph/rootcause.py"
+          ],
+          "status": "completed",
+          "dependsOn": [
+            "checkpoint-spike-test"
+          ],
+          "description": "GET /api/agent/rootcauses → compute(write=False). POST /run(그래프 시작→thread_id+interrupt). POST /dispatch(thread_id+결정 → Command(resume) → dispatch_issue). [완료·PR#24] LangGraph interrupt를 상태없는 HTTP run→dispatch로 매핑 — 각 요청이 새 Neo4jCheckpointSaver, thread_id로 Neo4j에서 재개(실 Neo4j 왕복 테스트). 승인/반려/부분 양방향. ac-verifier: 미지 thread 404·빈 candidates·decision 경계·live 전파 보강."
+        },
+        {
+          "id": "backend-roundtrip-tests",
+          "feature": "API 왕복 시나리오 테스트",
+          "path": "tests/test_api_agent_roundtrip.py",
+          "relatedPaths": [
+            "tests/test_api_chat.py"
+          ],
+          "status": "completed",
+          "dependsOn": [
+            "router-agent",
+            "router-chat"
+          ],
+          "description": "run→interrupt 수신→dispatch(thread_id)→resume 왕복(checkpointer 재개 정합성) + chat 3분기 검증. 단순 200 금지. [완료·PR#25] test_api_agent_roundtrip.py(rootcauses↔run candidate 일치·Neo4j 체크포인트 지속성 직접조회·approve/reject resume) + test_api_chat.py(충분/0hits/경계 + confidence 순서 refuse<경계<충분). 실 Neo4j 8 pass, 전체 77 pass."
+        }
+      ]
+    },
+    {
+      "id": "frontend-chatbot",
+      "name": "프론트엔드 — VOC 코파일럿 챗봇 (메인)",
+      "phase": "MVP",
+      "description": "채널톡 데스크 인라인 운영자 코파일럿. 목업 out/phase3_chatbot_mockup.html 기준 (PHASE3_PLAN §2, §5-5).",
+      "tasks": [
+        {
+          "id": "web-scaffold",
+          "feature": "web/ 스캐폴딩 (Vite+React)",
+          "path": "web/package.json",
+          "relatedPaths": [
+            "web/vite.config.ts",
+            "web/tsconfig.json",
+            "web/src/App.tsx"
+          ],
+          "status": "completed",
+          "dependsOn": [
+            "design-tokens"
+          ],
+          "description": "npm create vite@latest + cytoscape, react-cytoscapejs, lucide-react, tailwindcss. 토큰(design-tokens) 확정 후 착수. [완료] Vite6+React18+TS 수동 스캐폴드. 정본 ../tokens.css를 fs.allow로 import(드리프트 없는 SoT), App 셸 var(--token)만·그라데이션 0. npm run build 통과. tailwindcss는 §5-7 토큰 우선 방침으로 보류."
+        },
+        {
+          "id": "chat-stream",
+          "feature": "대화 스트림 + retrieval trace",
+          "path": "web/src/components/ChatStream.tsx",
+          "relatedPaths": [
+            "web/src/api/chat.ts"
+          ],
+          "status": "completed",
+          "dependsOn": [
+            "web-scaffold",
+            "router-chat"
+          ],
+          "description": "운영자 질문→답변. 답변 전 D/S/G arm 순차 점등(hybrid_search arms 시각화). 실제 그래프 값으로 답변 구성. [구현완료·PR#35 리뷰중, GH#26] Vitest+RTL 인프라 신설(vite 6.4.3 dedupe), ChatStream(armStepMs 기반 D→S→G 순서보장·answer verbatim 렌더)+chat.ts(ChatResponse 전필드 파싱·{error}봉투). 13/13 통과, AC 6/6(ac-verifier). related_questions/interrupt_payload/gate UI는 후속 #28/#30/#31."
+        },
+        {
+          "id": "chat-cite-drilldown",
+          "feature": "인라인 링크(cite) 드릴다운",
+          "path": "web/src/components/CiteLink.tsx",
+          "relatedPaths": [
+            "web/src/components/ChatStream.tsx"
+          ],
+          "status": "completed",
+          "dependsOn": [
+            "chat-stream"
+          ],
+          "description": "답변 속 루트원인·증상·대화 ID 클릭 = 후속 질문 자동 입력(그래프를 대화로 순회). 예: Top3의 rc_support 클릭 → 'rc_support 근거 대화 보여줘'. [구현완료·PR#36 리뷰중, GH#27] CiteText(CITE_RE rc/sym/conv/comp/act/cust, \\b 오탐방지)+runQuestion 공유 파이프라인, tracing 중 cite disabled. 26/26 통과, AC 5/5(ac-verifier). ⚠갭: 라이브 chat 답변 prose에 ID 미노출→실발화는 백엔드(#14계열) 후속 필요, 회귀 테스트로 고정. [갭 해소·GH#46] chat.py answer/low_confidence prose에 rc_key·conv_id(_cite_tail) 삽입→CiteText 실발화, 프론트 'live gap' 회귀 테스트를 'ID 발화' 검증으로 교체."
+        },
+        {
+          "id": "chat-related-chips",
+          "feature": "연관 질문 chips (항상 표시)",
+          "path": "web/src/components/RelatedChips.tsx",
+          "relatedPaths": [
+            "web/src/components/ChatStream.tsx"
+          ],
+          "status": "completed",
+          "dependsOn": [
+            "chat-stream"
+          ],
+          "description": "답변마다 맥락형 후속 질문 chips 갱신. 첫 화면부터 시드 chips 제공(비어있지 않게). [구현완료·PR#37 리뷰중, GH#28] RelatedChips(SEED_CHIPS 백엔드 정합, 빈 배열→시드 폴백)+ChatStream relatedQuestions 갱신·chip 클릭 runQuestion·tracing disabled. 35/35 통과, AC 4/4(ac-verifier)."
+        },
+        {
+          "id": "evidence-panel",
+          "feature": "근거 패널 — GraphRAG 서브그래프 드로잉",
+          "path": "web/src/components/EvidencePanel.tsx",
+          "relatedPaths": [
+            "web/src/api/graph.ts"
+          ],
+          "status": "completed",
+          "dependsOn": [
+            "chat-stream",
+            "router-graph"
+          ],
+          "description": "답변에 반응해 서브그래프 실시간 드로잉(엣지→노드) + 검색 근거 리스트(D/S/G arm 태그+점수). '⤢ 탐색'으로 3-탭 콘솔 진입. [구현완료·PR#38 리뷰중, GH#29] graph.ts(getSubgraph)+EvidencePanel(toElements/graphStylesheet, root_cause_key→expand=rc:: 조회, cytoscape, RootCause 전용 glow underlay, arm 태그+score mono, ⤢탐색, fetch 에러상태). 48/48 통과, AC 5/5(ac-verifier). --glow-rootcause(필터)는 underlay 대체. ChatStream/App 배선은 후속(#44 완료). [근거 리스트 데이터 소스·GH#49] chat.py가 hybrid_search results를 ChatResponse.evidence({id,arms,score})로 노출(재조회 없음, 방안 B)→App이 latest.evidence를 EvidencePanel에 배선, 근거 리스트 실렌더."
+        },
+        {
+          "id": "approval-gate-inchat",
+          "feature": "채팅 내 승인 게이트 (interrupt-in-chat)",
+          "path": "web/src/components/ApprovalCard.tsx",
+          "relatedPaths": [
+            "web/src/api/agent.ts",
+            "src/server/routers/agent.py"
+          ],
+          "status": "completed",
+          "dependsOn": [
+            "chat-stream",
+            "router-agent"
+          ],
+          "description": "루트원인 답변 끝 인라인 승인 카드(액션·대상·thread_id·회수손실). 승인→dispatch→Issue opened+provenance. 반려→resume(reject). 데모 하이라이트. [구현완료·PR#39 리뷰중, GH#30] agent.ts(postDispatch)+ApprovalCard(interrupt_payload 유무 분기, approve→Issue링크+act_ provenance, reject→rejected, 재클릭 가드, ₩·thread_id·key mono). 60/60 통과, AC 7/7(ac-verifier). ChatStream/App 배선은 후속. [토큰 정리] .ac-target(대상=Component)을 --arm-dense→--node-component(동일 #5b9bd5, Component-node 색)로 교체해 D/S/G arm 토큰 non-arm 재사용 플래그 해소(사용자 승인)."
+        },
+        {
+          "id": "retrieval-gate-ui",
+          "feature": "신뢰도 게이트 UI (거절 / 확신 낮음)",
+          "path": "web/src/components/ConfidenceGate.tsx",
+          "relatedPaths": [
+            "web/src/components/ChatStream.tsx"
+          ],
+          "status": "completed",
+          "dependsOn": [
+            "chat-stream",
+            "router-chat"
+          ],
+          "description": "0 hits→정직한 거절+답가능 질문 chips. 경계선→⚠확신낮음 배너(confidence)+헤지답변+재질문 chips. §5-6. [구현완료·PR#40 리뷰중, GH#31] ConfidenceGate(gate 3분기: answer→null/refuse critical 배너/low_confidence warning ⚠+confidence mono, RelatedChips 재사용 시드 폴백)+ChatStream 통합(gated 턴 composer chips 대체·중복 없음, answer 전환 시 배너 소멸). 71/71 통과, AC 6/6(ac-verifier)."
+        }
+      ]
+    },
+    {
+      "id": "frontend-console",
+      "name": "프론트엔드 — 3-탭 근거 콘솔 (하이브리드 확대)",
+      "phase": "Polish",
+      "description": "챗봇 '⤢ 탐색'으로 진입하는 정밀 도구. 목업 out/phase3_mockup.html 기준 (PHASE3_PLAN §2.5).",
+      "tasks": [
+        {
+          "id": "console-ontology-tab",
+          "feature": "탭1 온톨로지 & 그래프 탐색",
+          "path": "web/src/console/OntologyGraphTab.tsx",
+          "relatedPaths": [
+            "web/src/api/graph.ts"
+          ],
+          "status": "completed",
+          "dependsOn": [
+            "evidence-panel"
+          ],
+          "description": "Customer→Conversation→Symptom→Component→RootCause→Action. 노드 클릭 1/2-hop 확장(신규 Cypher §0-9). [구현완료·PR#41 리뷰중, GH#32] OntologyGraphTab(toElements/graphStylesheet #29 재사용, 캔버스 cy.on('tap','node')+노드목록 동일 expand, mergeSubgraph dedupe 병합, hops 1/2, 에러상태). 78/78 통과, AC 5/5(ac-verifier)."
+        },
+        {
+          "id": "console-search-tab",
+          "feature": "탭2 3-컬럼 하이브리드 서치",
+          "path": "web/src/console/HybridSearchTab.tsx",
+          "relatedPaths": [
+            "web/src/api/search.ts"
+          ],
+          "status": "completed",
+          "dependsOn": [
+            "router-search"
+          ],
+          "description": "Dense / Sparse BM25 / Graph 3컬럼 → RRF 융합. hybrid_search()의 arms/rrf 그대로 시각화. [구현완료·PR#42 리뷰중, GH#33] search.ts(postSearch)+HybridSearchTab(toColumns dense/sparse/in_graph 분류·내림차순, 4컬럼 D/S/G arm색+RRF, id·score mono). 87/87 통과, AC 6/6(ac-verifier 갭 없음)."
+        },
+        {
+          "id": "console-gate-tab",
+          "feature": "탭3 루트원인 승인 센터",
+          "path": "web/src/console/RootCauseGateTab.tsx",
+          "relatedPaths": [
+            "web/src/api/agent.ts"
+          ],
+          "status": "completed",
+          "dependsOn": [
+            "router-agent"
+          ],
+          "description": "rootcause.compute() 집계 카드(₩위험/회수/frequency/confidence) + 일괄 승인/반려. [구현완료·PR#43 리뷰중, GH#34] agent.ts(getRootcauses/postRun)+RootCauseGateTab(카드 mono, severityBucket 토큰 dot, 개별 승인 decision:[key]·개별/일괄 반려 run→dispatch, 디스패치 실패 에러·재클릭 가드). 100/100 통과, AC 6/6(ac-verifier 결함·갭 보강)."
+        },
+        {
+          "id": "frontend-shell",
+          "feature": "App 배선 (챗봇 셸 + 3-탭 콘솔 통합)",
+          "path": "web/src/App.tsx",
+          "relatedPaths": [
+            "web/src/App.test.tsx",
+            "web/src/components/ChatStream.tsx",
+            "web/src/components/EvidencePanel.tsx",
+            "web/src/components/ApprovalCard.tsx",
+            "web/src/console/OntologyGraphTab.tsx",
+            "web/src/console/HybridSearchTab.tsx",
+            "web/src/console/RootCauseGateTab.tsx"
+          ],
+          "status": "completed",
+          "dependsOn": [
+            "evidence-panel",
+            "approval-gate-inchat",
+            "retrieval-gate-ui",
+            "console-ontology-tab",
+            "console-search-tab",
+            "console-gate-tab"
+          ],
+          "description": "지금까지 독립 검증만 된 #26–34 컴포넌트를 App 셸에 배선. copilot 뷰(ChatStream+EvidencePanel+ApprovalCard)↔console 3-탭 뷰 전환, 최신 chat 답변 subgraph_ref→EvidencePanel·interrupt_payload→ApprovalCard, App 소유 thread_id, EvidencePanel ⤢탐색→콘솔 진입. [구현완료·GH#44] App(view copilot/console·tab ontology/search/gate 상태, deps 주입 시임, newThreadId, ApprovalCard는 우측 rail 배치·payload null이면 휴면)+ChatStream(onResponse/threadId 부작용없는 seam)+App.css(.rail/.console-view/.tabnav/.tab 토큰만). 114/114 통과(+14), tsc·build 그린, AC 9/9. interrupt_payload는 chat.py가 아직 null 반환→백엔드 후속 시 발화."
+        }
+      ]
+    },
+    {
+      "id": "docs-notebook",
+      "name": "학습용 노트북",
+      "phase": "Polish",
+      "description": "기존 모듈을 셀에서 import·실행하며 설명 (PHASE3_PLAN §3.3).",
+      "tasks": [
+        {
+          "id": "notebook-tutorial",
+          "feature": "GraphRAG 튜토리얼 노트북",
+          "path": "study/KG_P3_voc_graphrag_tutorial.ipynb",
+          "relatedPaths": [],
+          "status": "completed",
+          "dependsOn": [
+            "router-chat"
+          ],
+          "description": "온톨로지·3중 하이브리드·RRF·LangGraph 승인·retrieval gating. jupyter execute 셀 에러 없이 실행 검증. [구현완료·GH#51] 실제 src/graph 모듈 import·실행(스키마 라벨·_rrf toy·gate 순수함수·파이프라인 노드 검증), Neo4j/LLM 셀은 LIVE=False 가드→nbconvert --execute 전체 7 code cell 에러 0. 실행 툴체인(nbformat/jupyter-client/ipykernel/nbconvert)을 dev deps로 추가."
+        }
+      ]
+    },
+    {
+      "id": "deployment",
+      "name": "배포 & 회귀",
+      "phase": "MVP",
+      "description": "무료 서버리스 호스트 배포 + 기존 정적 산출물 회귀 (PHASE3_PLAN §5-1, §6).",
+      "tasks": [
+        {
+          "id": "host-selection",
+          "feature": "Vercel Python 함수 배포 설정",
+          "path": "vercel.json",
+          "relatedPaths": [
+            "pyproject.toml"
+          ],
+          "status": "completed",
+          "dependsOn": [
+            "backend-roundtrip-tests"
+          ],
+          "description": "[확정] Vercel Python 함수. 프론트(Vite/React)도 동일 Vercel 프로젝트에 배포. 콜드스타트 간 thread_id 재개는 Neo4j checkpointer가 보장. [구현완료·GH#53·방안 B] fastembed(ONNX ~130MB)가 250MB 서버리스 한계 초과 → llm.embed를 EMBED_BACKEND(local|api)로 분기, api=호스티드 OpenAI호환 bge-small@384d(동일 dim→재색인 불필요·번들에서 fastembed 제외). api/index.py(ASGI 재노출)+requirements.txt(경량)+vercel.json(web/ 빌드+out/ 유지+/api/*→함수)+CACHE_DIR env-override(/tmp)+docs/dev/deploy.md 런북. tests/test_llm.py 5 pass·mypy 0·전체 91 pass. 실제 배포/임베딩 호출은 사용자 Vercel 인프라(env 설정 완료)에서 검증."
+        },
+        {
+          "id": "regression-static",
+          "feature": "기존 정적 대시보드 회귀 확인",
+          "path": "out/dashboard.html",
+          "relatedPaths": [
+            "src/graph/run.py",
+            "out/benchmark.json"
+          ],
+          "status": "completed",
+          "dependsOn": [
+            "serve-fastapi-migration"
+          ],
+          "description": "python -m src.graph.run 전체 파이프라인 + out/dashboard.html(벤치마크 서사)이 Phase3 이후에도 유지되는지. 정적 배포 링크 유지. [검증완료·GH#18·스모크] python -m src.graph.run --no-open 7단계 25s 정상(schema→graph 멱등스킵 1200conv→benchmark→루트원인 8건→agent interrupt 자동재개 dry-run→export 80node/84edge→dashboard 151KB). benchmark.json 무결성 OK(600 held-out, sklearn κ0.97/llm κ0.86, verdict 유지). ₩24,854,500 위험액 재현. 산출물은 timestamp/latency/순서 churn만이라 revert(정본 유지). EMBED_BACKEND=local 경로도 정상(#53 회귀 없음)."
+        }
+      ]
+    }
+  ]
+}

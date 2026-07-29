@@ -1,0 +1,240 @@
+"""TDD (issue #14) — POST /api/chat retrieval-gated generation.
+
+hybrid_search + rootcause.compute are monkeypatched; tests drive the 3-branch
+gating (refuse / low_confidence / answer) and the response envelope via the
+mounted route.
+"""
+from __future__ import annotations
+
+import pytest
+from fastapi.testclient import TestClient
+
+from src.graph import serve
+
+
+@pytest.fixture()
+def client() -> TestClient:
+    return TestClient(serve.app)
+
+
+def _patch_search(monkeypatch, fn):
+    import src.server.routers.chat as mod
+    monkeypatch.setattr(mod, "hybrid_search", fn)
+
+
+def _patch_rootcause(monkeypatch, fn):
+    import src.server.routers.chat as mod
+    monkeypatch.setattr(mod, "compute_rootcauses", fn)
+
+
+def _ev(results, top_component=None):
+    return {"query": "q", "top_component": top_component,
+            "counts": {"dense": 0, "sparse": 0, "graph": 0}, "results": results}
+
+
+def _result(rid, arms):
+    return {"id": rid, "dense": 0.5 if "dense" in arms else None,
+            "sparse": 1.0 if "sparse" in arms else None,
+            "in_graph": "graph" in arms, "text": "t", "component": "billing",
+            "severity": 3, "rrf": 0.04, "arms": arms}
+
+
+# ── branch 1: refuse (0 hits) ─────────────────────────────────────────────────
+def test_should_refuse_with_zero_confidence_and_chips_when_no_hits(client, monkeypatch):
+    _patch_search(monkeypatch, lambda message, k: _ev([]))
+    r = client.post("/api/chat", json={"message": "완전 무관한 질문"})
+    assert r.status_code == 200
+    b = r.json()
+    assert b["gate"] == "refuse"
+    assert b["confidence"] == 0.0
+    assert b["arms"] == []
+    assert b["related_questions"]  # non-empty
+    assert b["interrupt_payload"] is None
+
+
+# ── branch 2: low_confidence (evidence exists but component NOT promoted) ──────
+def test_should_return_low_confidence_when_component_not_promoted(client, monkeypatch):
+    _patch_search(monkeypatch,
+                  lambda message, k: _ev([_result("c1", ["dense", "sparse", "graph"])], "orders"))
+    _patch_rootcause(monkeypatch, lambda write=False: [])  # below promotion threshold
+    b = client.post("/api/chat", json={"message": "약한 근거"}).json()
+    assert b["gate"] == "low_confidence"
+    assert 0.0 < b["confidence"] < 0.5
+    assert "⚠" in b["answer"] and "임계값" in b["answer"]  # hedge marker + threshold
+    assert b["subgraph_ref"]["top_component"] == "orders"
+    assert "root_cause_key" not in b["subgraph_ref"]
+    assert b["interrupt_payload"] is None
+    assert b["related_questions"]
+
+
+def test_should_not_leak_literal_none_when_top_component_missing(client, monkeypatch):
+    _patch_search(monkeypatch, lambda message, k: _ev([_result("c1", ["dense"])], None))
+    _patch_rootcause(monkeypatch, lambda write=False: [])
+    b = client.post("/api/chat", json={"message": "x"}).json()
+    assert b["gate"] == "low_confidence"
+    assert "None" not in b["answer"]
+
+
+# ── branch 3: answer (component promoted to a root cause) ──────────────────────
+def test_should_answer_with_rootcause_krw_when_promoted(client, monkeypatch):
+    _patch_search(monkeypatch,
+                  lambda message, k: _ev([_result("c1", ["dense", "sparse", "graph"])], "billing"))
+    _patch_rootcause(monkeypatch, lambda write=False: [
+        {"key": "rc_billing", "component": "billing", "frequency": 240,
+         "revenue_at_risk_krw": 5982900, "projected_recoverable_krw": 2094015,
+         "confidence_avg": 0.89, "hypothesis": "billing misconfig",
+         "sample_conv_ids": ["c1", "c2"]},
+    ])
+    b = client.post("/api/chat", json={"message": "billing 문제 근거"}).json()
+    assert b["gate"] == "answer"
+    assert b["confidence"] == 0.89
+    assert "5,982,900" in b["answer"]        # real ₩ value surfaced
+    assert "240" in b["answer"]
+    assert b["subgraph_ref"]["root_cause_key"] == "rc_billing"
+    assert b["interrupt_payload"] is None
+
+
+# ── envelope + trace ──────────────────────────────────────────────────────────
+def test_should_expose_arms_union_and_subgraph_ref(client, monkeypatch):
+    _patch_search(monkeypatch, lambda message, k: _ev(
+        [_result("c1", ["dense", "graph"]), _result("c2", ["sparse"])], "billing"))
+    _patch_rootcause(monkeypatch, lambda write=False: [])
+    b = client.post("/api/chat", json={"message": "x"}).json()
+    assert set(b["arms"]) == {"dense", "sparse", "graph"}
+    assert b["subgraph_ref"]["conversation_ids"]
+
+
+def test_should_accept_optional_thread_id(client, monkeypatch):
+    _patch_search(monkeypatch, lambda message, k: _ev([]))
+    assert client.post("/api/chat", json={"message": "hi", "thread_id": "t-1"}).status_code == 200
+    assert client.post("/api/chat", json={"message": "hi"}).status_code == 200
+
+
+def test_should_call_hybrid_search_with_message(client, monkeypatch):
+    seen = {}
+    _patch_search(monkeypatch, lambda message, k: seen.update(message=message) or _ev([]))
+    client.post("/api/chat", json={"message": "specific text"})
+    assert seen["message"] == "specific text"
+
+
+def test_should_return_error_envelope_when_message_missing(client):
+    r = client.post("/api/chat", json={})
+    assert r.status_code == 422
+    assert "error" in r.json() and "detail" not in r.json()
+
+
+def test_should_mount_chat_route_on_serve_app():
+    assert "/api/chat" in serve.app.openapi()["paths"]
+
+
+@pytest.mark.parametrize("results,top", [([], None),
+                                         ([_result("c", ["dense"])], "billing"),
+                                         ([_result("c", ["dense", "sparse"])], "billing")])
+def test_related_questions_always_non_empty(client, monkeypatch, results, top):
+    _patch_search(monkeypatch, lambda message, k: _ev(results, top))
+    _patch_rootcause(monkeypatch, lambda write=False: [])
+    b = client.post("/api/chat", json={"message": "x"}).json()
+    assert b["related_questions"]
+
+
+# ── issue #46: answer/low_confidence prose embeds graph ids for cite drilldown ─
+import re
+
+
+def _promoted_rc(**over):
+    rc = {"key": "rc_billing", "component": "billing", "frequency": 240,
+          "revenue_at_risk_krw": 5982900, "projected_recoverable_krw": 2094015,
+          "confidence_avg": 0.89, "hypothesis": "billing misconfig",
+          "sample_conv_ids": ["conv_00001", "conv_00002", "conv_00003", "conv_00004"]}
+    rc.update(over)
+    return rc
+
+
+def test_should_embed_rc_key_in_answer_prose_when_promoted(client, monkeypatch):
+    _patch_search(monkeypatch, lambda message, k: _ev(
+        [_result("conv_00001", ["dense", "sparse", "graph"])], "billing"))
+    _patch_rootcause(monkeypatch, lambda write=False: [_promoted_rc()])
+    b = client.post("/api/chat", json={"message": "billing 문제 근거"}).json()
+    assert b["gate"] == "answer"
+    assert "rc_billing" in b["answer"]  # cite-able rootcause id surfaced in prose
+
+
+def test_should_embed_sample_conv_ids_in_answer_prose_when_promoted(client, monkeypatch):
+    _patch_search(monkeypatch, lambda message, k: _ev(
+        [_result("conv_00001", ["dense"])], "billing"))
+    _patch_rootcause(monkeypatch, lambda write=False: [_promoted_rc()])
+    b = client.post("/api/chat", json={"message": "x"}).json()
+    assert "conv_00001" in b["answer"]
+
+
+def test_should_embed_at_most_three_conv_ids_in_answer_prose(client, monkeypatch):
+    _patch_search(monkeypatch, lambda message, k: _ev(
+        [_result("conv_00001", ["dense"])], "billing"))
+    _patch_rootcause(monkeypatch, lambda write=False: [_promoted_rc()])  # 4 sample ids
+    b = client.post("/api/chat", json={"message": "x"}).json()
+    convs = re.findall(r"conv_\d+", b["answer"])
+    assert 1 <= len(convs) <= 3
+
+
+def test_should_embed_conv_ids_in_low_confidence_answer(client, monkeypatch):
+    _patch_search(monkeypatch, lambda message, k: _ev(
+        [_result("conv_00007", ["dense", "sparse"])], "orders"))
+    _patch_rootcause(monkeypatch, lambda write=False: [])  # below promotion threshold
+    b = client.post("/api/chat", json={"message": "약한 근거"}).json()
+    assert b["gate"] == "low_confidence"
+    assert "conv_00007" in b["answer"]
+    assert "⚠" in b["answer"] and "임계값" in b["answer"]  # markers preserved
+    assert "None" not in b["answer"]
+
+
+def test_should_not_embed_ids_in_refuse_answer(client, monkeypatch):
+    _patch_search(monkeypatch, lambda message, k: _ev([]))
+    b = client.post("/api/chat", json={"message": "무관"}).json()
+    assert b["gate"] == "refuse"
+    assert not re.search(r"(?:rc|conv|sym|comp|act|cust)_[A-Za-z0-9]+", b["answer"])
+
+
+# ── issue #49: per-hit evidence (id/arms/score) exposed for EvidencePanel ──────
+def test_should_expose_per_hit_evidence_when_promoted(client, monkeypatch):
+    _patch_search(monkeypatch, lambda message, k: _ev(
+        [_result("conv_00001", ["dense", "graph"]),
+         _result("conv_00002", ["sparse"])], "billing"))
+    _patch_rootcause(monkeypatch, lambda write=False: [_promoted_rc()])
+    b = client.post("/api/chat", json={"message": "billing 근거"}).json()
+    assert b["gate"] == "answer"
+    ev = b["evidence"]
+    assert [e["id"] for e in ev] == ["conv_00001", "conv_00002"]
+    assert ev[0]["arms"] == ["dense", "graph"]
+    assert ev[0]["score"] == 0.04  # mirrors result rrf verbatim
+
+
+def test_should_expose_evidence_for_low_confidence_results(client, monkeypatch):
+    _patch_search(monkeypatch, lambda message, k: _ev(
+        [_result("conv_00007", ["dense", "sparse"])], "orders"))
+    _patch_rootcause(monkeypatch, lambda write=False: [])  # not promoted
+    b = client.post("/api/chat", json={"message": "약한 근거"}).json()
+    assert b["gate"] == "low_confidence"
+    assert [e["id"] for e in b["evidence"]] == ["conv_00007"]
+
+
+def test_evidence_ids_equal_results_ids_no_requery(client, monkeypatch):
+    calls = {"n": 0}
+
+    def _search(message, k):
+        calls["n"] += 1
+        return _ev([_result("conv_00001", ["dense"]),
+                    _result("conv_00002", ["graph"])], "billing")
+
+    _patch_search(monkeypatch, _search)
+    _patch_rootcause(monkeypatch, lambda write=False: [_promoted_rc()])
+    b = client.post("/api/chat", json={"message": "x"}).json()
+    # single retrieval drives both the answer and the evidence panel
+    assert calls["n"] == 1
+    assert [e["id"] for e in b["evidence"]] == ["conv_00001", "conv_00002"]
+
+
+def test_should_expose_empty_evidence_on_refuse(client, monkeypatch):
+    _patch_search(monkeypatch, lambda message, k: _ev([]))
+    b = client.post("/api/chat", json={"message": "무관"}).json()
+    assert b["gate"] == "refuse"
+    assert b["evidence"] == []

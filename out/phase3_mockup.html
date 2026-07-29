@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PHASE 3 — VOC Intelligence Console (Mockup)</title>
+<style>
+  :root{
+    --bg:#0e0e0d; --surface:#17171500; --panel:#1a1a19; --panel2:#201f1d;
+    --border:#33322f; --border2:#403e3a;
+    --ink:#f5f4ef; --muted:#8a897f; --dim:#5f5e57;
+    --accent:#e8a13a; --accent2:#f0c674;
+    --dense:#5b9bd5; --sparse:#8e6fd8; --graph:#3fb56b;
+    --good:#3fb56b; --warning:#fab219; --serious:#ec835a; --critical:#d03b3b;
+    --mono:"SF Mono",ui-monospace,"JetBrains Mono",Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Pretendard,Roboto,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:
+     radial-gradient(1200px 600px at 80% -10%, rgba(232,161,58,.10), transparent 60%),
+     radial-gradient(900px 500px at 0% 100%, rgba(91,155,213,.07), transparent 55%),
+     var(--bg);
+    color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;font-size:14px;line-height:1.5}
+  a{color:inherit}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 22px 80px}
+
+  /* ---- Header ---- */
+  header{position:sticky;top:0;z-index:40;backdrop-filter:blur(14px);
+    background:linear-gradient(180deg,rgba(14,14,13,.92),rgba(14,14,13,.72));border-bottom:1px solid var(--border)}
+  .hbar{max-width:1180px;margin:0 auto;padding:14px 22px;display:flex;align-items:center;gap:16px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:650;letter-spacing:-.01em}
+  .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 14px var(--accent)}
+  .badge{font:600 10px/1 var(--mono);letter-spacing:.08em;color:var(--accent2);
+    border:1px solid var(--border2);border-radius:999px;padding:5px 9px;text-transform:uppercase}
+  .live{margin-left:auto;display:flex;align-items:center;gap:7px;font:600 11px/1 var(--mono);color:var(--good)}
+  .live .pulse{width:7px;height:7px;border-radius:50%;background:var(--good);animation:pulse 1.6s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(63,181,107,.5)}70%{box-shadow:0 0 0 7px rgba(63,181,107,0)}100%{box-shadow:0 0 0 0 rgba(63,181,107,0)}}
+
+  /* ---- Tabs ---- */
+  .tabs{display:flex;gap:4px;max-width:1180px;margin:0 auto;padding:0 22px}
+  .tab{appearance:none;border:0;background:none;color:var(--muted);cursor:pointer;
+    font:600 13px var(--sans);padding:13px 16px;border-bottom:2px solid transparent;display:flex;align-items:center;gap:9px;transition:.18s}
+  .tab .n{font:600 10px/1 var(--mono);color:var(--dim);border:1px solid var(--border2);border-radius:5px;padding:3px 5px}
+  .tab:hover{color:var(--ink)}
+  .tab.active{color:var(--ink);border-color:var(--accent)}
+  .tab.active .n{color:var(--accent);border-color:var(--accent)}
+
+  .panel-head{padding:26px 0 10px}
+  .panel-head h2{margin:0;font-size:20px;letter-spacing:-.02em}
+  .panel-head p{margin:6px 0 0;color:var(--muted);max-width:640px}
+  .view{display:none;animation:fade .3s ease}
+  .view.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--border);border-radius:14px}
+  .kbd{font:600 11px var(--mono);background:#000;border:1px solid var(--border2);border-radius:5px;padding:2px 6px;color:var(--muted)}
+  .mono{font-family:var(--mono)}
+
+  /* =========== TAB 1: GRAPH =========== */
+  .g-layout{display:grid;grid-template-columns:1fr 300px;gap:16px}
+  @media(max-width:820px){.g-layout{grid-template-columns:1fr}}
+  .canvaswrap{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--border);
+    background:radial-gradient(700px 400px at 50% 40%,rgba(232,161,58,.06),transparent),#141412;height:460px}
+  #graph{width:100%;height:100%;display:block;cursor:grab}
+  .legend{position:absolute;left:14px;bottom:12px;display:flex;gap:14px;flex-wrap:wrap;font:600 11px var(--mono)}
+  .legend span{display:flex;align-items:center;gap:6px;color:var(--muted)}
+  .legend i{width:9px;height:9px;border-radius:50%;display:inline-block}
+  .hint{position:absolute;top:12px;left:14px;font:500 11px var(--mono);color:var(--dim)}
+  .side h4{margin:0 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+  .side .body{padding:16px}
+  .kv{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--border);font-size:13px}
+  .kv:last-child{border:0}
+  .kv b{font-family:var(--mono);font-weight:600}
+  .chip{display:inline-block;font:600 10px var(--mono);padding:3px 8px;border-radius:6px;margin:3px 4px 0 0}
+  .placeholder-side{color:var(--dim);text-align:center;padding:60px 20px;font-size:13px}
+
+  /* =========== TAB 2: SEARCH =========== */
+  .searchbar{display:flex;gap:10px;align-items:center;padding:6px 6px 6px 16px;border:1px solid var(--border2);
+    border-radius:12px;background:#121210;margin-bottom:18px}
+  .searchbar input{flex:1;background:none;border:0;color:var(--ink);font-size:15px;outline:none;font-family:var(--sans)}
+  .searchbar input::placeholder{color:var(--dim)}
+  .runbtn{background:var(--accent);color:#1a1200;border:0;border-radius:9px;padding:10px 18px;font:650 13px var(--sans);cursor:pointer}
+  .runbtn:active{transform:translateY(1px)}
+  .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  @media(max-width:820px){.cols{grid-template-columns:1fr}}
+  .col{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--panel)}
+  .col-h{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+  .col-h .tag{font:700 10px var(--mono);letter-spacing:.06em;padding:3px 7px;border-radius:5px}
+  .col-h small{margin-left:auto;color:var(--dim);font:500 11px var(--mono)}
+  .row{padding:11px 14px;border-bottom:1px solid var(--border);opacity:0;transform:translateX(-6px);animation:slidein .4s forwards}
+  .row:last-child{border:0}
+  @keyframes slidein{to{opacity:1;transform:none}}
+  .row .t{font-size:13px}
+  .row .m{font:500 11px var(--mono);color:var(--dim);margin-top:3px;display:flex;gap:10px}
+  .score{font-family:var(--mono);font-weight:700}
+  .fusion{margin-top:16px;border:1px solid var(--accent);border-radius:12px;
+    background:linear-gradient(180deg,rgba(232,161,58,.08),transparent);overflow:hidden}
+  .fusion-h{padding:12px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+  .fusion-h b{color:var(--accent2)}
+  .fusion-h .formula{margin-left:auto;font:500 11px var(--mono);color:var(--muted)}
+  .frow{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;
+    opacity:0;animation:slidein .5s forwards}
+  .frow:last-child{border:0}
+  .rank{font:700 13px var(--mono);color:var(--accent);width:26px}
+  .frow .arms{margin-left:auto;display:flex;gap:5px}
+  .arm{width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font:700 9px var(--mono);color:#0e0e0d}
+  .arm.off{background:#26251f;color:var(--dim)}
+
+  /* =========== TAB 3: GATE =========== */
+  .rc-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:820px){.rc-grid{grid-template-columns:1fr}}
+  .rc{padding:18px;position:relative;overflow:hidden}
+  .rc .sev{position:absolute;top:0;left:0;bottom:0;width:4px}
+  .rc h3{margin:0 0 2px;font-size:16px;letter-spacing:-.01em}
+  .rc .comp{font:600 11px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+  .rc .hyp{color:var(--muted);font-size:13px;margin:12px 0;line-height:1.55}
+  .metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+  .metric{background:#121210;border:1px solid var(--border);border-radius:9px;padding:10px 12px}
+  .metric .l{font:600 10px var(--mono);color:var(--dim);text-transform:uppercase}
+  .metric .v{font:700 17px var(--mono);margin-top:3px}
+  .metric .v.risk{color:var(--serious)}
+  .metric .v.rec{color:var(--good)}
+  .conf{margin:12px 0}
+  .conf .bar{height:6px;border-radius:4px;background:#26251f;overflow:hidden;margin-top:5px}
+  .conf .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+  .syms .chip{background:#26251f;color:var(--muted)}
+  .actions{display:flex;gap:10px;margin-top:16px}
+  .btn{flex:1;border:0;border-radius:9px;padding:11px;font:650 13px var(--sans);cursor:pointer;transition:.15s}
+  .btn.approve{background:var(--good);color:#04180c}
+  .btn.reject{background:none;border:1px solid var(--border2);color:var(--muted)}
+  .btn.reject:hover{border-color:var(--critical);color:var(--critical)}
+  .btn:disabled{opacity:.5;cursor:default}
+  .dispatched{margin-top:16px;border:1px solid var(--good);background:rgba(63,181,107,.08);border-radius:9px;
+    padding:12px 14px;font-size:12.5px;display:none}
+  .dispatched.show{display:block;animation:fade .3s}
+  .dispatched a{color:var(--good);font-family:var(--mono);text-decoration:none;border-bottom:1px dotted}
+  .prov{font:500 11px var(--mono);color:var(--dim);margin-top:6px}
+
+  .footnote{margin-top:40px;padding:16px 18px;border:1px dashed var(--border2);border-radius:12px;
+    color:var(--dim);font-size:12.5px}
+  .footnote b{color:var(--muted)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hbar">
+    <div class="logo"><span class="dot"></span> VOC Intelligence <span style="color:var(--dim)">/</span> Root-Cause Console</div>
+    <span class="badge">Phase 3 · Mockup</span>
+    <div class="live"><span class="pulse"></span> Neo4j Aura · LIVE</div>
+  </div>
+  <nav class="tabs">
+    <button class="tab active" data-view="graph"><span class="n">1</span> 온톨로지 & 지식그래프</button>
+    <button class="tab" data-view="search"><span class="n">2</span> 하이브리드 서치</button>
+    <button class="tab" data-view="gate"><span class="n">3</span> 루트원인 승인 센터</button>
+  </nav>
+</header>
+
+<div class="wrap">
+
+  <!-- =============== TAB 1 =============== -->
+  <section class="view active" id="view-graph">
+    <div class="panel-head">
+      <h2>지식그래프 탐색 <span class="mono" style="color:var(--dim);font-size:14px">Customer → Conversation → Symptom → Component → RootCause → Action</span></h2>
+      <p>노드를 <b style="color:var(--ink)">클릭</b>하면 1-hop 이웃이 실시간 확장되고, 다시 클릭하면 2-hop까지 펼쳐집니다. <span class="mono" style="color:var(--dim)">MATCH (n)-[r*1..2]-(m)</span></p>
+    </div>
+    <div class="g-layout">
+      <div class="canvaswrap">
+        <div class="hint">click a node → expand · drag to pan</div>
+        <svg id="graph" viewBox="0 0 720 460" preserveAspectRatio="xMidYMid meet"></svg>
+        <div class="legend">
+          <span><i style="background:#e8a13a"></i>RootCause</span>
+          <span><i style="background:#5b9bd5"></i>Component</span>
+          <span><i style="background:#ec835a"></i>Symptom</span>
+          <span><i style="background:#8e6fd8"></i>Conversation</span>
+          <span><i style="background:#3fb56b"></i>Action</span>
+        </div>
+      </div>
+      <div class="card side">
+        <div class="body" id="nodeInfo">
+          <div class="placeholder-side">노드를 선택하면<br>상세 속성과 연결이 표시됩니다.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============== TAB 2 =============== -->
+  <section class="view" id="view-search">
+    <div class="panel-head">
+      <h2>3-컬럼 하이브리드 서치 파이프라인</h2>
+      <p>하나의 쿼리가 세 갈래(Dense 임베딩 · Sparse BM25 · Graph 순회)로 병렬 검색된 뒤 <b style="color:var(--ink)">RRF</b>로 융합됩니다. <span class="mono" style="color:var(--dim)">retriever.hybrid_search()</span></p>
+    </div>
+    <div class="searchbar">
+      <span class="mono" style="color:var(--dim)">›</span>
+      <input id="q" value="환불 정책이 헷갈려서 결제 취소했어요" />
+      <button class="runbtn" onclick="runSearch()">Search ⏎</button>
+    </div>
+    <div class="cols">
+      <div class="col">
+        <div class="col-h"><span class="tag" style="background:rgba(91,155,213,.2);color:var(--dense)">DENSE</span> <span style="font-size:12px">fastembed 384d</span><small id="c1t"></small></div>
+        <div id="c1"></div>
+      </div>
+      <div class="col">
+        <div class="col-h"><span class="tag" style="background:rgba(142,111,216,.2);color:var(--sparse)">SPARSE</span> <span style="font-size:12px">Lucene BM25</span><small id="c2t"></small></div>
+        <div id="c2"></div>
+      </div>
+      <div class="col">
+        <div class="col-h"><span class="tag" style="background:rgba(63,181,107,.2);color:var(--graph)">GRAPH</span> <span style="font-size:12px">1–2 hop</span><small id="c3t"></small></div>
+        <div id="c3"></div>
+      </div>
+    </div>
+    <div class="fusion">
+      <div class="fusion-h"><b>⟠ RRF Fusion</b> <span style="color:var(--muted)">reciprocal rank fusion</span>
+        <span class="formula">score = Σ 1 / (k + rankᵢ) , k=60</span></div>
+      <div id="fused"></div>
+    </div>
+  </section>
+
+  <!-- =============== TAB 3 =============== -->
+  <section class="view" id="view-gate">
+    <div class="panel-head">
+      <h2>루트원인 탐지 & 인간 승인 배포 센터</h2>
+      <p>LangGraph 에이전트가 임계값(8건 이상) 이상의 클러스터를 루트원인으로 승격시키고 <b style="color:var(--ink)">interrupt()</b>로 승인을 대기합니다. 승인 시 GitHub Issue가 멱등 발행됩니다.</p>
+    </div>
+    <div class="rc-grid" id="rcGrid"></div>
+    <div class="footnote">
+      <b>이건 목업입니다.</b> 실제 Phase 3에서는 이 화면이 FastAPI(<span class="mono">/api/agent/run · /api/agent/dispatch</span>) + React로 구동되며, 승인 상태는 Neo4j 커스텀 <span class="mono">BaseCheckpointSaver</span>에 <span class="mono">thread_id</span> 단위로 영속화되어 콜드스타트 사이에도 재개됩니다. 수치·가설·심각도는 실제 <span class="mono">out/graph_snapshot.json</span>에서 가져왔습니다.
+    </div>
+  </section>
+
+</div>
+
+<script>
+// ---------- Tabs ----------
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  document.getElementById('view-'+t.dataset.view).classList.add('active');
+  if(t.dataset.view==='search' && !window._searched){runSearch();window._searched=1;}
+});
+
+// ---------- TAB 1: interactive graph ----------
+const COLOR={RootCause:'#e8a13a',Component:'#5b9bd5',Symptom:'#ec835a',Conversation:'#8e6fd8',Action:'#3fb56b'};
+const svg=document.getElementById('graph');
+const SVGNS='http://www.w3.org/2000/svg';
+// seed graph (real data from snapshot)
+let nodes=[
+  {id:'rc',type:'RootCause',label:'support',x:360,y:230,r:26,hop:0,
+    hypothesis:'결제·환불 정책에 대한 명확한 커뮤니케이션 부재로 고객 혼란·불만이 누적됨.',
+    frequency:419,revenue:'₩6,454,800',confidence:0.88,severity:2.51},
+  {id:'comp',type:'Component',label:'support',x:200,y:150,r:20,hop:1,total:419},
+];
+let edges=[{s:'rc',t:'comp',type:'CAUSED_BY'}];
+const expandMap={
+  rc:[ // 1-hop of root cause = symptoms
+    {id:'s1',type:'Symptom',label:'trouble with payment',freq:7},
+    {id:'s2',type:'Symptom',label:'refund policy',freq:6},
+    {id:'s3',type:'Symptom',label:'customer reclamation',freq:7},
+    {id:'a1',type:'Action',label:'GH #142 published',status:'dispatched'},
+  ],
+  comp:[
+    {id:'cv1',type:'Conversation',label:'conv#8831',lang:'ko'},
+    {id:'cv2',type:'Conversation',label:'conv#8907',lang:'en'},
+  ]
+};
+let expanded={};
+function draw(){
+  svg.innerHTML='';
+  // edges
+  edges.forEach(e=>{
+    const a=nodes.find(n=>n.id===e.s),b=nodes.find(n=>n.id===e.t);
+    if(!a||!b)return;
+    const l=document.createElementNS(SVGNS,'line');
+    l.setAttribute('x1',a.x);l.setAttribute('y1',a.y);l.setAttribute('x2',b.x);l.setAttribute('y2',b.y);
+    l.setAttribute('stroke','#403e3a');l.setAttribute('stroke-width',1.4);
+    svg.appendChild(l);
+    const tx=document.createElementNS(SVGNS,'text');
+    tx.setAttribute('x',(a.x+b.x)/2);tx.setAttribute('y',(a.y+b.y)/2-4);
+    tx.setAttribute('fill','#5f5e57');tx.setAttribute('font-size','8');tx.setAttribute('font-family','monospace');
+    tx.setAttribute('text-anchor','middle');tx.textContent=e.type;svg.appendChild(tx);
+  });
+  // nodes
+  nodes.forEach(n=>{
+    const g=document.createElementNS(SVGNS,'g');
+    g.style.cursor='pointer';g.style.transition='.3s';
+    const c=document.createElementNS(SVGNS,'circle');
+    c.setAttribute('cx',n.x);c.setAttribute('cy',n.y);c.setAttribute('r',n.r||14);
+    c.setAttribute('fill',COLOR[n.type]);c.setAttribute('opacity',.92);
+    c.setAttribute('stroke',n.id===sel?'#fff':'rgba(0,0,0,.3)');c.setAttribute('stroke-width',n.id===sel?2.5:1);
+    if(n.type==='RootCause'){c.style.filter='drop-shadow(0 0 10px rgba(232,161,58,.6))';}
+    g.appendChild(c);
+    const t=document.createElementNS(SVGNS,'text');
+    t.setAttribute('x',n.x);t.setAttribute('y',n.y+(n.r||14)+12);
+    t.setAttribute('fill','#c9c8c0');t.setAttribute('font-size','10');t.setAttribute('text-anchor','middle');
+    t.setAttribute('font-family','monospace');t.textContent=n.label;g.appendChild(t);
+    g.onclick=()=>select(n);
+    svg.appendChild(g);
+  });
+}
+let sel=null;
+function select(n){
+  sel=n.id;
+  // expand
+  if(expandMap[n.id] && !expanded[n.id]){
+    expanded[n.id]=true;
+    const kids=expandMap[n.id];const N=kids.length;
+    kids.forEach((k,i)=>{
+      const ang=(i/N)*Math.PI*2 + (n.id==='rc'?0.6:2.2);
+      const dist=n.id==='rc'?135:100;
+      k.x=Math.max(40,Math.min(680,n.x+Math.cos(ang)*dist));
+      k.y=Math.max(40,Math.min(420,n.y+Math.sin(ang)*dist));
+      k.r=k.type==='Symptom'?13:k.type==='Action'?15:11;
+      nodes.push(k);edges.push({s:n.id,t:k.id,type:relLabel(n.type,k.type)});
+    });
+  }
+  draw();info(n);
+}
+function relLabel(a,b){
+  if(b==='Symptom')return'EXHIBITS';if(b==='Action')return'RESOLVED_BY';
+  if(b==='Conversation')return'ABOUT';return'REL';
+}
+function info(n){
+  const el=document.getElementById('nodeInfo');
+  let h=`<h4>${n.type}</h4><div style="font-size:17px;font-weight:650;margin:2px 0 12px">${n.label}</div>`;
+  if(n.type==='RootCause'){
+    h+=`<div class="kv"><span>frequency</span><b>${n.frequency}건</b></div>
+        <div class="kv"><span>revenue at risk</span><b style="color:var(--serious)">${n.revenue}</b></div>
+        <div class="kv"><span>severity</span><b>${n.severity}</b></div>
+        <div class="kv"><span>confidence</span><b>${n.confidence}</b></div>
+        <div style="margin-top:12px;color:var(--muted);font-size:12.5px;line-height:1.55">${n.hypothesis}</div>`;
+  } else if(n.type==='Component'){
+    h+=`<div class="kv"><span>total conversations</span><b>${n.total}</b></div>`;
+  } else if(n.type==='Symptom'){
+    h+=`<div class="kv"><span>frequency</span><b>${n.freq}</b></div>`;
+  } else if(n.type==='Action'){
+    h+=`<div class="kv"><span>status</span><b style="color:var(--good)">${n.status}</b></div>`;
+  } else if(n.type==='Conversation'){
+    h+=`<div class="kv"><span>lang</span><b>${n.lang}</b></div>`;
+  }
+  if(!expanded[n.id] && expandMap[n.id]) h+=`<div style="margin-top:14px;color:var(--dim);font-size:12px">↻ 다시 클릭 → ${expandMap[n.id].length}개 이웃 확장</div>`;
+  el.innerHTML=h;
+}
+draw();
+
+// ---------- TAB 2: search ----------
+const DATA={
+  dense:[['환불 규정 문의 후 결제 취소',0.912],['정책이 불명확해 재청구 요청',0.874],['reimbursement policy 혼동',0.841],['support 응대 불만',0.803]],
+  sparse:[['환불 정책 결제 취소',7.31],['refund policy payment',6.02],['결제 취소 환불',5.44],['cases for refund',4.10]],
+  graph:[['rc::support ▸ trouble with payment',3],['rc::support ▸ refund policy',2],['comp::support ▸ 419 convs',1]],
+};
+const FUSED=[
+  ['환불 정책이 불명확해 결제를 취소한 케이스','rc::support',[1,1,1]],
+  ['재청구·재결제 요청 (reimbursement)','sym::reimbursement',[1,1,0]],
+  ['support 응대 지연 불만','comp::support',[1,0,1]],
+  ['refund policy 문서 링크 요청','sym::refund',[0,1,1]],
+];
+function runSearch(){
+  fill('c1','c1t',DATA.dense,'dense',v=>v.toFixed(3));
+  fill('c2','c2t',DATA.sparse,'sparse',v=>v.toFixed(2));
+  fill('c3','c3t',DATA.graph,'graph',v=>v+' hop');
+  const f=document.getElementById('fused');f.innerHTML='';
+  FUSED.forEach((r,i)=>{
+    const d=document.createElement('div');d.className='frow';d.style.animationDelay=(0.5+i*0.12)+'s';
+    d.innerHTML=`<span class="rank">#${i+1}</span>
+      <div><div class="t">${r[0]}</div><div class="mono" style="color:var(--dim);font-size:11px;margin-top:2px">${r[1]}</div></div>
+      <div class="arms">
+        <span class="arm ${r[2][0]?'':'off'}" style="background:${r[2][0]?'var(--dense)':''}">D</span>
+        <span class="arm ${r[2][1]?'':'off'}" style="background:${r[2][1]?'var(--sparse)':''}">S</span>
+        <span class="arm ${r[2][2]?'':'off'}" style="background:${r[2][2]?'var(--graph)':''}">G</span>
+      </div>`;
+    f.appendChild(d);
+  });
+}
+function fill(cid,tid,rows,cls,fmt){
+  const c=document.getElementById(cid);c.innerHTML='';
+  document.getElementById(tid).textContent=rows.length+' hits';
+  const col={dense:'var(--dense)',sparse:'var(--sparse)',graph:'var(--graph)'}[cls];
+  rows.forEach((r,i)=>{
+    const d=document.createElement('div');d.className='row';d.style.animationDelay=(i*0.09)+'s';
+    d.innerHTML=`<div class="t">${r[0]}</div><div class="m"><span class="score" style="color:${col}">${fmt(r[1])}</span><span>rank ${i+1}</span></div>`;
+    c.appendChild(d);
+  });
+}
+
+// ---------- TAB 3: gate ----------
+const RCS=[
+  {id:'rc_support',comp:'SUPPORT',freq:419,revenue:'₩6,454,800',recover:'₩2,259,180',conf:0.88,sev:2.51,sevColor:'var(--serious)',
+   hyp:'결제·환불 정책에 대한 명확한 커뮤니케이션·투명성 부재로 고객 혼란과 불만이 누적됨.',
+   syms:['trouble with payment','refund policy','customer reclamation','reimbursement policy']},
+  {id:'rc_billing',comp:'BILLING',freq:112,revenue:'₩2,180,400',recover:'₩763,140',conf:0.81,sev:1.94,sevColor:'var(--warning)',
+   hyp:'구독 갱신 시점 안내 부족으로 예상치 못한 청구가 이탈·분쟁을 유발함.',
+   syms:['unexpected charge','renewal notice','cancel subscription']},
+];
+const grid=document.getElementById('rcGrid');
+RCS.forEach(rc=>{
+  const el=document.createElement('div');el.className='card rc';
+  el.innerHTML=`<div class="sev" style="background:${rc.sevColor}"></div>
+    <div class="comp">${rc.comp} · severity ${rc.sev}</div>
+    <h3>Root Cause: ${rc.id}</h3>
+    <div class="hyp">${rc.hyp}</div>
+    <div class="metrics">
+      <div class="metric"><div class="l">Conversations</div><div class="v">${rc.freq}</div></div>
+      <div class="metric"><div class="l">Confidence</div><div class="v">${rc.conf}</div></div>
+      <div class="metric"><div class="l">Revenue at risk</div><div class="v risk">${rc.revenue}</div></div>
+      <div class="metric"><div class="l">Recoverable</div><div class="v rec">${rc.recover}</div></div>
+    </div>
+    <div class="conf"><div class="l" style="font:600 10px var(--mono);color:var(--dim)">CONFIDENCE</div>
+      <div class="bar"><i style="width:${rc.conf*100}%"></i></div></div>
+    <div class="syms">${rc.syms.map(s=>`<span class="chip">${s}</span>`).join('')}</div>
+    <div class="actions">
+      <button class="btn approve" onclick="dispatch(this,'${rc.id}')">✓ 승인 & Issue 발행</button>
+      <button class="btn reject" onclick="reject(this)">✕ 반려</button>
+    </div>
+    <div class="dispatched">
+      ✓ GitHub Issue <a href="#">#${rc.id==='rc_support'?142:143} opened</a> — LangGraph <span class="mono">Command(resume=approve)</span>
+      <div class="prov">provenance: (:RootCause {${rc.id}})-[:DISPATCHED_TO]->(:Action) · thread_id 영속 완료</div>
+    </div>`;
+  grid.appendChild(el);
+});
+function dispatch(btn,id){
+  const card=btn.closest('.rc');
+  card.querySelector('.actions').style.display='none';
+  card.querySelector('.dispatched').classList.add('show');
+  card.querySelector('.sev').style.background='var(--good)';
+}
+function reject(btn){
+  const card=btn.closest('.rc');
+  card.querySelectorAll('.btn').forEach(b=>b.disabled=true);
+  btn.textContent='반려됨 — resume(reject)';btn.style.color='var(--critical)';
+}
+</script>
+</body>
+</html>

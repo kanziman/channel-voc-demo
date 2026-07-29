@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PHASE 3 — VOC Copilot (Chatbot Mockup)</title>
+<style>
+  :root{
+    --bg:#0e0e0d; --desk:#151513; --chat:#1a1a19; --panel:#141412;
+    --border:#2b2a27; --border2:#3d3b37;
+    --ink:#f5f4ef; --muted:#8a897f; --dim:#5f5e57;
+    --brand:#3b82f6; --brandink:#eaf1ff;
+    --accent:#e8a13a; --accent2:#f0c674;
+    --dense:#5b9bd5; --sparse:#8e6fd8; --graph:#3fb56b;
+    --good:#3fb56b; --serious:#ec835a; --critical:#d03b3b;
+    --mono:"SF Mono",ui-monospace,"JetBrains Mono",Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Pretendard,Roboto,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
+    font-family:var(--sans);-webkit-font-smoothing:antialiased;font-size:14px;line-height:1.55}
+  .app{display:flex;flex-direction:column;height:100vh;max-width:1240px;margin:0 auto;
+    border-left:1px solid var(--border);border-right:1px solid var(--border)}
+
+  /* header */
+  .top{display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid var(--border);
+    background:var(--desk)}
+  .brandmark{width:30px;height:30px;border-radius:9px;background:var(--brand);
+    display:grid;place-items:center;font-weight:800;color:#fff;font-size:15px}
+  .top b{letter-spacing:-.01em}
+  .top .sub{color:var(--dim);font:500 12px var(--mono)}
+  .badge{margin-left:auto;font:600 10px var(--mono);letter-spacing:.08em;color:var(--accent2);
+    border:1px solid var(--border2);border-radius:999px;padding:5px 10px;text-transform:uppercase}
+
+  /* body: chat | evidence */
+  .body{display:grid;grid-template-columns:1fr 360px;flex:1;min-height:0}
+  @media(max-width:860px){.body{grid-template-columns:1fr}.evidence{display:none}}
+
+  /* chat column */
+  .chat{display:flex;flex-direction:column;min-height:0;background:var(--chat)}
+  .stream{flex:1;overflow-y:auto;padding:22px 22px 8px}
+  .msg{display:flex;gap:11px;margin-bottom:20px;max-width:92%}
+  .msg.user{margin-left:auto;flex-direction:row-reverse}
+  .av{width:30px;height:30px;border-radius:9px;flex-shrink:0;display:grid;place-items:center;font-weight:700;font-size:13px}
+  .av.bot{background:var(--accent);color:#1a1200}
+  .av.op{background:#33322f;color:var(--muted)}
+  .bubble{padding:12px 15px;border-radius:14px;font-size:14px}
+  .user .bubble{background:var(--brand);color:var(--brandink);border-bottom-right-radius:4px}
+  .bot .bubble{background:#232320;border:1px solid var(--border);border-bottom-left-radius:4px}
+  .bubble .cite{color:var(--accent2);font-family:var(--mono);font-size:12px;cursor:pointer;border-bottom:1px dotted}
+  .money{color:var(--serious);font-weight:700;font-family:var(--mono)}
+  .oos-sug{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .oos-sug .cite{border:1px solid var(--border2);border-radius:999px;padding:6px 12px;border-bottom-style:solid}
+  .rec{color:var(--good);font-weight:700;font-family:var(--mono)}
+
+  /* retrieval trace chip */
+  .trace{display:flex;align-items:center;gap:8px;margin:2px 0 10px;font:600 11px var(--mono);color:var(--dim)}
+  .trace .arm{width:20px;height:20px;border-radius:6px;display:grid;place-items:center;font:700 9px var(--mono);
+    color:#0e0e0d;background:#26251f;transition:.3s;opacity:.4}
+  .trace .arm.on{opacity:1}
+  .typing span{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--muted);margin:0 1px;
+    animation:blink 1.2s infinite}
+  .typing span:nth-child(2){animation-delay:.2s}.typing span:nth-child(3){animation-delay:.4s}
+  @keyframes blink{0%,60%,100%{opacity:.25}30%{opacity:1}}
+
+  /* approval card in chat */
+  .approval{margin-top:12px;border:1px solid var(--accent);border-radius:12px;overflow:hidden;
+    background:rgba(232,161,58,.06)}
+  .approval .h{padding:11px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;font-weight:650}
+  .approval .h .lg{font:700 9px var(--mono);letter-spacing:.06em;background:#26251f;color:var(--accent2);padding:3px 6px;border-radius:5px}
+  .approval .b{padding:14px}
+  .arow{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--border);font-size:13px}
+  .arow:last-child{border:0}.arow b{font-family:var(--mono)}
+  .abtns{display:flex;gap:9px;padding:0 14px 14px}
+  .abtn{flex:1;border:0;border-radius:9px;padding:10px;font:650 13px var(--sans);cursor:pointer}
+  .abtn.ok{background:var(--good);color:#04180c}
+  .abtn.no{background:none;border:1px solid var(--border2);color:var(--muted)}
+  .done{padding:12px 14px;font-size:12.5px;color:var(--good);display:none}
+  .done.show{display:block}
+  .done a{color:var(--good);font-family:var(--mono);border-bottom:1px dotted;text-decoration:none}
+  .done .prov{color:var(--dim);font:500 11px var(--mono);margin-top:5px}
+
+  /* low-confidence warning */
+  .lowconf{display:flex;align-items:center;gap:8px;margin-bottom:10px;padding:8px 11px;border-radius:9px;
+    background:rgba(236,131,90,.12);border:1px solid var(--serious);color:var(--serious);
+    font:600 12px var(--mono)}
+
+  /* composer + suggestions */
+  .suggests-wrap{padding:12px 18px 0;display:flex;align-items:baseline;gap:10px}
+  .suggests-label{font:600 10px var(--mono);letter-spacing:.06em;color:var(--dim);text-transform:uppercase;flex-shrink:0}
+  .suggests{display:flex;gap:8px;flex-wrap:wrap;flex:1}
+  .sug{background:#201f1d;border:1px solid var(--border2);border-radius:999px;padding:7px 13px;
+    font-size:12.5px;color:var(--muted);cursor:pointer;transition:.15s}
+  .sug:hover{border-color:var(--accent);color:var(--ink)}
+  .composer{display:flex;gap:10px;align-items:center;padding:12px 18px 16px}
+  .composer .box{flex:1;display:flex;align-items:center;gap:8px;background:#121210;border:1px solid var(--border2);
+    border-radius:12px;padding:10px 14px}
+  .composer input{flex:1;background:none;border:0;color:var(--ink);outline:none;font-size:14px;font-family:var(--sans)}
+  .composer input::placeholder{color:var(--dim)}
+  .send{background:var(--brand);border:0;color:#fff;border-radius:10px;width:42px;height:42px;font-size:16px;cursor:pointer}
+
+  /* evidence panel */
+  .evidence{border-left:1px solid var(--border);background:var(--panel);display:flex;flex-direction:column;min-height:0}
+  .ev-h{padding:13px 16px;border-bottom:1px solid var(--border);font:600 11px var(--mono);
+    letter-spacing:.06em;color:var(--muted);text-transform:uppercase;display:flex;align-items:center;gap:8px}
+  .ev-h .expand-link{font:600 10px var(--mono);color:var(--accent2);text-decoration:none;
+    border:1px solid var(--border2);border-radius:6px;padding:3px 7px}
+  .ev-h .expand-link:hover{border-color:var(--accent)}
+  .ev-h .lv{margin-left:auto;font-size:10px;color:var(--dim)}
+  #evgraph{width:100%;height:300px;display:block}
+  .ev-legend{padding:10px 16px;display:flex;gap:12px;flex-wrap:wrap;font:600 10px var(--mono);color:var(--muted);border-top:1px solid var(--border)}
+  .ev-legend span{display:flex;align-items:center;gap:5px}
+  .ev-legend i{width:8px;height:8px;border-radius:50%}
+  .sources{padding:12px 16px;border-top:1px solid var(--border);flex:1;overflow-y:auto}
+  .sources h5{margin:0 0 8px;font:600 11px var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:.06em}
+  .src{padding:9px 11px;background:#1a1a17;border:1px solid var(--border);border-radius:9px;margin-bottom:7px;
+    font-size:12px;opacity:0;transform:translateY(5px);transition:.4s}
+  .src.in{opacity:1;transform:none}
+  .src .id{font:600 11px var(--mono);color:var(--accent2)}
+  .src .arm-tags{display:flex;gap:4px;margin-top:5px}
+  .src .at{font:700 8px var(--mono);padding:2px 5px;border-radius:4px;color:#0e0e0d}
+  .empty{padding:50px 20px;text-align:center;color:var(--dim);font-size:12.5px}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <div class="brandmark">VC</div>
+    <div>
+      <b>VOC Copilot</b> <span class="sub">· 채널톡 데스크 인라인</span>
+    </div>
+    <span class="badge">Phase 3 · Chatbot Mockup</span>
+  </div>
+
+  <div class="body">
+    <!-- CHAT -->
+    <div class="chat">
+      <div class="stream" id="stream">
+        <div class="msg bot">
+          <div class="av bot">VC</div>
+          <div class="bubble">안녕하세요 👋 지식그래프에 연결된 VOC 코파일럿입니다.<br>
+          루트원인·손실액·근거 대화를 물어보시면 <b style="color:var(--accent2)">근거 서브그래프</b>와 함께 답하고, 필요하면 이 채팅 안에서 바로 <b style="color:var(--accent2)">이슈 발행까지 승인</b>받습니다.</div>
+        </div>
+      </div>
+
+      <div class="suggests-wrap">
+        <span class="suggests-label">연관 질문</span>
+        <div class="suggests" id="suggests"></div>
+      </div>
+      <div class="composer">
+        <div class="box"><span class="mono" style="color:var(--dim)">›</span>
+          <input id="inp" placeholder="그래프에 질문하기…" onkeydown="if(event.key==='Enter')freeAsk()">
+        </div>
+        <button class="send" onclick="freeAsk()">↑</button>
+      </div>
+    </div>
+
+    <!-- EVIDENCE -->
+    <div class="evidence">
+      <div class="ev-h">근거 서브그래프 <a class="expand-link" href="phase3_mockup.html" target="_blank" title="3-탭 그래프 탐색 콘솔로 확대">⤢ 탐색</a> <span class="lv">GraphRAG live</span></div>
+      <svg id="evgraph" viewBox="0 0 360 300"></svg>
+      <div class="ev-legend">
+        <span><i style="background:#e8a13a"></i>RootCause</span>
+        <span><i style="background:#5b9bd5"></i>Component</span>
+        <span><i style="background:#ec835a"></i>Symptom</span>
+        <span><i style="background:#8e6fd8"></i>Conversation</span>
+      </div>
+      <div class="sources" id="sources">
+        <div class="empty">질문하면 검색된 근거(Dense·Sparse·Graph)가<br>여기에 순서대로 쌓입니다.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const stream=document.getElementById('stream');
+const COLOR={RootCause:'#e8a13a',Component:'#5b9bd5',Symptom:'#ec835a',Conversation:'#8e6fd8'};
+const SVGNS='http://www.w3.org/2000/svg';
+
+// scripted answers keyed to real snapshot data
+const SCRIPTS=[
+ { q:'요즘 환불 관련 불만이 왜 늘었어?',
+   arms:[1,1,1],
+   answer:()=>`<b>support</b> 컴포넌트에서 <span class="cite" data-q="rc_support 근거 대화 보여줘" data-kind="script" data-key="2">rc_support</span> 루트원인이 지배적이에요. `+
+     `총 <b>419건</b>의 대화가 여기로 클러스터됐고, 핵심은 결제·환불 정책의 커뮤니케이션·투명성 부재입니다.<br><br>`+
+     `위험 손실액 <span class="money">₩6,454,800</span>, 회수 가능 추정 <span class="rec">₩2,259,180</span> · 신뢰도 <b class="mono">0.88</b>.<br>`+
+     `주요 증상: <span class="cite" data-q="'trouble with payment' 증상 대화 보여줘" data-kind="symptom" data-key="trouble with payment">trouble with payment</span> · <span class="cite" data-q="'refund policy' 증상 대화 보여줘" data-kind="symptom" data-key="refund policy">refund policy</span> · <span class="cite" data-q="'customer reclamation' 증상 대화 보여줘" data-kind="symptom" data-key="customer reclamation">customer reclamation</span>.`,
+   sources:[['conv#8831','ko','환불 규정이 안내와 달라 결제 취소',[1,1,0]],['conv#8907','en','refund policy unclear, re-charged',[1,0,1]],['rc::rc_support','graph','1-hop: EXHIBITS 4 symptoms',[0,0,1]]],
+   graph:'support', approval:true, ctx:'s0' },
+
+ { q:'손실액 가장 큰 루트원인 3개는?',
+   arms:[1,0,1],
+   answer:()=>`손실액 기준 상위 3개예요:<br><br>`+
+     `1. <span class="cite" data-q="rc_support 근거 대화 보여줘" data-kind="script" data-key="2">rc_support</span> — <span class="money">₩6,454,800</span> · 419건 · sev 2.51<br>`+
+     `2. <span class="cite" data-q="rc_billing 자세히 보여줘" data-kind="rc" data-key="rc_billing">rc_billing</span> — <span class="money">₩2,180,400</span> · 112건 · sev 1.94<br>`+
+     `3. <span class="cite" data-q="rc_onboarding 자세히 보여줘" data-kind="rc" data-key="rc_onboarding">rc_onboarding</span> — <span class="money">₩1,020,300</span> · 61건 · sev 1.42<br><br>`+
+     `합산 위험 <span class="money">₩9.65M</span>, 회수 가능 <span class="rec">₩3.38M</span>.`,
+   sources:[['rc::rc_support','graph','₩6.45M · 419 convs',[0,0,1]],['rc::rc_billing','graph','₩2.18M · 112 convs',[0,0,1]],['rc::rc_onboarding','graph','₩1.02M · 61 convs',[0,0,1]]],
+   graph:'top3', approval:false, ctx:'s1' },
+
+ { q:'rc_support 근거 대화 보여줘',
+   arms:[1,1,0],
+   answer:()=>`rc_support로 클러스터된 419건 중 대표 근거 대화입니다. 전부 provenance 엣지로 루트원인에 연결돼 있어요:<br><br>`+
+     `· <span class="cite" data-q="conv#8831 전체 내용 보여줘" data-kind="conv" data-key="conv#8831">conv#8831</span> "환불 규정이 상담원 안내랑 달라서 그냥 취소했어요"<br>`+
+     `· <span class="cite" data-q="conv#8907 전체 내용 보여줘" data-kind="conv" data-key="conv#8907">conv#8907</span> "refund policy said 7 days but I was re-charged"<br>`+
+     `· <span class="cite" data-q="conv#9012 전체 내용 보여줘" data-kind="conv" data-key="conv#9012">conv#9012</span> "재청구 사유를 못 찾겠어요 (reimbursement)"`,
+   sources:[['conv#8831','ko','dense 0.912 · bm25 7.31',[1,1,0]],['conv#8907','en','dense 0.874 · bm25 6.02',[1,1,0]],['conv#9012','ko','dense 0.841',[1,0,0]]],
+   graph:'support', approval:false, ctx:'s2' },
+];
+
+const GRAPHS={
+  support:{nodes:[
+    {id:'rc',t:'RootCause',l:'rc_support',x:180,y:150,r:26},
+    {id:'c',t:'Component',l:'support',x:80,y:70,r:16},
+    {id:'s1',t:'Symptom',l:'payment',x:300,y:80,r:12},
+    {id:'s2',t:'Symptom',l:'refund',x:315,y:170,r:12},
+    {id:'s3',t:'Symptom',l:'reclamation',x:270,y:240,r:12},
+    {id:'v1',t:'Conversation',l:'#8831',x:90,y:230,r:10},
+  ],edges:[['c','rc'],['rc','s1'],['rc','s2'],['rc','s3'],['v1','rc']]},
+  top3:{nodes:[
+    {id:'r1',t:'RootCause',l:'support',x:110,y:90,r:26},
+    {id:'r2',t:'RootCause',l:'billing',x:250,y:150,r:19},
+    {id:'r3',t:'RootCause',l:'onboarding',x:150,y:230,r:14},
+  ],edges:[]},
+};
+
+let busy=false;
+function ask(i){ if(busy)return; run(SCRIPTS[i]); }
+function freeAsk(){ const v=document.getElementById('inp').value.trim(); if(!v||busy)return;
+  document.getElementById('inp').value=''; route(v); }
+function route(v){
+  if(/근거|대화 보여|rc_support|conv#/.test(v)) return run({...SCRIPTS[2],q:v});
+  if(/손실|top ?3|3개|세 ?개/i.test(v)) return run({...SCRIPTS[1],q:v});
+  if(/환불|결제|불만|왜 늘|증가|원인/.test(v)) return run({...SCRIPTS[0],q:v});
+  if(/배송|deliver|지연/.test(v)) return runLowConf(v); // 약한 신호 → 확신 낮음
+  return runOOS(v); // 도메인 근거 없는 질문 → 정직한 거절
+}
+
+// ---- 연관 질문 chips (항상 표시) ----
+const CHIPS={
+  start:[['요즘 환불 관련 불만이 왜 늘었어?','script','0'],['손실액 가장 큰 루트원인 3개는?','script','1'],['rc_support 근거 대화 보여줘','script','2']],
+  s0:[['rc_support 근거 대화 보여줘','script','2'],['손실액 Top3 루트원인','script','1'],['배송 지연 불만도 있어?','lowconf','']],
+  s1:[['rc_support 근거 대화','script','2'],['rc_billing 자세히','rc','rc_billing'],['rc_onboarding 자세히','rc','rc_onboarding']],
+  s2:[['conv#8831 전체 내용','conv','conv#8831'],["'refund policy' 증상 대화",'symptom','refund policy'],['환불 왜 늘었는지','script','0']],
+  conv:[['rc_support 근거 대화','script','2'],['손실액 Top3','script','1']],
+  rc:[['rc_support 근거 대화','script','2'],['손실액 Top3','script','1']],
+  symptom:[['rc_support 근거 대화','script','2'],["'trouble with payment' 증상",'symptom','trouble with payment']],
+  oos:[['손실액 Top3 루트원인','script','1'],['rc_support 근거 대화','script','2']],
+  lowconf:[['정식 루트원인만 보여줘','script','1'],['rc_support 근거 대화','script','2']],
+};
+function setChips(key){
+  document.getElementById('suggests').innerHTML=(CHIPS[key]||CHIPS.start)
+    .map(c=>`<div class="sug" data-q="${c[0]}" data-kind="${c[1]}" data-key="${c[2]}">${c[0]}</div>`).join('');
+}
+function dispatchAsk(q,kind,key){
+  if(kind==='script') run({...SCRIPTS[+key],q});
+  else if(kind==='lowconf') runLowConf(q);
+  else if(kind==='free') route(q);
+  else runMini(q,kind,key);
+}
+document.getElementById('suggests').addEventListener('click',e=>{
+  const s=e.target.closest('.sug'); if(!s||busy)return;
+  dispatchAsk(s.dataset.q,s.dataset.kind,s.dataset.key);
+});
+// cite 클릭 = 그 내용을 채팅으로 물어본 것처럼 대화 이어가기
+stream.addEventListener('click',e=>{
+  const c=e.target.closest('.cite[data-q]'); if(!c||busy)return;
+  dispatchAsk(c.dataset.q,c.dataset.kind,c.dataset.key);
+});
+setChips('start');
+
+// ---- 확신 낮음 (경계선 근거) ----
+function runLowConf(q){
+  busy=true;addUser(q);
+  const bot=botShell();lightArms(bot,[1,1,0]);
+  setTimeout(()=>fillSources([['conv#7710','ko','dense 0.41 · 약한 매칭',[1,0,0]],['sym::shipping delay','graph','freq 3 · 임계값(8) 미만',[0,0,1]]]),700);
+  setTimeout(()=>{
+    bot.querySelector('.bubble').innerHTML=
+      `<div class="lowconf">⚠ 확신 낮음 · confidence 0.42</div>`+
+      `배송 지연 신호가 <b>약하게</b> 잡히긴 해요 — 관련 대화가 <b>3건</b>뿐이라 루트원인 승격 임계값(8건)에 못 미칩니다. 아직 패턴이라 보긴 이르니 <b>참고용</b>으로만 보시고, 추측은 덧붙이지 않았어요.`;
+    setChips('lowconf');scrollDown();busy=false;
+  },1400);
+}
+
+// mini follow-up data (real snapshot-derived)
+const CONV={
+ 'conv#8831':{lang:'ko',arms:[1,1,0],text:'환불 규정이 상담원 안내랑 달라서 그냥 취소했어요. 재결제 안내도 못 받았고요.'},
+ 'conv#8907':{lang:'en',arms:[1,0,1],text:'The refund policy said 7 days but I was re-charged after cancelling.'},
+ 'conv#9012':{lang:'ko',arms:[1,0,0],text:'재청구 사유를 못 찾겠어요. reimbursement 절차가 어디 있나요?'},
+};
+const SYM={
+ 'trouble with payment':{freq:7},'refund policy':{freq:6},'customer reclamation':{freq:7},
+};
+const RCDETAIL={
+ 'rc_billing':{freq:112,rev:'₩2,180,400',rec:'₩763,140',conf:0.81,hyp:'구독 갱신 시점 안내 부족으로 예상치 못한 청구가 이탈·분쟁을 유발.'},
+ 'rc_onboarding':{freq:61,rev:'₩1,020,300',rec:'₩357,105',conf:0.76,hyp:'초기 설정 가이드 부재로 첫 주 이탈이 집중됨.'},
+};
+function botShell(){
+  const bot=document.createElement('div');bot.className='msg bot';
+  bot.innerHTML=`<div class="av bot">VC</div><div class="bubble" style="min-width:210px">
+    <div class="trace">retrieval
+      <span class="arm" data-a="0" style="background:var(--dense)">D</span>
+      <span class="arm" data-a="1" style="background:var(--sparse)">S</span>
+      <span class="arm" data-a="2" style="background:var(--graph)">G</span></div>
+    <div class="typing"><span></span><span></span><span></span></div></div>`;
+  stream.appendChild(bot);scrollDown();return bot;
+}
+function lightArms(bot,arms,step=240){ arms.forEach((on,i)=>{ if(on) setTimeout(()=>bot.querySelector(`.arm[data-a="${i}"]`).classList.add('on'),250+i*step); }); }
+function runMini(q,kind,key){
+  busy=true;addUser(q);
+  const arms = kind==='conv'?CONV[key].arms : kind==='symptom'?[1,1,0] : [0,0,1];
+  const bot=botShell();lightArms(bot,arms);
+  setTimeout(()=>{
+    bot.querySelector('.bubble').innerHTML=`<div class="trace" style="margin-bottom:10px">grounded · RRF k=60</div>`+miniBody(kind,key);
+    setChips(kind);scrollDown();busy=false;
+  },1100);
+}
+function miniBody(kind,key){
+  if(kind==='conv'){const c=CONV[key];
+    return `<div class="mono" style="color:var(--accent2);font-size:12px;margin-bottom:6px">${key} · ${c.lang}</div>
+      "${c.text}"<br><br>연결된 루트원인 <span class="cite" data-q="rc_support 근거 대화 보여줘" data-kind="script" data-key="2">rc_support</span> <span class="mono" style="color:var(--dim)">:ABOUT</span>`;}
+  if(kind==='symptom'){const s=SYM[key];
+    return `증상 <b>${key}</b>은(는) <b>${s.freq}건</b>의 대화에서 관찰됐고 <span class="cite" data-q="rc_support 근거 대화 보여줘" data-kind="script" data-key="2">rc_support</span>에 <span class="mono" style="color:var(--dim)">:EXHIBITS</span>로 연결돼요.`;}
+  if(kind==='rc'){const r=RCDETAIL[key];
+    return `<b>${key}</b> — ${r.hyp}<br><br>위험 <span class="money">${r.rev}</span> · 회수 가능 <span class="rec">${r.rec}</span> · ${r.freq}건 · 신뢰도 <b class="mono">${r.conf}</b>.`;}
+  return '근거를 찾았어요.';
+}
+function runOOS(q){
+  busy=true;addUser(q);
+  const bot=botShell();lightArms(bot,[1,1,1],210);
+  document.getElementById('sources').innerHTML='<h5>검색된 근거 · 0 hits</h5><div class="empty">RRF 임계값 이상 근거 없음<br>→ 답변 생성 차단</div>';
+  setTimeout(()=>{
+    bot.querySelector('.bubble').innerHTML=`<div class="trace" style="margin-bottom:10px">retrieved <b style="color:var(--muted)">0 hits</b> · below threshold</div>
+      그 질문은 <b>VOC 지식그래프에 근거가 없어서</b> 답할 수 없어요. 추측으로 답하지 않고 <b>근거 있는 질문만</b> 답합니다.<br><br>
+      대신 이런 걸 물어보실 수 있어요:<br>
+      <div class="oos-sug">
+        <span class="cite" data-q="손실액 가장 큰 루트원인 3개는?" data-kind="script" data-key="1">손실액 Top3 루트원인</span>
+        <span class="cite" data-q="rc_support 근거 대화 보여줘" data-kind="script" data-key="2">rc_support 근거 대화</span>
+      </div>`;
+    setChips('oos');scrollDown();busy=false;
+  },1200);
+}
+
+function addUser(q){
+  const m=document.createElement('div');m.className='msg user';
+  m.innerHTML=`<div class="av op">나</div><div class="bubble">${q}</div>`;
+  stream.appendChild(m);scrollDown();
+}
+function run(s){
+  busy=true;
+  addUser(s.q);
+  // bot thinking bubble with retrieval trace
+  const bot=document.createElement('div');bot.className='msg bot';
+  bot.innerHTML=`<div class="av bot">VC</div><div class="bubble" style="min-width:200px">
+    <div class="trace">retrieval
+      <span class="arm" data-a="0" style="background:var(--dense)">D</span>
+      <span class="arm" data-a="1" style="background:var(--sparse)">S</span>
+      <span class="arm" data-a="2" style="background:var(--graph)">G</span>
+    </div>
+    <div class="typing"><span></span><span></span><span></span></div></div>`;
+  stream.appendChild(bot);scrollDown();
+  const bubble=bot.querySelector('.bubble');
+  // light arms sequentially
+  s.arms.forEach((on,i)=>{ if(on) setTimeout(()=>bot.querySelector(`.arm[data-a="${i}"]`).classList.add('on'), 250+i*260); });
+  // draw evidence graph + sources
+  setTimeout(()=>drawEv(GRAPHS[s.graph]),500);
+  setTimeout(()=>fillSources(s.sources),700);
+  // reveal answer
+  setTimeout(()=>{
+    bubble.innerHTML=`<div class="trace" style="margin-bottom:10px">grounded on
+      ${s.arms[0]?'<span class="arm on" style="background:var(--dense)">D</span>':''}
+      ${s.arms[1]?'<span class="arm on" style="background:var(--sparse)">S</span>':''}
+      ${s.arms[2]?'<span class="arm on" style="background:var(--graph)">G</span>':''}
+      · RRF k=60</div>${s.answer()}`;
+    if(s.approval) bubble.appendChild(approvalCard());
+    setChips(s.ctx||'start'); scrollDown(); busy=false;
+  }, 1500);
+}
+
+function approvalCard(){
+  const d=document.createElement('div');d.className='approval';
+  d.innerHTML=`<div class="h"><span class="lg">LANGGRAPH · interrupt()</span> 승인 대기</div>
+    <div class="b">
+      <div class="arow"><span>액션</span><b>GitHub Issue 발행</b></div>
+      <div class="arow"><span>대상 루트원인</span><b>rc_support</b></div>
+      <div class="arow"><span>thread_id</span><b class="mono" style="color:var(--muted)">agent-7f3a…</b></div>
+      <div class="arow"><span>회수 가능 손실</span><b class="rec">₩2,259,180</b></div>
+    </div>
+    <div class="abtns">
+      <button class="abtn ok" onclick="approve(this)">✓ 승인 &amp; 발행</button>
+      <button class="abtn no" onclick="rejectA(this)">✕ 반려</button>
+    </div>
+    <div class="done"></div>`;
+  return d;
+}
+function approve(btn){
+  const card=btn.closest('.approval');
+  card.querySelector('.abtns').style.display='none';
+  const done=card.querySelector('.done');done.classList.add('show');
+  done.innerHTML=`✓ GitHub Issue <a href="#">#142 opened</a> — <span class="mono">Command(resume=approve)</span>로 재개됨.
+    <div class="prov">provenance: (:RootCause {rc_support})-[:DISPATCHED_TO]->(:Action) · Neo4j checkpoint 영속 완료</div>`;
+}
+function rejectA(btn){
+  const card=btn.closest('.approval');card.querySelectorAll('.abtn').forEach(b=>b.disabled=true);
+  card.querySelector('.abtns').style.opacity=.5;
+  const done=card.querySelector('.done');done.classList.add('show');
+  done.style.color='var(--muted)';
+  done.innerHTML=`반려됨 — <span class="mono">Command(resume=reject)</span>. 그래프 상태는 보존됩니다.`;
+}
+
+// evidence graph
+function drawEv(g){
+  const svg=document.getElementById('evgraph');svg.innerHTML='';
+  g.edges.forEach(e=>{
+    const a=g.nodes.find(n=>n.id===e[0]),b=g.nodes.find(n=>n.id===e[1]);
+    const l=document.createElementNS(SVGNS,'line');
+    l.setAttribute('x1',a.x);l.setAttribute('y1',a.y);l.setAttribute('x2',b.x);l.setAttribute('y2',b.y);
+    l.setAttribute('stroke','#3d3b37');l.setAttribute('stroke-width',1.4);
+    l.setAttribute('stroke-dasharray','200');l.setAttribute('stroke-dashoffset','200');
+    l.style.animation='none';svg.appendChild(l);
+    l.animate([{strokeDashoffset:200},{strokeDashoffset:0}],{duration:500,fill:'forwards'});
+  });
+  g.nodes.forEach((n,i)=>{
+    const grp=document.createElementNS(SVGNS,'g');grp.style.opacity=0;
+    const c=document.createElementNS(SVGNS,'circle');
+    c.setAttribute('cx',n.x);c.setAttribute('cy',n.y);c.setAttribute('r',n.r);
+    c.setAttribute('fill',COLOR[n.t]);c.setAttribute('opacity',.92);
+    c.setAttribute('stroke','rgba(0,0,0,.35)');c.setAttribute('stroke-width',1);
+    if(n.t==='RootCause')c.style.filter='drop-shadow(0 0 9px rgba(232,161,58,.6))';
+    grp.appendChild(c);
+    const t=document.createElementNS(SVGNS,'text');
+    t.setAttribute('x',n.x);t.setAttribute('y',n.y+n.r+11);t.setAttribute('fill','#c9c8c0');
+    t.setAttribute('font-size','9');t.setAttribute('text-anchor','middle');t.setAttribute('font-family','monospace');
+    t.textContent=n.l;grp.appendChild(t);
+    svg.appendChild(grp);
+    grp.animate([{opacity:0,transform:'scale(.6)'},{opacity:1,transform:'scale(1)'}],
+      {duration:350,delay:i*90,fill:'forwards',easing:'ease-out'});
+  });
+}
+function fillSources(list){
+  const box=document.getElementById('sources');
+  box.innerHTML='<h5>검색된 근거 · '+list.length+' hits</h5>';
+  const armCol={D:'var(--dense)',S:'var(--sparse)',G:'var(--graph)'};
+  list.forEach((s,i)=>{
+    const d=document.createElement('div');d.className='src';
+    const tags=['D','S','G'].map((a,j)=>s[3][j]?`<span class="at" style="background:${armCol[a]}">${a}</span>`:'').join('');
+    d.innerHTML=`<div class="id">${s[0]} <span style="color:var(--dim)">· ${s[1]}</span></div>
+      <div style="color:var(--muted);margin-top:3px">${s[2]}</div>
+      <div class="arm-tags">${tags}</div>`;
+    box.appendChild(d);setTimeout(()=>d.classList.add('in'),120+i*130);
+  });
+}
+function scrollDown(){requestAnimationFrame(()=>stream.scrollTop=stream.scrollHeight);}
+</script>
+</body>
+</html>

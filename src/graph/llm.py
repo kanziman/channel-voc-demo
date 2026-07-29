@@ -17,6 +17,7 @@ from typing import Iterable
 from langchain_community.cache import SQLiteCache
 from langchain_core.globals import set_llm_cache
 from langchain_openai import ChatOpenAI
+from pydantic import SecretStr
 
 from . import config
 
@@ -31,7 +32,7 @@ def chat(model: str | None = None, temperature: float = 0.0) -> ChatOpenAI:
     config.require("OPENROUTER_API_KEY")
     return ChatOpenAI(
         base_url=config.OPENROUTER_BASE_URL,
-        api_key=config.OPENROUTER_API_KEY,
+        api_key=SecretStr(config.OPENROUTER_API_KEY),
         model=model or config.CHAT_MODEL,
         temperature=temperature,
         timeout=60,
@@ -51,9 +52,32 @@ def _embedder():
     return TextEmbedding(model_name=config.EMBED_MODEL)
 
 
+def _embed_local(texts: list[str]) -> list[list[float]]:
+    """Local fastembed ONNX (dev + graph loading)."""
+    return [vec.tolist() for vec in _embedder().embed(texts)]
+
+
+def _embed_api(texts: list[str]) -> list[list[float]]:
+    """Hosted OpenAI-compatible embeddings — SAME bge-small model @384d, so the
+    Neo4j vector index stays valid. Keeps the ONNX runtime out of the serverless
+    bundle (§B deploy). Imports lazily so the api path never pulls fastembed."""
+    from langchain_openai import OpenAIEmbeddings
+
+    client = OpenAIEmbeddings(
+        base_url=config.EMBED_API_URL,
+        api_key=SecretStr(config.EMBED_API_KEY),
+        model=config.EMBED_MODEL,
+    )
+    return client.embed_documents(texts)
+
+
 def embed(texts: Iterable[str]) -> list[list[float]]:
-    """Local ONNX embeddings → list of 384-d vectors (order-preserving)."""
-    return [vec.tolist() for vec in _embedder().embed(list(texts))]
+    """384-d embeddings (order-preserving). Backend per config.EMBED_BACKEND:
+    'local' fastembed | 'api' hosted OpenAI-compatible bge-small."""
+    items = list(texts)
+    if config.EMBED_BACKEND == "api":
+        return _embed_api(items)
+    return _embed_local(items)
 
 
 def embed_one(text: str) -> list[float]:
