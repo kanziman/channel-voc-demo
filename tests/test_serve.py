@@ -125,9 +125,13 @@ def test_should_run_uvicorn_with_search_port_when_main(monkeypatch):
     assert calls["port"] == config.SEARCH_PORT
 
 
-# ── [경계] vercel.json stays a static build (entrypoint 변경 불필요) ───────
-def test_should_keep_vercel_static_build_without_python_function():
+# ── [경계] vercel.json ships the frontend + Python function (#53, 방안 B) ───────
+def test_should_deploy_frontend_and_python_function():
     cfg = json.loads((Path(__file__).resolve().parents[1] / "vercel.json").read_text())
-    assert cfg.get("framework") is None
-    assert cfg.get("outputDirectory") == "public"
-    assert "functions" not in cfg and "builds" not in cfg
+    # Vite frontend build is the static output…
+    assert cfg["outputDirectory"] == "web/dist"
+    # …and the FastAPI app ships as a serverless Python function with src/ bundled…
+    assert "api/index.py" in cfg["functions"]
+    assert "src/" in cfg["functions"]["api/index.py"]["includeFiles"]
+    # …with /api/* routed to it.
+    assert any(r["source"].startswith("/api/") for r in cfg["rewrites"])

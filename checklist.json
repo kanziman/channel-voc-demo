@@ -393,11 +393,11 @@
           "relatedPaths": [
             "pyproject.toml"
           ],
-          "status": "pending",
+          "status": "completed",
           "dependsOn": [
             "backend-roundtrip-tests"
           ],
-          "description": "[확정] Vercel Python 함수. 기존 [tool.vercel].entrypoint(serve.py) 재사용, 프론트(Vite/React)도 동일 Vercel 프로젝트에 배포. 콜드스타트 간 thread_id 재개는 Neo4j checkpointer가 보장."
+          "description": "[확정] Vercel Python 함수. 프론트(Vite/React)도 동일 Vercel 프로젝트에 배포. 콜드스타트 간 thread_id 재개는 Neo4j checkpointer가 보장. [구현완료·GH#53·방안 B] fastembed(ONNX ~130MB)가 250MB 서버리스 한계 초과 → llm.embed를 EMBED_BACKEND(local|api)로 분기, api=호스티드 OpenAI호환 bge-small@384d(동일 dim→재색인 불필요·번들에서 fastembed 제외). api/index.py(ASGI 재노출)+requirements.txt(경량)+vercel.json(web/ 빌드+out/ 유지+/api/*→함수)+CACHE_DIR env-override(/tmp)+docs/dev/deploy.md 런북. tests/test_llm.py 5 pass·mypy 0·전체 91 pass. 실제 배포/임베딩 호출은 사용자 Vercel 인프라(env 설정 완료)에서 검증."
         },
         {
           "id": "regression-static",

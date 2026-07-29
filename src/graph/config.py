@@ -15,7 +15,9 @@ from dotenv import load_dotenv
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DATA_DIR = REPO_ROOT / "data"
 OUT_DIR = REPO_ROOT / "out"
-CACHE_DIR = REPO_ROOT / "data" / "graph_cache"     # deterministic extraction/embedding cache
+# Deterministic extraction/embedding cache. Env-overridable so serverless hosts
+# (read-only FS except /tmp) can point it at a writable dir, e.g. VOC_CACHE_DIR=/tmp/graph_cache.
+CACHE_DIR = Path(os.getenv("VOC_CACHE_DIR", str(REPO_ROOT / "data" / "graph_cache")))
 CONVERSATIONS = DATA_DIR / "conversations.jsonl"    # 1,200 labelled convs (PHASE1 ingest)
 HELDOUT = DATA_DIR / "heldout.jsonl"                # 600 held-out for benchmark
 
@@ -30,6 +32,13 @@ CHAT_MODEL = os.getenv("VOC_CHAT_MODEL", "openai/gpt-4o-mini")
 # Embeddings → local fastembed ONNX (no key, deterministic, offline after 1st pull).
 EMBED_MODEL = os.getenv("VOC_EMBED_MODEL", "BAAI/bge-small-en-v1.5")
 EMBED_DIM = 384
+# Serverless deploy (§B): "api" swaps local fastembed for a hosted OpenAI-compatible
+# embeddings endpoint serving the SAME bge-small model @384d — the Neo4j vector
+# index stays valid (no re-embed) and the ONNX runtime leaves the serverless
+# bundle. "local" (default) keeps fastembed for dev + graph loading.
+EMBED_BACKEND = os.getenv("VOC_EMBED_BACKEND", "local")
+EMBED_API_URL = os.getenv("VOC_EMBED_API_URL", "")   # OpenAI-compatible /v1 base (e.g. Deepinfra)
+EMBED_API_KEY = os.getenv("VOC_EMBED_API_KEY", "")
 
 # ── Neo4j ────────────────────────────────────────────────────────────────────
 NEO4J_URI = os.getenv("NEO4J_URI", "")

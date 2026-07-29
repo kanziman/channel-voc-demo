@@ -1,6 +1,13 @@
 {
-  "framework": null,
-  "buildCommand": "mkdir -p public && cp out/dashboard.html public/index.html && cp -r out/* public/",
-  "outputDirectory": "public",
+  "buildCommand": "cd web && npm install && npm run build && cp -r ../out/* dist/ || true",
+  "outputDirectory": "web/dist",
+  "functions": {
+    "api/index.py": {
+      "includeFiles": "src/**"
+    }
+  },
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/index" }
+  ],
   "cleanUrls": true
 }
