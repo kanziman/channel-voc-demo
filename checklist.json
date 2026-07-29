@@ -334,6 +334,30 @@
             "router-agent"
           ],
           "description": "rootcause.compute() 집계 카드(₩위험/회수/frequency/confidence) + 일괄 승인/반려. [구현완료·PR#43 리뷰중, GH#34] agent.ts(getRootcauses/postRun)+RootCauseGateTab(카드 mono, severityBucket 토큰 dot, 개별 승인 decision:[key]·개별/일괄 반려 run→dispatch, 디스패치 실패 에러·재클릭 가드). 100/100 통과, AC 6/6(ac-verifier 결함·갭 보강)."
+        },
+        {
+          "id": "frontend-shell",
+          "feature": "App 배선 (챗봇 셸 + 3-탭 콘솔 통합)",
+          "path": "web/src/App.tsx",
+          "relatedPaths": [
+            "web/src/App.test.tsx",
+            "web/src/components/ChatStream.tsx",
+            "web/src/components/EvidencePanel.tsx",
+            "web/src/components/ApprovalCard.tsx",
+            "web/src/console/OntologyGraphTab.tsx",
+            "web/src/console/HybridSearchTab.tsx",
+            "web/src/console/RootCauseGateTab.tsx"
+          ],
+          "status": "pending",
+          "dependsOn": [
+            "evidence-panel",
+            "approval-gate-inchat",
+            "retrieval-gate-ui",
+            "console-ontology-tab",
+            "console-search-tab",
+            "console-gate-tab"
+          ],
+          "description": "지금까지 독립 검증만 된 #26–34 컴포넌트를 App 셸에 배선. copilot 뷰(ChatStream+EvidencePanel+ApprovalCard)↔console 3-탭 뷰 전환, 최신 chat 답변 subgraph_ref→EvidencePanel·interrupt_payload→ApprovalCard, App 소유 thread_id, EvidencePanel ⤢탐색→콘솔 진입. GH#44."
         }
       ]
     },
