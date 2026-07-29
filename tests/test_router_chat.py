@@ -135,3 +135,60 @@ def test_related_questions_always_non_empty(client, monkeypatch, results, top):
     _patch_rootcause(monkeypatch, lambda write=False: [])
     b = client.post("/api/chat", json={"message": "x"}).json()
     assert b["related_questions"]
+
+
+# ── issue #46: answer/low_confidence prose embeds graph ids for cite drilldown ─
+import re
+
+
+def _promoted_rc(**over):
+    rc = {"key": "rc_billing", "component": "billing", "frequency": 240,
+          "revenue_at_risk_krw": 5982900, "projected_recoverable_krw": 2094015,
+          "confidence_avg": 0.89, "hypothesis": "billing misconfig",
+          "sample_conv_ids": ["conv_00001", "conv_00002", "conv_00003", "conv_00004"]}
+    rc.update(over)
+    return rc
+
+
+def test_should_embed_rc_key_in_answer_prose_when_promoted(client, monkeypatch):
+    _patch_search(monkeypatch, lambda message, k: _ev(
+        [_result("conv_00001", ["dense", "sparse", "graph"])], "billing"))
+    _patch_rootcause(monkeypatch, lambda write=False: [_promoted_rc()])
+    b = client.post("/api/chat", json={"message": "billing 문제 근거"}).json()
+    assert b["gate"] == "answer"
+    assert "rc_billing" in b["answer"]  # cite-able rootcause id surfaced in prose
+
+
+def test_should_embed_sample_conv_ids_in_answer_prose_when_promoted(client, monkeypatch):
+    _patch_search(monkeypatch, lambda message, k: _ev(
+        [_result("conv_00001", ["dense"])], "billing"))
+    _patch_rootcause(monkeypatch, lambda write=False: [_promoted_rc()])
+    b = client.post("/api/chat", json={"message": "x"}).json()
+    assert "conv_00001" in b["answer"]
+
+
+def test_should_embed_at_most_three_conv_ids_in_answer_prose(client, monkeypatch):
+    _patch_search(monkeypatch, lambda message, k: _ev(
+        [_result("conv_00001", ["dense"])], "billing"))
+    _patch_rootcause(monkeypatch, lambda write=False: [_promoted_rc()])  # 4 sample ids
+    b = client.post("/api/chat", json={"message": "x"}).json()
+    convs = re.findall(r"conv_\d+", b["answer"])
+    assert 1 <= len(convs) <= 3
+
+
+def test_should_embed_conv_ids_in_low_confidence_answer(client, monkeypatch):
+    _patch_search(monkeypatch, lambda message, k: _ev(
+        [_result("conv_00007", ["dense", "sparse"])], "orders"))
+    _patch_rootcause(monkeypatch, lambda write=False: [])  # below promotion threshold
+    b = client.post("/api/chat", json={"message": "약한 근거"}).json()
+    assert b["gate"] == "low_confidence"
+    assert "conv_00007" in b["answer"]
+    assert "⚠" in b["answer"] and "임계값" in b["answer"]  # markers preserved
+    assert "None" not in b["answer"]
+
+
+def test_should_not_embed_ids_in_refuse_answer(client, monkeypatch):
+    _patch_search(monkeypatch, lambda message, k: _ev([]))
+    b = client.post("/api/chat", json={"message": "무관"}).json()
+    assert b["gate"] == "refuse"
+    assert not re.search(r"(?:rc|conv|sym|comp|act|cust)_[A-Za-z0-9]+", b["answer"])

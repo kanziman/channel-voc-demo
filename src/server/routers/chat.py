@@ -40,6 +40,13 @@ def _related_chips(component: str | None) -> list[str]:
     ]
 
 
+def _cite_tail(conv_ids: list[str], limit: int = 3) -> str:
+    """Trailing '근거 대화: <ids>.' clause so answer prose carries cite-drilldown
+    ids (#46) — the frontend CITE_RE linkifies conv_xxxxx / rc_xxx tokens."""
+    ids = conv_ids[:limit]
+    return f" 근거 대화: {', '.join(ids)}." if ids else ""
+
+
 class ChatRequest(BaseModel):
     message: str
     thread_id: str | None = None
@@ -83,9 +90,10 @@ def chat(req: ChatRequest) -> ChatResponse:
     if rc is None:
         threshold = config.ROOTCAUSE_MIN_CONVERSATIONS
         conf = round(min(len(results) / threshold, 1.0) * 0.5, 2)  # capped < 0.5
+        # Surface the evidence conv ids so the hedged answer is still traversable.
         return ChatResponse(
             answer=(f"⚠ 확신이 낮아요 — {comp_label}근거 {len(results)}건은 루트원인 승격 "
-                    f"임계값({threshold}건) 미만이라 참고용으로만 보세요."),
+                    f"임계값({threshold}건) 미만이라 참고용으로만 보세요.{_cite_tail(conv_ids)}"),
             arms=arms_union,
             subgraph_ref={"top_component": top_component, "conversation_ids": conv_ids},
             confidence=conf, gate="low_confidence",
@@ -94,10 +102,13 @@ def chat(req: ChatRequest) -> ChatResponse:
         )
 
     # ── answer: promoted root cause → compose from real ₩ / frequency values ──
+    # Embed the rootcause key + representative conv ids so the operator can drill
+    # into the graph via cite-drilldown (#46); both match the frontend CITE_RE.
     answer = (
-        f"'{top_component}' 관련 근거 {rc['frequency']}건. "
+        f"루트원인 {rc['key']} — '{top_component}' 관련 근거 {rc['frequency']}건. "
         f"위험 ₩{rc['revenue_at_risk_krw']:,}, 회수가능 ₩{rc['projected_recoverable_krw']:,}, "
-        f"confidence {rc['confidence_avg']}. 가설: {rc['hypothesis']}"
+        f"confidence {rc['confidence_avg']}. 가설: {rc['hypothesis']}."
+        f"{_cite_tail(rc.get('sample_conv_ids') or conv_ids)}"
     )
     return ChatResponse(
         answer=answer, arms=arms_union,

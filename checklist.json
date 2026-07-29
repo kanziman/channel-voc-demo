@@ -230,7 +230,7 @@
           "dependsOn": [
             "chat-stream"
           ],
-          "description": "답변 속 루트원인·증상·대화 ID 클릭 = 후속 질문 자동 입력(그래프를 대화로 순회). 예: Top3의 rc_support 클릭 → 'rc_support 근거 대화 보여줘'. [구현완료·PR#36 리뷰중, GH#27] CiteText(CITE_RE rc/sym/conv/comp/act/cust, \\b 오탐방지)+runQuestion 공유 파이프라인, tracing 중 cite disabled. 26/26 통과, AC 5/5(ac-verifier). ⚠갭: 라이브 chat 답변 prose에 ID 미노출→실발화는 백엔드(#14계열) 후속 필요, 회귀 테스트로 고정."
+          "description": "답변 속 루트원인·증상·대화 ID 클릭 = 후속 질문 자동 입력(그래프를 대화로 순회). 예: Top3의 rc_support 클릭 → 'rc_support 근거 대화 보여줘'. [구현완료·PR#36 리뷰중, GH#27] CiteText(CITE_RE rc/sym/conv/comp/act/cust, \\b 오탐방지)+runQuestion 공유 파이프라인, tracing 중 cite disabled. 26/26 통과, AC 5/5(ac-verifier). ⚠갭: 라이브 chat 답변 prose에 ID 미노출→실발화는 백엔드(#14계열) 후속 필요, 회귀 테스트로 고정. [갭 해소·GH#46] chat.py answer/low_confidence prose에 rc_key·conv_id(_cite_tail) 삽입→CiteText 실발화, 프론트 'live gap' 회귀 테스트를 'ID 발화' 검증으로 교체."
         },
         {
           "id": "chat-related-chips",
