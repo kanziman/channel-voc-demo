@@ -65,13 +65,16 @@ describe("CiteText", () => {
     expect(onCite).not.toHaveBeenCalled();
   });
 
-  it("should produce no cite links for the current backend answer prose (documents the live gap)", () => {
-    // Mirrors src/server/routers/chat.py:97-101 — the composed answer carries no
-    // id tokens (ids live in subgraph_ref). If the backend later embeds ids in
-    // the prose, this test breaks and signals the doc/scope note needs revisiting.
+  it("should linkify the rc key and conv ids the backend now embeds in answer prose (#46)", () => {
+    // Mirrors src/server/routers/chat.py answer branch — the composed answer now
+    // carries the rootcause key + sample conversation ids so the operator can
+    // traverse the graph as a conversation (the live gap this documented is closed).
     const liveAnswer =
-      "'auth' 관련 근거 12건. 위험 ₩6,484,500, 회수가능 ₩3,306,600, confidence 0.82. 가설: 게이트웨이 타임아웃";
+      "루트원인 rc_auth — 'auth' 관련 근거 12건. 위험 ₩6,484,500, 회수가능 ₩3,306,600, " +
+      "confidence 0.82. 가설: 게이트웨이 타임아웃. 근거 대화: conv_00001, conv_00002.";
     render(<CiteText text={liveAnswer} onCite={vi.fn()} />);
-    expect(screen.queryByRole("button")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "rc_auth" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "conv_00001" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "conv_00002" })).toBeInTheDocument();
   });
 });
