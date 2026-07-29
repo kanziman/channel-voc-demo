@@ -192,3 +192,49 @@ def test_should_not_embed_ids_in_refuse_answer(client, monkeypatch):
     b = client.post("/api/chat", json={"message": "무관"}).json()
     assert b["gate"] == "refuse"
     assert not re.search(r"(?:rc|conv|sym|comp|act|cust)_[A-Za-z0-9]+", b["answer"])
+
+
+# ── issue #49: per-hit evidence (id/arms/score) exposed for EvidencePanel ──────
+def test_should_expose_per_hit_evidence_when_promoted(client, monkeypatch):
+    _patch_search(monkeypatch, lambda message, k: _ev(
+        [_result("conv_00001", ["dense", "graph"]),
+         _result("conv_00002", ["sparse"])], "billing"))
+    _patch_rootcause(monkeypatch, lambda write=False: [_promoted_rc()])
+    b = client.post("/api/chat", json={"message": "billing 근거"}).json()
+    assert b["gate"] == "answer"
+    ev = b["evidence"]
+    assert [e["id"] for e in ev] == ["conv_00001", "conv_00002"]
+    assert ev[0]["arms"] == ["dense", "graph"]
+    assert ev[0]["score"] == 0.04  # mirrors result rrf verbatim
+
+
+def test_should_expose_evidence_for_low_confidence_results(client, monkeypatch):
+    _patch_search(monkeypatch, lambda message, k: _ev(
+        [_result("conv_00007", ["dense", "sparse"])], "orders"))
+    _patch_rootcause(monkeypatch, lambda write=False: [])  # not promoted
+    b = client.post("/api/chat", json={"message": "약한 근거"}).json()
+    assert b["gate"] == "low_confidence"
+    assert [e["id"] for e in b["evidence"]] == ["conv_00007"]
+
+
+def test_evidence_ids_equal_results_ids_no_requery(client, monkeypatch):
+    calls = {"n": 0}
+
+    def _search(message, k):
+        calls["n"] += 1
+        return _ev([_result("conv_00001", ["dense"]),
+                    _result("conv_00002", ["graph"])], "billing")
+
+    _patch_search(monkeypatch, _search)
+    _patch_rootcause(monkeypatch, lambda write=False: [_promoted_rc()])
+    b = client.post("/api/chat", json={"message": "x"}).json()
+    # single retrieval drives both the answer and the evidence panel
+    assert calls["n"] == 1
+    assert [e["id"] for e in b["evidence"]] == ["conv_00001", "conv_00002"]
+
+
+def test_should_expose_empty_evidence_on_refuse(client, monkeypatch):
+    _patch_search(monkeypatch, lambda message, k: _ev([]))
+    b = client.post("/api/chat", json={"message": "무관"}).json()
+    assert b["gate"] == "refuse"
+    assert b["evidence"] == []

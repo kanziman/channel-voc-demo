@@ -23,6 +23,7 @@ function makeChat(over: Partial<ChatResponse> = {}): ChatResponse {
     gate: "answer",
     related_questions: ["ORDER 근거 대화 보여줘"],
     interrupt_payload: null,
+    evidence: [],
     ...over,
   };
 }
@@ -173,5 +174,33 @@ describe("App", () => {
     render(<App deps={deps} armStepMs={0} initialView="console" initialTab="gate" />);
 
     await waitFor(() => expect(screen.getByTestId("rc-error")).toBeInTheDocument());
+  });
+
+  it("should feed the latest response evidence into the evidence panel (#49)", async () => {
+    const deps = makeDeps({
+      postChatFn: vi.fn().mockResolvedValue(
+        makeChat({
+          evidence: [
+            { id: "conv_00001", arms: ["dense", "graph"], score: 0.04 },
+            { id: "conv_00002", arms: ["sparse"], score: 0.03 },
+          ],
+        }),
+      ),
+    });
+    render(<App deps={deps} armStepMs={0} />);
+
+    ask("ORDER 실패 원인?");
+
+    await waitFor(() => expect(screen.getAllByTestId("evidence-item")).toHaveLength(2));
+    expect(screen.getByText("conv_00001")).toBeInTheDocument();
+  });
+
+  it("should render no evidence items when the response evidence is empty (#49)", async () => {
+    render(<App deps={makeDeps()} armStepMs={0} />);
+
+    ask("ORDER 실패 원인?");
+
+    await waitFor(() => expect(screen.getByTestId("cytoscape")).toBeInTheDocument());
+    expect(screen.queryAllByTestId("evidence-item")).toHaveLength(0);
   });
 });

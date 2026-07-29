@@ -12,6 +12,7 @@ function makeResponse(over: Partial<ChatResponse> = {}): ChatResponse {
     gate: "answer",
     related_questions: ["ORDER 근거 대화 보여줘"],
     interrupt_payload: null,
+    evidence: [],
     ...over,
   };
 }
