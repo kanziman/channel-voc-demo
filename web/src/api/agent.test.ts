@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { postDispatch } from "./agent";
+import { getRootcauses, postDispatch, postRun } from "./agent";
 import type { DispatchResponse } from "./agent";
 
 const OK: DispatchResponse = {
@@ -73,5 +73,46 @@ describe("postDispatch", () => {
     await expect(
       postDispatch({ thread_id: "agent-abc123", decision: "approve" }),
     ).rejects.toThrow(/Internal Server Error/);
+  });
+});
+
+describe("getRootcauses", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  it("should GET /api/agent/rootcauses and return {rootcauses}", async () => {
+    const body = { rootcauses: [{ key: "rc_billing", component: "billing" }] };
+    const fetchMock = mockFetch(body);
+    vi.stubGlobal("fetch", fetchMock);
+
+    const res = await getRootcauses();
+
+    const [url, opts] = fetchMock.mock.calls[0];
+    expect(String(url)).toMatch(/\/api\/agent\/rootcauses$/);
+    expect(opts?.method ?? "GET").toBe("GET");
+    expect(res).toEqual(body);
+  });
+});
+
+describe("postRun", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  it("should POST /api/agent/run with {live} and return the run response", async () => {
+    const body = { thread_id: "agent-xyz", interrupt: { message: "m", candidates: [] }, dispatched: null };
+    const fetchMock = mockFetch(body);
+    vi.stubGlobal("fetch", fetchMock);
+
+    const res = await postRun(true);
+
+    const [url, opts] = fetchMock.mock.calls[0];
+    expect(String(url)).toMatch(/\/api\/agent\/run$/);
+    expect(opts.method).toBe("POST");
+    expect(JSON.parse(opts.body)).toEqual({ live: true });
+    expect(res).toEqual(body);
   });
 });
