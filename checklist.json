@@ -303,11 +303,11 @@
           "relatedPaths": [
             "web/src/api/graph.ts"
           ],
-          "status": "pending",
+          "status": "completed",
           "dependsOn": [
             "evidence-panel"
           ],
-          "description": "Customer→Conversation→Symptom→Component→RootCause→Action. 노드 클릭 1/2-hop 확장(신규 Cypher §0-9)."
+          "description": "Customer→Conversation→Symptom→Component→RootCause→Action. 노드 클릭 1/2-hop 확장(신규 Cypher §0-9). [구현완료·PR#41 리뷰중, GH#32] OntologyGraphTab(toElements/graphStylesheet #29 재사용, 캔버스 cy.on('tap','node')+노드목록 동일 expand, mergeSubgraph dedupe 병합, hops 1/2, 에러상태). 78/78 통과, AC 5/5(ac-verifier)."
         },
         {
           "id": "console-search-tab",
