@@ -246,4 +246,68 @@ describe("ChatStream", () => {
     fireEvent.click(screen.getByRole("button", { name: "rc_ORDER" }));
     expect(postChatFn).toHaveBeenCalledTimes(2);
   });
+
+  it("should show seed chips before any question (cold-start non-empty)", () => {
+    const postChatFn = vi.fn().mockResolvedValue(makeResponse());
+    render(<ChatStream postChatFn={postChatFn} armStepMs={0} />);
+
+    expect(screen.getByRole("button", { name: "손실 Top3 루트원인은?" })).toBeInTheDocument();
+  });
+
+  it("should replace chips with response.related_questions after an answer", async () => {
+    const postChatFn = vi
+      .fn()
+      .mockResolvedValue(makeResponse({ related_questions: ["auth 위험액은 얼마야?"] }));
+    render(<ChatStream postChatFn={postChatFn} armStepMs={0} />);
+
+    ask("auth 실패 원인?");
+
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: "auth 위험액은 얼마야?" })).toBeInTheDocument(),
+    );
+    // seed chip replaced
+    expect(screen.queryByRole("button", { name: "손실 Top3 루트원인은?" })).not.toBeInTheDocument();
+  });
+
+  it("should auto-submit the question when a related chip is clicked", async () => {
+    const postChatFn = vi.fn().mockResolvedValue(makeResponse());
+    render(<ChatStream postChatFn={postChatFn} armStepMs={0} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "가장 심각한 컴포넌트는?" }));
+
+    await waitFor(() => expect(postChatFn).toHaveBeenCalledTimes(1));
+    expect(postChatFn).toHaveBeenCalledWith(
+      expect.objectContaining({ message: "가장 심각한 컴포넌트는?" }),
+    );
+    // let the answer land so seed chips are replaced, leaving only the user turn
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: "ORDER 근거 대화 보여줘" })).toBeInTheDocument(),
+    );
+    const userTurn = screen.getByText("가장 심각한 컴포넌트는?");
+    expect(userTurn.closest("[data-role='user']")).not.toBeNull();
+  });
+
+  it("should disable related chips and ignore clicks while a question is in flight", async () => {
+    const postChatFn = vi.fn().mockReturnValueOnce(new Promise<ChatResponse>(() => {}));
+    render(<ChatStream postChatFn={postChatFn} armStepMs={0} />);
+
+    ask("무언가 질문"); // enters tracing; pending promise keeps it there
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: "손실 Top3 루트원인은?" })).toBeDisabled(),
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "손실 Top3 루트원인은?" }));
+    expect(postChatFn).toHaveBeenCalledTimes(1); // chip click ignored
+  });
+
+  it("should fall back to seed chips when response.related_questions is empty", async () => {
+    const postChatFn = vi.fn().mockResolvedValue(makeResponse({ related_questions: [] }));
+    render(<ChatStream postChatFn={postChatFn} armStepMs={0} />);
+
+    ask("auth 실패 원인?");
+
+    await waitFor(() => expect(screen.getByTestId("answer")).toBeInTheDocument());
+    // empty related_questions → UI must not go empty
+    expect(screen.getByRole("button", { name: "손실 Top3 루트원인은?" })).toBeInTheDocument();
+  });
 });

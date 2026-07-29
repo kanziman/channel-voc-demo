@@ -6,6 +6,7 @@ import { useState } from "react";
 import { postChat } from "../api/chat";
 import type { ChatRequest, ChatResponse } from "../api/chat";
 import { CiteText, citeQuestion } from "./CiteLink";
+import { RelatedChips } from "./RelatedChips";
 
 export const ARM_ORDER = ["D", "S", "G"] as const;
 type ArmKey = (typeof ARM_ORDER)[number];
@@ -48,6 +49,7 @@ export function ChatStream({ postChatFn = postChat, armStepMs = 220 }: ChatStrea
   const [input, setInput] = useState("");
   const [litCount, setLitCount] = useState(0);
   const [tracing, setTracing] = useState(false);
+  const [relatedQuestions, setRelatedQuestions] = useState<string[]>([]);
 
   // Shared submit pipeline for both typed questions and cite-drilldown clicks.
   function runQuestion(raw: string) {
@@ -84,6 +86,7 @@ export function ChatStream({ postChatFn = postChat, armStepMs = 220 }: ChatStrea
             confidence: resp.confidence,
           },
         ]);
+        setRelatedQuestions(resp.related_questions);
       })
       .catch((err: unknown) => {
         const message = err instanceof Error ? err.message : String(err);
@@ -179,6 +182,12 @@ export function ChatStream({ postChatFn = postChat, armStepMs = 220 }: ChatStrea
           </div>
         )}
       </div>
+
+      <RelatedChips
+        questions={relatedQuestions}
+        onPick={runQuestion}
+        disabled={tracing}
+      />
 
       <form className="composer" onSubmit={handleSubmit}>
         <div className="box">
