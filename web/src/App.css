@@ -134,6 +134,32 @@
   color: var(--accent-hi);
 }
 
+/* Related-question chips (RelatedChips) — always-visible follow-up suggestions. */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-xs);
+  padding: 0 var(--sp-md);
+}
+.chip {
+  border: 1px solid var(--border-2);
+  background: var(--surface-3);
+  color: var(--ink);
+  border-radius: var(--r-pill);
+  padding: 6px 12px;
+  font-size: var(--fs-sm);
+  font-family: var(--font-sans);
+  cursor: pointer;
+}
+.chip:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent-hi);
+}
+.chip:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
 .composer {
   padding: var(--sp-sm) var(--sp-md) var(--sp-md);
 }

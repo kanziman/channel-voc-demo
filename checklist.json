@@ -239,11 +239,11 @@
           "relatedPaths": [
             "web/src/components/ChatStream.tsx"
           ],
-          "status": "pending",
+          "status": "completed",
           "dependsOn": [
             "chat-stream"
           ],
-          "description": "답변마다 맥락형 후속 질문 chips 갱신. 첫 화면부터 시드 chips 제공(비어있지 않게)."
+          "description": "답변마다 맥락형 후속 질문 chips 갱신. 첫 화면부터 시드 chips 제공(비어있지 않게). [구현완료·PR#37 리뷰중, GH#28] RelatedChips(SEED_CHIPS 백엔드 정합, 빈 배열→시드 폴백)+ChatStream relatedQuestions 갱신·chip 클릭 runQuestion·tracing disabled. 35/35 통과, AC 4/4(ac-verifier)."
         },
         {
           "id": "evidence-panel",
