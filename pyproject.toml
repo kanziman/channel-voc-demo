@@ -34,6 +34,10 @@ dev = [
     "pytest-cov>=5.0",        # 커버리지 (tdd-green 8단계)
     "mypy>=1.11",             # security-review 타입 검사
     "pip-audit>=2.7",         # security-review 취약점 스캔
+    "nbformat>=5.10.4",
+    "jupyter-client>=8.9.1",
+    "ipykernel>=7.3.0",
+    "nbconvert>=7.17.1",
 ]
 
 [tool.pytest.ini_options]
