@@ -134,6 +134,31 @@
   color: var(--accent-hi);
 }
 
+/* Retrieval-trust gate (ConfidenceGate) — refuse / low-confidence banners. */
+.gate {
+  padding: var(--sp-xs) var(--sp-md);
+  border-top: 1px solid var(--border);
+}
+.gate-banner {
+  font-size: var(--fs-sm);
+  margin-bottom: var(--sp-xs);
+  padding: 6px 10px;
+  border-radius: var(--r-md);
+}
+.gate-refuse .gate-banner {
+  color: var(--critical);
+  border: 1px solid var(--critical);
+  background: var(--surface-3);
+}
+.gate-low .gate-banner {
+  color: var(--warning);
+  border: 1px solid var(--warning);
+  background: var(--surface-3);
+}
+.gate-conf {
+  color: var(--ink);
+}
+
 /* Related-question chips (RelatedChips) — always-visible follow-up suggestions. */
 .chips {
   display: flex;

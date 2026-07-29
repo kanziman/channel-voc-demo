@@ -310,4 +310,77 @@ describe("ChatStream", () => {
     // empty related_questions → UI must not go empty
     expect(screen.getByRole("button", { name: "손실 Top3 루트원인은?" })).toBeInTheDocument();
   });
+
+  it("should show the confidence gate banner after a refuse answer", async () => {
+    const postChatFn = vi.fn().mockResolvedValue(
+      makeResponse({
+        answer: "근거가 없어 답할 수 없어요.",
+        arms: [],
+        gate: "refuse",
+        confidence: 0,
+      }),
+    );
+    render(<ChatStream postChatFn={postChatFn} armStepMs={0} />);
+
+    ask("우주의 끝은?");
+
+    await waitFor(() =>
+      expect(screen.getByTestId("confidence-gate")).toHaveAttribute("data-gate", "refuse"),
+    );
+  });
+
+  it("should show the ⚠ low-confidence banner with confidence after a low_confidence answer", async () => {
+    const postChatFn = vi.fn().mockResolvedValue(
+      makeResponse({
+        answer: "⚠ 확신이 낮아요 …",
+        gate: "low_confidence",
+        confidence: 0.32,
+      }),
+    );
+    render(<ChatStream postChatFn={postChatFn} armStepMs={0} />);
+
+    ask("auth 실패 원인?");
+
+    await waitFor(() =>
+      expect(screen.getByTestId("confidence-gate")).toHaveAttribute("data-gate", "low_confidence"),
+    );
+    expect(screen.getByText("0.32")).toHaveClass("mono");
+  });
+
+  it("should not show a gate banner after a normal (answer) response", async () => {
+    const postChatFn = vi.fn().mockResolvedValue(makeResponse({ gate: "answer" }));
+    render(<ChatStream postChatFn={postChatFn} armStepMs={0} />);
+
+    ask("auth 실패 원인?");
+
+    await waitFor(() => expect(screen.getByTestId("answer")).toBeInTheDocument());
+    expect(screen.queryByTestId("confidence-gate")).not.toBeInTheDocument();
+  });
+
+  it("should replace (not duplicate) the composer chips when a gate banner is shown", async () => {
+    const postChatFn = vi.fn().mockResolvedValue(
+      makeResponse({ gate: "refuse", arms: [], confidence: 0, related_questions: ["auth 위험액은?"] }),
+    );
+    render(<ChatStream postChatFn={postChatFn} armStepMs={0} />);
+
+    ask("우주의 끝은?");
+
+    await waitFor(() => expect(screen.getByTestId("confidence-gate")).toBeInTheDocument());
+    // exactly one chip with that text — the gate replaces the composer chips, no dup
+    expect(screen.getAllByRole("button", { name: "auth 위험액은?" })).toHaveLength(1);
+  });
+
+  it("should clear the gate banner once a later answer turn arrives", async () => {
+    const postChatFn = vi
+      .fn()
+      .mockResolvedValueOnce(makeResponse({ gate: "refuse", arms: [], confidence: 0 }))
+      .mockResolvedValueOnce(makeResponse({ gate: "answer" }));
+    render(<ChatStream postChatFn={postChatFn} armStepMs={0} />);
+
+    ask("우주의 끝은?");
+    await waitFor(() => expect(screen.getByTestId("confidence-gate")).toBeInTheDocument());
+
+    ask("auth 실패 원인?");
+    await waitFor(() => expect(screen.queryByTestId("confidence-gate")).not.toBeInTheDocument());
+  });
 });
