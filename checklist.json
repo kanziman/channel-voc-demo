@@ -407,11 +407,11 @@
             "src/graph/run.py",
             "out/benchmark.json"
           ],
-          "status": "pending",
+          "status": "completed",
           "dependsOn": [
             "serve-fastapi-migration"
           ],
-          "description": "python -m src.graph.run 전체 파이프라인 + out/dashboard.html(벤치마크 서사)이 Phase3 이후에도 유지되는지. 정적 배포 링크 유지."
+          "description": "python -m src.graph.run 전체 파이프라인 + out/dashboard.html(벤치마크 서사)이 Phase3 이후에도 유지되는지. 정적 배포 링크 유지. [검증완료·GH#18·스모크] python -m src.graph.run --no-open 7단계 25s 정상(schema→graph 멱등스킵 1200conv→benchmark→루트원인 8건→agent interrupt 자동재개 dry-run→export 80node/84edge→dashboard 151KB). benchmark.json 무결성 OK(600 held-out, sklearn κ0.97/llm κ0.86, verdict 유지). ₩24,854,500 위험액 재현. 산출물은 timestamp/latency/순서 churn만이라 revert(정본 유지). EMBED_BACKEND=local 경로도 정상(#53 회귀 없음)."
         }
       ]
     }
