@@ -204,6 +204,11 @@
   text-transform: uppercase;
   color: var(--muted);
 }
+.ev-canvas {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
 .ev-placeholder {
   flex: 1;
   display: grid;
@@ -212,6 +217,63 @@
   font-size: var(--fs-sm);
   padding: var(--sp-xl);
   text-align: center;
+}
+/* Evidence list — each retrieval hit with its D/S/G arm tags + score. */
+.ev-list {
+  list-style: none;
+  margin: 0;
+  padding: var(--sp-sm) var(--sp-md);
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-xs);
+}
+.ev-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-sm);
+  font-size: var(--fs-sm);
+}
+.ev-id {
+  color: var(--muted);
+  flex: 1;
+}
+.ev-arms {
+  display: flex;
+  gap: 3px;
+}
+.ev-arm {
+  width: 16px;
+  height: 16px;
+  border-radius: var(--r-sm);
+  display: grid;
+  place-items: center;
+  font-size: 9px;
+  font-weight: var(--fw-bold);
+  color: var(--bg);
+}
+.ev-arm[data-arm="D"] { background: var(--arm-dense); }
+.ev-arm[data-arm="S"] { background: var(--arm-sparse); }
+.ev-arm[data-arm="G"] { background: var(--arm-graph); }
+.ev-score {
+  color: var(--ink);
+}
+.ev-actions {
+  padding: 10px var(--sp-md);
+  border-top: 1px solid var(--border);
+}
+.ev-explore {
+  width: 100%;
+  border: 1px solid var(--border-2);
+  background: var(--surface-3);
+  color: var(--accent-hi);
+  border-radius: var(--r-md);
+  padding: 8px;
+  font-size: var(--fs-sm);
+  cursor: pointer;
+}
+.ev-explore:hover {
+  border-color: var(--accent);
 }
 .ev-legend {
   display: flex;
