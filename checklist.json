@@ -281,12 +281,12 @@
           "relatedPaths": [
             "web/src/components/ChatStream.tsx"
           ],
-          "status": "pending",
+          "status": "completed",
           "dependsOn": [
             "chat-stream",
             "router-chat"
           ],
-          "description": "0 hits→정직한 거절+답가능 질문 chips. 경계선→⚠확신낮음 배너(confidence)+헤지답변+재질문 chips. §5-6."
+          "description": "0 hits→정직한 거절+답가능 질문 chips. 경계선→⚠확신낮음 배너(confidence)+헤지답변+재질문 chips. §5-6. [구현완료·PR#40 리뷰중, GH#31] ConfidenceGate(gate 3분기: answer→null/refuse critical 배너/low_confidence warning ⚠+confidence mono, RelatedChips 재사용 시드 폴백)+ChatStream 통합(gated 턴 composer chips 대체·중복 없음, answer 전환 시 배너 소멸). 71/71 통과, AC 6/6(ac-verifier)."
         }
       ]
     },
