@@ -534,7 +534,10 @@
   color: var(--ink);
 }
 .ac-target {
-  color: var(--arm-dense);
+  /* Approval target is a Component → use the Component-node color (== --arm-dense
+     #5b9bd5), not the D/S/G arm token, so the arm visual language isn't reused
+     for a non-arm meaning (#30 QA flag, user-approved). */
+  color: var(--node-component);
 }
 .ac-risk {
   color: var(--serious);
