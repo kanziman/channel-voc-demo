@@ -10,6 +10,7 @@ const OK_BODY: ChatResponse = {
   gate: "answer",
   related_questions: ["ORDER 근거 대화 보여줘"],
   interrupt_payload: null,
+  evidence: [{ id: "conv_00001", arms: ["dense", "graph"], score: 0.04 }],
 };
 
 function mockFetch(body: unknown, init?: { ok?: boolean; status?: number }) {

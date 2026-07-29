@@ -101,6 +101,7 @@ export function App({
             />
             <EvidencePanel
               subgraphRef={subgraphRef}
+              evidence={latest?.evidence ?? []}
               onExplore={() => setView("console")}
               getSubgraphFn={deps.getSubgraphFn}
             />

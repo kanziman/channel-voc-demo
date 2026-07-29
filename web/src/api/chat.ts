@@ -15,6 +15,8 @@ export interface ChatResponse {
   gate: "refuse" | "low_confidence" | "answer";
   related_questions: string[];
   interrupt_payload: Record<string, unknown> | null;
+  // Per-hit retrieval evidence for the panel (#49) — structurally an EvidenceItem[].
+  evidence: { id: string; arms: string[]; score: number }[];
 }
 
 const API_BASE = (import.meta.env.VITE_API_BASE as string | undefined) ?? "";

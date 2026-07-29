@@ -47,6 +47,13 @@ def _cite_tail(conv_ids: list[str], limit: int = 3) -> str:
     return f" 근거 대화: {', '.join(ids)}." if ids else ""
 
 
+def _evidence(results: list[dict]) -> list[dict]:
+    """Per-hit retrieval evidence for the panel (#49) — the same hybrid_search
+    results the answer was gated on (no re-query). id + D/S/G arms + rrf score."""
+    return [{"id": r["id"], "arms": r.get("arms", []), "score": r.get("rrf", 0)}
+            for r in results]
+
+
 class ChatRequest(BaseModel):
     message: str
     thread_id: str | None = None
@@ -60,6 +67,7 @@ class ChatResponse(BaseModel):
     gate: str
     related_questions: list[str]
     interrupt_payload: dict | None = None
+    evidence: list[dict] = []  # per-hit {id, arms, score} for the evidence panel (#49)
 
 
 @router.post("/chat", response_model=ChatResponse)
@@ -99,6 +107,7 @@ def chat(req: ChatRequest) -> ChatResponse:
             confidence=conf, gate="low_confidence",
             related_questions=_related_chips(top_component),
             interrupt_payload=None,
+            evidence=_evidence(results),
         )
 
     # ── answer: promoted root cause → compose from real ₩ / frequency values ──
@@ -117,4 +126,5 @@ def chat(req: ChatRequest) -> ChatResponse:
         confidence=rc["confidence_avg"], gate="answer",
         related_questions=_related_chips(top_component),
         interrupt_payload=None,
+        evidence=_evidence(results),
     )
