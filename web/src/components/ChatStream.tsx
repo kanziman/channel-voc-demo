@@ -34,6 +34,10 @@ interface StreamMessage {
 export interface ChatStreamProps {
   postChatFn?: (req: ChatRequest) => Promise<ChatResponse>;
   armStepMs?: number;
+  // App wire-up (#44): fires once with the landed response so the shell can drive
+  // the evidence panel / approval card; threadId is sent with every chat request.
+  onResponse?: (resp: ChatResponse) => void;
+  threadId?: string;
 }
 
 let _seq = 0;
@@ -45,7 +49,12 @@ const armStyle = (key: ArmKey, active: boolean): React.CSSProperties => ({
   color: active ? "var(--bg)" : "var(--dim)",
 });
 
-export function ChatStream({ postChatFn = postChat, armStepMs = 220 }: ChatStreamProps) {
+export function ChatStream({
+  postChatFn = postChat,
+  armStepMs = 220,
+  onResponse,
+  threadId,
+}: ChatStreamProps) {
   const [messages, setMessages] = useState<StreamMessage[]>([]);
   const [input, setInput] = useState("");
   const [litCount, setLitCount] = useState(0);
@@ -74,7 +83,7 @@ export function ChatStream({ postChatFn = postChat, armStepMs = 220 }: ChatStrea
     });
 
     // The answer appears only after BOTH the arms finish AND the response lands.
-    Promise.all([postChatFn({ message: q }), armsDone])
+    Promise.all([postChatFn({ message: q, thread_id: threadId }), armsDone])
       .then(([resp]) => {
         setMessages((m) => [
           ...m,
@@ -88,6 +97,7 @@ export function ChatStream({ postChatFn = postChat, armStepMs = 220 }: ChatStrea
           },
         ]);
         setRelatedQuestions(resp.related_questions);
+        onResponse?.(resp);
       })
       .catch((err: unknown) => {
         const message = err instanceof Error ? err.message : String(err);
