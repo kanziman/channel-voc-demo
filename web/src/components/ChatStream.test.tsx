@@ -383,4 +383,40 @@ describe("ChatStream", () => {
     ask("auth 실패 원인?");
     await waitFor(() => expect(screen.queryByTestId("confidence-gate")).not.toBeInTheDocument());
   });
+
+  // ── App wire-up seams (#44) ────────────────────────────────────────────────
+  it("should send thread_id in the chat request when threadId prop is set", async () => {
+    const postChatFn = vi.fn().mockResolvedValue(makeResponse());
+    render(<ChatStream postChatFn={postChatFn} armStepMs={0} threadId="t_abc123" />);
+
+    ask("ORDER 실패 원인?");
+
+    await waitFor(() => expect(postChatFn).toHaveBeenCalledTimes(1));
+    expect(postChatFn).toHaveBeenCalledWith(
+      expect.objectContaining({ message: "ORDER 실패 원인?", thread_id: "t_abc123" }),
+    );
+  });
+
+  it("should invoke onResponse with the landed response when an answer arrives", async () => {
+    const resp = makeResponse({ subgraph_ref: { top_component: "ORDER", root_cause_key: "rc_ORDER" } });
+    const postChatFn = vi.fn().mockResolvedValue(resp);
+    const onResponse = vi.fn();
+    render(<ChatStream postChatFn={postChatFn} armStepMs={0} onResponse={onResponse} />);
+
+    ask("ORDER 실패 원인?");
+
+    await waitFor(() => expect(onResponse).toHaveBeenCalledTimes(1));
+    expect(onResponse).toHaveBeenCalledWith(resp);
+  });
+
+  it("should not invoke onResponse when postChatFn rejects", async () => {
+    const postChatFn = vi.fn().mockRejectedValue(new Error("boom"));
+    const onResponse = vi.fn();
+    render(<ChatStream postChatFn={postChatFn} armStepMs={0} onResponse={onResponse} />);
+
+    ask("ORDER 실패 원인?");
+
+    await waitFor(() => expect(screen.getByText(/오류|boom/i)).toBeInTheDocument());
+    expect(onResponse).not.toHaveBeenCalled();
+  });
 });
