@@ -131,39 +131,30 @@ flowchart LR
 ```mermaid
 erDiagram
     Customer ||--o{ Conversation : INITIATED
-    Conversation ||--o{ Symptom : EXPRESSES
-    Symptom }|--|| Component : INDICATES
-    Component ||--o| RootCause : EVOLVED_INTO
+    Conversation ||--o{ Symptom : MENTIONS
+    Symptom }|--|| Component : IMPLICATES
+    Component ||--o| RootCause : CAUSED_BY
     Action }|--o{ Conversation : EVIDENCES
 
     Customer {
-        string customer_id PK
+        string id PK
     }
     Conversation {
-        string conv_id PK
-        string text
+        string id PK
         float32_array embedding_384d
-        string intent
-        float confidence
     }
     Symptom {
         string name PK
     }
     Component {
         string name PK
-        int frequency
     }
     RootCause {
-        string component PK
-        int frequency
+        string key PK
         int total_risk_krw
-        float avg_severity
-        string hypothesis
     }
     Action {
         string issue_id PK
-        string title
-        string status
     }
 ```
 
