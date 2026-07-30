@@ -1,0 +1,8 @@
+# Vercel's Python builder prioritizes pyproject.toml/uv.lock over requirements.txt
+# when both are present (see vercel/vercel#14041). Our pyproject.toml/uv.lock pull
+# in the full local-dev dependency set (fastembed+onnxruntime, scikit-learn, pandas,
+# joblib) which blows past the 500MB serverless function bundle limit. Hiding them
+# from the Vercel build forces it to fall back to the trimmed requirements.txt
+# (§B deploy, docs/dev/deploy.md).
+pyproject.toml
+uv.lock
