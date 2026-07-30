@@ -44,10 +44,29 @@ describe("CiteText", () => {
     expect(screen.getByRole("button", { name: "conv_00012" })).toBeInTheDocument();
   });
 
-  it("should render plain text unchanged when no id token is present", () => {
+  it("should render prose unchanged (no button) when no id token is present", () => {
     render(<CiteText text="위험 ₩6,484,500, 회수가능 ₩3,306,600" onCite={vi.fn()} />);
-    expect(screen.getByText("위험 ₩6,484,500, 회수가능 ₩3,306,600")).toBeInTheDocument();
     expect(screen.queryByRole("button")).not.toBeInTheDocument();
+  });
+
+  it("should mono-wrap ₩ amounts as plain (non-clickable) spans", () => {
+    render(<CiteText text="위험 ₩6,484,500, 회수가능 ₩3,306,600" onCite={vi.fn()} />);
+    const amounts = screen.getAllByText(/^₩[\d,]+$/);
+    expect(amounts).toHaveLength(2);
+    expect(amounts[0]).toHaveClass("mono");
+    expect(amounts[0].tagName).toBe("SPAN");
+  });
+
+  it("should mono-wrap only the numeric value after a score label, not the label word", () => {
+    const { container } = render(<CiteText text="confidence 0.82 입니다" onCite={vi.fn()} />);
+    const monoEls = container.querySelectorAll(".mono");
+    expect(monoEls).toHaveLength(1);
+    expect(monoEls[0]).toHaveTextContent("0.82");
+  });
+
+  it("should not mono-wrap plain counts or ordinals (49건, Top3)", () => {
+    render(<CiteText text="근거 49건, Top3 손실" onCite={vi.fn()} />);
+    expect(document.querySelector(".mono")).not.toBeInTheDocument();
   });
 
   it("should not linkify a word with underscore but no known prefix (foo_bar, order_id)", () => {

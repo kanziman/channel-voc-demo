@@ -120,7 +120,7 @@ describe("ChatStream", () => {
     await act(async () => {
       vi.advanceTimersByTime(100);
     });
-    expect(screen.queryByText(answer)).not.toBeInTheDocument();
+    expect(screen.queryByTestId("answer")).not.toBeInTheDocument();
 
     // Complete the arm sweep and flush the resolved response.
     await act(async () => {
@@ -130,7 +130,10 @@ describe("ChatStream", () => {
       await Promise.resolve();
     });
 
-    expect(screen.getByText(answer)).toBeInTheDocument();
+    // ₩ amounts render as mono spans (DESIGN.md), so the answer text is split
+    // across nodes — assert on the container's full text content, not a single
+    // text node.
+    expect(screen.getByTestId("answer")).toHaveTextContent(answer);
   });
 
   it("should render response.answer verbatim (exact ₩ text, no client-side regeneration)", async () => {
@@ -152,9 +155,9 @@ describe("ChatStream", () => {
 
     ask("ORDER 실패 원인?");
 
-    await waitFor(() => expect(screen.getByText(/위험 ₩/)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByTestId("answer")).toBeInTheDocument());
 
-    const bot = screen.getByText(/위험 ₩/).closest("[data-role='bot']")!;
+    const bot = screen.getByTestId("answer").closest("[data-role='bot']")!;
     const armsInBot = within(bot as HTMLElement).getAllByTestId(/arm-hit-/);
     const hitMap: Record<string, string> = {};
     armsInBot.forEach((el) => {
