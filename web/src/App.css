@@ -91,6 +91,19 @@
   gap: 11px;
   max-width: 92%;
 }
+/* Operator turn (DESIGN.md: brand/blue = 운영자, distinct from bot's amber) —
+   right-aligned, brand fill, tail on the bottom-right corner (bot's is
+   bottom-left). */
+.msg.user {
+  margin-left: auto;
+  justify-content: flex-end;
+}
+.msg.user .bubble {
+  background: var(--brand);
+  color: var(--brand-ink);
+  border-bottom-left-radius: var(--r-xl);
+  border-bottom-right-radius: var(--r-tail);
+}
 .av {
   width: 30px;
   height: 30px;
