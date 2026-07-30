@@ -5,6 +5,11 @@
 # src/graph/llm.py's `if not os.getenv("VERCEL")` guard, which skips that import
 # on Vercel). Also excludes numpy: it's only used by src/pipeline/analyze.py
 # (PHASE1 local pipeline), which the serverless API surface never imports.
+# Also excludes langchain-neo4j: unused (src/graph/db.py deliberately talks to
+# Neo4j via the raw driver, not langchain's Neo4jGraph — see its module
+# docstring), yet langchain-neo4j pulls in neo4j-graphrag, which transitively
+# drags numpy + scipy (~190MB alone) + pypdf + fsspec back in even after
+# removing them above. This one line was the actual bulk of the overage.
 # Query embeddings come from a hosted OpenAI-compatible endpoint
 # (VOC_EMBED_BACKEND=api), so no fastembed is needed at request time. `uv`/pyproject
 # remain the source of truth for local dev; this file is only read by Vercel's
@@ -13,7 +18,6 @@ fastapi>=0.115
 pydantic>=2
 langchain>=0.3.30
 langchain-openai>=0.3.35
-langchain-neo4j>=0.3.0
 langgraph>=0.2.0
 neo4j>=5.28.0
 python-dotenv>=1.0.0
