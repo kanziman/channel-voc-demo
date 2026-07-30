@@ -17,7 +17,28 @@
 
 > 🔗 **[https://channel-voc-demo.vercel.app](https://channel-voc-demo.vercel.app)**
 > 
-> *위 링크를 클릭하면 별도 환경 구축 없이 브라우저에서 6단계 엔진 프로세스와 하이브리드 검색을 직접 테스트해 보실 수 있습니다.*
+> *아래 화면 스크린샷을 좌우로 스크롤하여 코파일럿 및 3가지 탐색 콘솔(온톨로지 그래프, 하이브리드 서치, 루트원인 승인)을 확인하실 수 있습니다.*
+
+<div align="center">
+  <div style="display: flex; overflow-x: auto; gap: 14px; padding: 12px 0; scroll-snap-type: x mandatory;">
+    <a href="https://channel-voc-demo.vercel.app/" target="_blank" style="flex: 0 0 88%; min-width: 320px; scroll-snap-align: start; text-decoration: none;">
+      <img src="docs/copilot_preview.png" alt="1. VOC Copilot - 대화형 코파일럿 & 근거 서브그래프" style="width: 100%; border-radius: 8px; border: 1px solid #30363d;" />
+      <p align="center"><b>1. VOC Copilot (대화형 코파일럿 & 근거 서브그래프)</b></p>
+    </a>
+    <a href="https://channel-voc-demo.vercel.app/" target="_blank" style="flex: 0 0 88%; min-width: 320px; scroll-snap-align: start; text-decoration: none;">
+      <img src="docs/ontology_preview.png" alt="2. 온톨로지 지식그래프 콘솔" style="width: 100%; border-radius: 8px; border: 1px solid #30363d;" />
+      <p align="center"><b>2. 온톨로지 지식그래프 콘솔 (1-hop / 2-hop 지식 탐색)</b></p>
+    </a>
+    <a href="https://channel-voc-demo.vercel.app/" target="_blank" style="flex: 0 0 88%; min-width: 320px; scroll-snap-align: start; text-decoration: none;">
+      <img src="docs/search_preview.png" alt="3. 하이브리드 서치 콘솔" style="width: 100%; border-radius: 8px; border: 1px solid #30363d;" />
+      <p align="center"><b>3. 하이브리드 서치 콘솔 (Dense + Sparse + Graph → RRF 융합)</b></p>
+    </a>
+    <a href="https://channel-voc-demo.vercel.app/" target="_blank" style="flex: 0 0 88%; min-width: 320px; scroll-snap-align: start; text-decoration: none;">
+      <img src="docs/gate_preview.png" alt="4. 루트원인 승인 콘솔" style="width: 100%; border-radius: 8px; border: 1px solid #30363d;" />
+      <p align="center"><b>4. 루트원인 승인 콘솔 (LangGraph HITL 에이전트 게이트)</b></p>
+    </a>
+  </div>
+</div>
 
 ---
 
