@@ -73,13 +73,20 @@ export function OntologyGraphTab({
   expandRef.current = expand;
 
   // Bind cytoscape canvas node taps to the same expand handler as the node list.
+  // Also (re-)run the layout here: react-cytoscapejs only re-lays-out elements
+  // when its `layout` *prop* changes, not when `elements` changes, so merging
+  // in newly expanded nodes would otherwise leave them stacked at (0,0) on top
+  // of everything else. This callback fires on every mount + update, so it
+  // covers both the initial snapshot and every expand().
   function bindCy(cyInstance: unknown) {
     const cy = cyInstance as {
       on: (ev: string, sel: string, h: (evt: { target: { id: () => string } }) => void) => void;
       off?: (ev: string, sel: string) => void;
+      layout?: (opts: Record<string, unknown>) => { run: () => void };
     };
     cy.off?.("tap", "node");
     cy.on("tap", "node", (evt) => expandRef.current(evt.target.id()));
+    cy.layout?.({ name: "cose", animate: false, padding: 24 })?.run();
   }
 
   const glow = cssVar("--node-rootcause", "#e8a13a");

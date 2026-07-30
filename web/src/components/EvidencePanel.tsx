@@ -165,6 +165,7 @@ export function EvidencePanel({
             elements={toElements(graph)}
             stylesheet={graphStylesheet(glow)}
             style={{ width: "100%", height: "100%" }}
+            layout={{ name: "cose", animate: false, padding: 24 }}
           />
         ) : (
           <div className="ev-placeholder mono">서브그래프 불러오는 중…</div>
