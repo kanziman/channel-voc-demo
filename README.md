@@ -262,14 +262,11 @@ flowchart LR
 - **인라인 코파일럿**: 질문을 던지면 답변 전에 Dense → Sparse → Graph 세 검색 arm이 순서대로 점등해 3중 하이브리드 과정을 그대로 보여주고, 답변과 함께 근거 서브그래프·승인 카드가 붙습니다. 루트원인 답변의 승인 카드에서 승인하면 `/api/agent/dispatch`로 이어져 GitHub Issue가 발행됩니다.
 - **3-탭 근거 콘솔** (근거 패널의 "⤢ 탐색"으로 진입): ① 온톨로지 그래프 — 노드 클릭으로 1/2-hop 확장, ② 하이브리드 서치 — Dense · Sparse(BM25) · Graph 3컬럼과 RRF 융합을 나란히, ③ 루트원인 승인 센터 — 카드별·일괄 승인/반려.
 
-### 4. 배포 (Vercel & Cloudflare)
+### 4. 프로덕션 배포 (Vercel & Cloudflare Workers AI)
 
-- **Vercel**: 프론트엔드(Vite React 정적 자산)와 백엔드 FastAPI(서버리스 Python Serverless Function)를 통합 구성. 로컬 `fastembed`(ONNX 런타임)를 동일 모델·동일 384d의 서빙 인프라 엔드포인트로 전환하여 서버리스 번들 크기 경량화 완료.
-- **Cloudflare (Pages, Workers AI & Tunnel)**:
-  - **Cloudflare Workers AI**: 로컬 Heavy ONNX 의존성 없이 에지 단에서 **`@cf/baai/bge-small-en` (384d)** 모델을 직접 호출하여 실시간 검색 쿼리 임베딩 벡터를 초고속 생성 (Neo4j Vector Index와 100% 차원 호환).
-  - **Cloudflare Pages**: 글로벌 Edge CDN 네트워크를 활용하여 Vite React 프론트엔드 콘솔을 초고속 글로벌 분산 배포.
-  - **Cloudflare Tunnel (`cloudflared`)**: 로컬 Neo4j 인스턴스 및 FastAPI 백엔드 포트(`:8756`)를 제로트러스트 보안 터널로 외부에 노출하여 에지 단에 실시간 연동.
-  - 환경 변수 및 상세 배포 절차는 [`docs/dev/deploy.md`](docs/dev/deploy.md) 참고.
+- **Vercel (메인 프로덕션 라이브 배포)**: 프론트엔드(Vite React 정적 앱)와 백엔드 API(FastAPI 서버리스 Python Function)를 [`vercel.json`](vercel.json)으로 통합 구성하여 [`channel-voc-demo.vercel.app`](https://channel-voc-demo.vercel.app)에 라이브 배포 완료.
+- **Cloudflare Workers AI (에지 쿼리 임베딩 연동)**: 무거운 로컬 ONNX 런타임(FastEmbed) 의존성을 서버리스 번들에서 제거하고, 에지 단에서 **`@cf/baai/bge-small-en` (384d)** 인프라 모델을 직접 호출하여 Neo4j 벡터 인덱스와 100% 차원 호환되는 쿼리 임베딩을 초고속 생성.
+- 상세 배포 구조 및 환경 변수는 [`docs/dev/deploy.md`](docs/dev/deploy.md) 참고.
 
 ---
 
