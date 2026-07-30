@@ -177,6 +177,7 @@ export function ChatStream({
             <div className="av bot mono">VC</div>
             <div className="bubble">
               <div className="trace mono">
+                <span className="spinner" data-testid="tracing-spinner" />
                 retrieval
                 {ARM_ORDER.map((k, i) => {
                   const state = i < litCount ? "lit" : "pending";

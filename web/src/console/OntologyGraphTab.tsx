@@ -48,6 +48,7 @@ export function OntologyGraphTab({
   const [graph, setGraph] = useState<SubgraphResponse | null>(null);
   const [hops, setHops] = useState<1 | 2>(initialHops);
   const [failed, setFailed] = useState(false);
+  const [activeNodeId, setActiveNodeId] = useState<string | null>(null);
   const alive = useRef(true);
 
   useEffect(() => {
@@ -61,6 +62,7 @@ export function OntologyGraphTab({
   }, [getSubgraphFn]);
 
   function expand(id: string) {
+    setActiveNodeId(id);
     getSubgraphFn({ expand: id, hops })
       .then((inc) => alive.current && setGraph((cur) => (cur ? mergeSubgraph(cur, inc) : inc)))
       .catch(() => {
@@ -72,24 +74,54 @@ export function OntologyGraphTab({
   const expandRef = useRef(expand);
   expandRef.current = expand;
 
-  // Bind cytoscape canvas node taps to the same expand handler as the node list.
-  // Also (re-)run the layout here: react-cytoscapejs only re-lays-out elements
-  // when its `layout` *prop* changes, not when `elements` changes, so merging
-  // in newly expanded nodes would otherwise leave them stacked at (0,0) on top
-  // of everything else. This callback fires on every mount + update, so it
-  // covers both the initial snapshot and every expand().
   function bindCy(cyInstance: unknown) {
     const cy = cyInstance as {
       on: (ev: string, sel: string, h: (evt: { target: { id: () => string } }) => void) => void;
       off?: (ev: string, sel: string) => void;
       layout?: (opts: Record<string, unknown>) => { run: () => void };
+      $id?: (id: string) => { select: () => void };
     };
     cy.off?.("tap", "node");
-    cy.on("tap", "node", (evt) => expandRef.current(evt.target.id()));
-    cy.layout?.({ name: "cose", animate: false, padding: 24 })?.run();
+    cy.on("tap", "node", (evt) => {
+      const nid = evt.target.id();
+      expandRef.current(nid);
+    });
+    if (activeNodeId) {
+      cy.$id?.(activeNodeId)?.select();
+    }
+    cy.layout?.({
+      name: "cose",
+      animate: false,
+      randomize: false,
+      fit: false,
+      padding: 24,
+      componentSpacing: 40,
+      nodeRepulsion: () => 400000,
+    })?.run();
   }
 
   const glow = cssVar("--node-rootcause", "#e8a13a");
+
+  const [showConvs, setShowConvs] = useState(false);
+
+  // Priority order for the node chip bar: RootCause > Component > Symptom > Action > Other > Conversation
+  const TYPE_ORDER: Record<string, number> = {
+    RootCause: 1,
+    Component: 2,
+    Symptom: 3,
+    Action: 4,
+    Customer: 5,
+    Intent: 5,
+    Theme: 5,
+    Conversation: 6,
+  };
+  const sortedNodes = graph
+    ? [...graph.nodes].sort((a, b) => (TYPE_ORDER[a.type] ?? 5) - (TYPE_ORDER[b.type] ?? 5))
+    : [];
+
+  const mainNodes = sortedNodes.filter((n) => n.type !== "Conversation");
+  const convNodes = sortedNodes.filter((n) => n.type === "Conversation");
+  const visibleNodes = showConvs ? sortedNodes : mainNodes;
 
   return (
     <section className="console-tab" data-testid="ontology-tab">
@@ -106,6 +138,25 @@ export function OntologyGraphTab({
             {h}-hop
           </button>
         ))}
+
+        <div className="ct-legend mono">
+          <span className="leg-node"><i className="dot dot-conv" />Conversation</span>
+          <span className="leg-link">
+            <span className="leg-tag">MENTIONS</span>
+            <span className="leg-arr">➔</span>
+          </span>
+          <span className="leg-node"><i className="dot dot-sym" />Symptom</span>
+          <span className="leg-link">
+            <span className="leg-tag">IMPLICATES</span>
+            <span className="leg-arr">➔</span>
+          </span>
+          <span className="leg-node"><i className="dot dot-comp" />Component</span>
+          <span className="leg-link">
+            <span className="leg-tag">CAUSED_BY</span>
+            <span className="leg-arr">➔</span>
+          </span>
+          <span className="leg-node"><i className="dot dot-rc" />RootCause</span>
+        </div>
       </div>
 
       {failed ? (
@@ -123,19 +174,34 @@ export function OntologyGraphTab({
             />
           </div>
           <ul className="ct-nodes">
-            {graph.nodes.map((n) => (
-              <li key={n.id}>
+            {visibleNodes.map((n) => {
+              const isActive = n.id === activeNodeId || n.id === graph.center;
+              return (
+                <li key={n.id}>
+                  <button
+                    type="button"
+                    className={`ct-node mono${isActive ? " is-active" : ""}`}
+                    data-node-id={n.id}
+                    onClick={() => expand(n.id)}
+                    title={`${n.type} 확장`}
+                  >
+                    {n.id}
+                  </button>
+                </li>
+              );
+            })}
+            {convNodes.length > 0 && (
+              <li>
                 <button
                   type="button"
                   className="ct-node mono"
-                  data-node-id={n.id}
-                  onClick={() => expand(n.id)}
-                  title={`${n.type} 확장`}
+                  style={{ opacity: 0.75, borderStyle: "dashed" }}
+                  onClick={() => setShowConvs((v) => !v)}
                 >
-                  {n.id}
+                  {showConvs ? "대화 노드 접기" : `대화 노드 ${convNodes.length}건 더보기`}
                 </button>
               </li>
-            ))}
+            )}
           </ul>
         </>
       ) : (

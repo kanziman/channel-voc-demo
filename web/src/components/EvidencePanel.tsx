@@ -20,6 +20,7 @@ export interface EvidenceItem {
   arms: string[];
   score: number;
   label?: string;
+  text?: string;
 }
 export interface EvidenceSubgraphRef {
   top_component?: string;
@@ -66,9 +67,31 @@ function colorForType(type: string): string {
   return token ? cssVar(token, fallback) : fallback;
 }
 
+const NODE_SIZE: Record<string, number> = {
+  RootCause: 28,
+  Component: 22,
+  Symptom: 18,
+  Conversation: 14,
+  Customer: 14,
+  Intent: 14,
+  Theme: 14,
+};
+const DEFAULT_SIZE = 16;
+
+function sizeForType(type: string): number {
+  return NODE_SIZE[type] ?? DEFAULT_SIZE;
+}
+
 export function toElements(sub: SubgraphResponse): ElementDefinition[] {
   const nodes: ElementDefinition[] = sub.nodes.map((n) => ({
-    data: { id: n.id, type: n.type, label: n.label, color: colorForType(n.type) },
+    data: {
+      id: n.id,
+      type: n.type,
+      label: n.label,
+      color: colorForType(n.type),
+      size: sizeForType(n.type),
+      isCenter: n.id === sub.center,
+    },
   }));
   const edges: ElementDefinition[] = sub.edges.map((e) => ({
     data: { source: e.source, target: e.target, type: e.type },
@@ -84,11 +107,42 @@ export function graphStylesheet(glow: string): CyStyleRule[] {
         "background-color": "data(color)",
         label: "data(label)",
         color: "#e8e6df",
-        "font-size": 9,
+        "font-size": 11.5,
         "text-valign": "bottom",
         "text-margin-y": 3,
-        width: 18,
-        height: 18,
+        width: "data(size)",
+        height: "data(size)",
+        "border-width": 1,
+        "border-color": "#2b2a27",
+      },
+    },
+    {
+      selector: "node:selected",
+      style: {
+        "border-width": 3,
+        "border-color": "#f0c674",
+        "border-opacity": 1,
+      },
+    },
+    {
+      selector: "node[?isCenter]",
+      style: {
+        "border-width": 3,
+        "border-color": "#f0c674",
+        "border-opacity": 1,
+      },
+    },
+    {
+      // Conversation nodes are dense; hide label until selected or hovered to avoid text overlap
+      selector: 'node[type="Conversation"]',
+      style: {
+        "text-opacity": 0,
+      },
+    },
+    {
+      selector: 'node[type="Conversation"]:selected, node[type="Conversation"]:active',
+      style: {
+        "text-opacity": 1,
       },
     },
     {
@@ -96,6 +150,7 @@ export function graphStylesheet(glow: string): CyStyleRule[] {
       // is a CSS drop-shadow filter; the canvas equivalent is a colored underlay.
       selector: 'node[type="RootCause"]',
       style: {
+        shape: "round-rectangle",
         "underlay-color": glow,
         "underlay-opacity": 0.45,
         "underlay-padding": 6,
@@ -105,6 +160,11 @@ export function graphStylesheet(glow: string): CyStyleRule[] {
       selector: "edge",
       style: {
         width: 1,
+        label: "data(type)",
+        color: "#8a897f",
+        "font-size": 7,
+        "text-rotation": "autorotate",
+        "text-margin-y": -6,
         "line-color": "#3d3b37",
         "target-arrow-color": "#3d3b37",
         "target-arrow-shape": "triangle",
@@ -146,6 +206,7 @@ export function EvidencePanel({
   // underlay-color (a solid color), so the canvas glow uses the RootCause node
   // color (--node-rootcause); the RootCause-only exception is what matters (§DESIGN).
   const glow = cssVar("--node-rootcause", "#e8a13a");
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   return (
     <aside className="evidence">
@@ -154,7 +215,9 @@ export function EvidencePanel({
       <div className="ev-canvas">
         {subgraphRef == null ? (
           <div className="ev-placeholder mono" data-testid="evidence-placeholder">
-            답변을 선택하면 GraphRAG 서브그래프가 여기 그려집니다
+            답변을 선택하면
+            <br />
+            GraphRAG 서브그래프가 그려집니다
           </div>
         ) : failed ? (
           <div className="ev-placeholder mono" data-testid="evidence-error">
@@ -174,21 +237,50 @@ export function EvidencePanel({
 
       {evidence.length > 0 && (
         <ul className="ev-list">
-          {evidence.map((item) => (
-            <li key={item.id} className="ev-item" data-testid="evidence-item">
-              <span className="ev-id mono">{item.id}</span>
-              <span className="ev-arms">
-                {ARM_ORDER.filter((a) => item.arms.includes(a)).map((a) => (
-                  <span key={a} className="ev-arm mono" data-arm={ARM_LETTER[a]}>
-                    {ARM_LETTER[a]}
+          {evidence.map((item) => {
+            const isExpanded = expandedId === item.id;
+            return (
+              <li
+                key={item.id}
+                className={`ev-item-row${isExpanded ? " is-expanded" : ""}`}
+                onClick={() => setExpandedId(isExpanded ? null : item.id)}
+                data-testid="evidence-item"
+              >
+                <div className="ev-item">
+                  <span className="ev-id mono">
+                    <span className="ev-arrow">{isExpanded ? "▾" : "▸"}</span> {item.id}
                   </span>
-                ))}
-              </span>
-              <span className="ev-score mono">{item.score}</span>
-            </li>
-          ))}
+                  <span className="ev-arms">
+                    {ARM_ORDER.filter((a) => item.arms.includes(a)).map((a) => (
+                      <span key={a} className="ev-arm mono" data-arm={ARM_LETTER[a]}>
+                        {ARM_LETTER[a]}
+                      </span>
+                    ))}
+                  </span>
+                  <span className="ev-score mono">{item.score}</span>
+                </div>
+                {isExpanded && (
+                  <div className="ev-detail mono" data-testid={`evidence-detail-${item.id}`}>
+                    <div className="ev-detail-text">
+                      "{item.text || item.label || item.id}"
+                    </div>
+                  </div>
+                )}
+              </li>
+            );
+          })}
         </ul>
       )}
+
+      <div className="ev-legend mono" data-testid="evidence-legend">
+        <div className="ev-flow-step"><i className="dot dot-conv" /> Conversation</div>
+        <div className="ev-flow-edge">│ MENTIONS ▼</div>
+        <div className="ev-flow-step"><i className="dot dot-sym" /> Symptom</div>
+        <div className="ev-flow-edge">│ IMPLICATES ▼</div>
+        <div className="ev-flow-step"><i className="dot dot-comp" /> Component</div>
+        <div className="ev-flow-edge">│ CAUSED_BY ▼</div>
+        <div className="ev-flow-step"><i className="dot dot-rc" /> RootCause</div>
+      </div>
 
       <div className="ev-actions">
         <button type="button" className="ev-explore" onClick={() => onExplore?.()}>
