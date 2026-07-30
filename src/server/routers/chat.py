@@ -49,9 +49,16 @@ def _cite_tail(conv_ids: list[str], limit: int = 3) -> str:
 
 def _evidence(results: list[dict]) -> list[dict]:
     """Per-hit retrieval evidence for the panel (#49) — the same hybrid_search
-    results the answer was gated on (no re-query). id + D/S/G arms + rrf score."""
-    return [{"id": r["id"], "arms": r.get("arms", []), "score": r.get("rrf", 0)}
-            for r in results]
+    results the answer was gated on (no re-query). id + D/S/G arms + rrf score + raw text."""
+    return [
+        {
+            "id": r["id"],
+            "arms": r.get("arms", []),
+            "score": r.get("rrf", 0),
+            "text": r.get("text"),
+        }
+        for r in results
+    ]
 
 
 class ChatRequest(BaseModel):
@@ -68,6 +75,17 @@ class ChatResponse(BaseModel):
     related_questions: list[str]
     interrupt_payload: dict | None = None
     evidence: list[dict] = []  # per-hit {id, arms, score} for the evidence panel (#49)
+
+
+_HYPOTHESIS_KO: dict[str, str] = {
+    "rc_checkout": "체크아웃 UI/UX 마찰 및 결제 처리 시스템 예외 처리 부족으로 인한 결제 단계 이탈",
+    "rc_orders": "주문 관리 시스템(OMS)의 상태 동기화 누락으로 인한 고객 화면 주문 상태 오류",
+    "rc_billing": "결제/청구 모듈 설정 오류로 인한 청구서 생성 불일치 및 결제 수단 제한",
+    "rc_support": "환불 정책 및 안내 처리 규정 미비로 인한 보상 문의 폭증",
+    "rc_shipping": "배송 연동 시스템 지연으로 인한 운송장 추적 정보 미갱신",
+    "rc_auth": "인증 세션 처리 오류로 인한 접속 실패",
+    "rc_feedback": "고객 피드백 수집 분류 체계 미흡",
+}
 
 
 @router.post("/chat", response_model=ChatResponse)
@@ -101,7 +119,7 @@ def chat(req: ChatRequest) -> ChatResponse:
         # Surface the evidence conv ids so the hedged answer is still traversable.
         return ChatResponse(
             answer=(f"⚠ 확신이 낮아요 — {comp_label}근거 {len(results)}건은 루트원인 승격 "
-                    f"임계값({threshold}건) 미만이라 참고용으로만 보세요.{_cite_tail(conv_ids)}"),
+                    f"임계값({threshold}건) 미만이라 참고용으로만 보세요.\n\n{_cite_tail(conv_ids).strip()}"),
             arms=arms_union,
             subgraph_ref={"top_component": top_component, "conversation_ids": conv_ids},
             confidence=conf, gate="low_confidence",
@@ -111,13 +129,18 @@ def chat(req: ChatRequest) -> ChatResponse:
         )
 
     # ── answer: promoted root cause → compose from real ₩ / frequency values ──
-    # Embed the rootcause key + representative conv ids so the operator can drill
-    # into the graph via cite-drilldown (#46); both match the frontend CITE_RE.
+    at_risk = rc["revenue_at_risk_krw"]
+    rec = rc["projected_recoverable_krw"]
+    pct = round((rec / at_risk * 100), 1) if at_risk > 0 else 0.0
+    rc_key = rc["key"]
+    hypothesis_text = _HYPOTHESIS_KO.get(rc_key) or rc.get("hypothesis") or ""
+
     answer = (
-        f"루트원인 {rc['key']} — '{top_component}' 관련 근거 {rc['frequency']}건. "
-        f"위험 ₩{rc['revenue_at_risk_krw']:,}, 회수가능 ₩{rc['projected_recoverable_krw']:,}, "
-        f"confidence {rc['confidence_avg']}. 가설: {rc['hypothesis']}."
-        f"{_cite_tail(rc.get('sample_conv_ids') or conv_ids)}"
+        f"🟧 루트원인 {rc_key} — '{top_component}' (관련 근거 {rc['frequency']}건)\n\n"
+        f"• 재무 영향: 위험 ₩{at_risk:,} (회수가능 ₩{rec:,} / {pct}%)\n"
+        f"• 분석 신뢰도: {rc['confidence_avg']}\n"
+        f"• 원인 가설: {hypothesis_text}\n\n"
+        f"{_cite_tail(rc.get('sample_conv_ids') or conv_ids).strip()}"
     )
     return ChatResponse(
         answer=answer, arms=arms_union,

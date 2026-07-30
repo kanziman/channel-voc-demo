@@ -26,6 +26,7 @@ export function RelatedChips({ questions, onPick, disabled = false }: RelatedChi
           disabled={disabled}
           onClick={() => onPick(q)}
         >
+          <span className="chip-icon" aria-hidden="true" style={{ marginRight: 4, opacity: 0.8 }}>✦</span>
           {q}
         </button>
       ))}

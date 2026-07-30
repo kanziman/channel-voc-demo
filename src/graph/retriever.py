@@ -36,7 +36,7 @@ ORDER BY score DESC
 _GRAPH_NEIGHBORS = """
 MATCH (comp:Component {name: $component})<-[:IMPLICATES]-(s:Symptom)<-[:MENTIONS]-(conv:Conversation)
 WITH conv, collect(DISTINCT s.text) AS symptoms, comp
-MATCH (conv)-[:EXPRESSES]->(i:Intent)
+OPTIONAL MATCH (conv)-[:EXPRESSES]->(i:Intent)
 RETURN conv.id AS id, left(conv.text, 240) AS text, conv.severity AS severity,
        i.name AS intent, symptoms, 1 AS hop
 ORDER BY conv.severity DESC
@@ -178,7 +178,7 @@ def hybrid_search(query_text: str, k: int = 6, pool: int = 12) -> dict:
         "query": query_text,
         "top_component": top_component,
         "counts": {"dense": len(dense), "sparse": len(sparse), "graph": len(graph)},
-        "results": results[:k],
+        "results": results[: max(k * 2, 12)],
     }
 
 

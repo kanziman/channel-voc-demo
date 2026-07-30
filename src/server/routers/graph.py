@@ -23,6 +23,8 @@ router = APIRouter(prefix="/api/graph", tags=["graph"])
 _ONTOLOGY: list[tuple[str, str, str]] = [
     ("cust", "Customer", "id"),
     ("conv", "Conversation", "id"),
+    ("intent", "Intent", "name"),
+    ("theme", "Theme", "name"),
     ("sym", "Symptom", "text"),
     ("comp", "Component", "name"),
     ("rc", "RootCause", "key"),
@@ -62,7 +64,7 @@ def _node_id(labels: list[str], props: dict) -> tuple[str, str, str]:
     """(id, type, label) in build_snapshot's scheme for a raw Neo4j node."""
     label = next((l for l in labels if l in _BY_LABEL), labels[0] if labels else "Node")
     prefix, key = _BY_LABEL.get(label, (label.lower(), "id"))
-    keyval = str(props.get(key, ""))
+    keyval = str(props.get(key, "") or props.get("name", "") or props.get("id", "") or props.get("text", "") or "unknown")
     # build_snapshot ids Actions by their root-cause key (act::rc_x), but the stored
     # Action.key is "act_<rc_key>" (dispatch.py) — strip so both paths share one id.
     if label == "Action":
@@ -90,7 +92,25 @@ def subgraph(
         snap = build_snapshot()
         return SubgraphResponse(nodes=snap["nodes"], edges=snap["edges"])
 
-    prefix, _, keyval = expand.partition("::")
+    if "::" in expand:
+        prefix, _, keyval = expand.partition("::")
+    else:
+        # Fallback for plain IDs (e.g. "conv_00387", "rc_billing", "checkout")
+        keyval = expand
+        if expand.startswith("conv_"):
+            prefix = "conv"
+        elif expand.startswith("rc_"):
+            prefix = "rc"
+        elif expand.startswith("act_"):
+            prefix = "act"
+            keyval = expand.removeprefix("act_")
+        elif expand.startswith("cust_"):
+            prefix = "cust"
+        elif expand in _BY_PREFIX:
+            prefix = expand
+        else:
+            prefix = "sym"
+
     if prefix not in _BY_PREFIX or not keyval:
         raise HTTPException(status_code=400, detail="unknown node id")
     label, key = _BY_PREFIX[prefix]
@@ -107,8 +127,12 @@ def subgraph(
     def _add(labels: list[str], props: dict) -> str:
         nid, ntype, lbl = _node_id(labels, props)
         if nid not in nodes:
-            nodes[nid] = {"id": nid, "type": ntype, "label": lbl,
-                          **{k: v for k, v in props.items()}}
+            nodes[nid] = {
+                **{k: v for k, v in props.items()},
+                "id": nid,
+                "type": ntype,
+                "label": lbl,
+            }
         return nid
 
     _add(center[0]["nl"], center[0]["np"])  # always include the clicked node

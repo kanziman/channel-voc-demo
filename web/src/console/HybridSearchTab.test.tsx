@@ -38,7 +38,7 @@ describe("HybridSearchTab", () => {
     const searchFn = vi.fn().mockResolvedValue(RESP);
     render(<HybridSearchTab searchFn={searchFn} />);
 
-    const input = screen.getByPlaceholderText(/검색|서치|query/i);
+    const input = screen.getByPlaceholderText(/order status|검색|서치|query/i);
     fireEvent.change(input, { target: { value: "결제 실패" } });
     fireEvent.submit(input.closest("form")!);
 
@@ -59,7 +59,7 @@ describe("HybridSearchTab", () => {
     const searchFn = vi.fn().mockResolvedValue(RESP);
     render(<HybridSearchTab searchFn={searchFn} />);
 
-    const input = screen.getByPlaceholderText(/검색|서치|query/i);
+    const input = screen.getByPlaceholderText(/order status|검색|서치|query/i);
     fireEvent.change(input, { target: { value: "x" } });
     fireEvent.submit(input.closest("form")!);
 
@@ -77,7 +77,7 @@ describe("HybridSearchTab", () => {
     const searchFn = vi.fn().mockResolvedValue(RESP);
     render(<HybridSearchTab searchFn={searchFn} />);
 
-    const input = screen.getByPlaceholderText(/검색|서치|query/i);
+    const input = screen.getByPlaceholderText(/order status|검색|서치|query/i);
     fireEvent.change(input, { target: { value: "   " } });
     fireEvent.submit(input.closest("form")!);
 
@@ -88,7 +88,7 @@ describe("HybridSearchTab", () => {
     const searchFn = vi.fn().mockRejectedValue(new Error("boom"));
     render(<HybridSearchTab searchFn={searchFn} />);
 
-    const input = screen.getByPlaceholderText(/검색|서치|query/i);
+    const input = screen.getByPlaceholderText(/order status|검색|서치|query/i);
     fireEvent.change(input, { target: { value: "x" } });
     fireEvent.submit(input.closest("form")!);
 
