@@ -27,29 +27,29 @@
 
 ```mermaid
 flowchart LR
-    subgraph Phase1 ["PHASE 1: 해커톤"]
+    subgraph Phase1 ["PHASE 1: AX 해커톤 제출작"]
         direction TB
-        P1_1["순차 자동 분석"]
-        P1_2["ML 의도 분류"]
-        P1_3["GitHub Issue 연동"]
+        P1_1["순차적 자동 분석\n(대화 수집 → 분석 → 티켓)"]
+        P1_2["머신러닝 기반 의도 분류\n(Scikit-Learn)"]
+        P1_3["기본 GitHub / Jira 연동"]
     end
 
-    Phase1 -->|"지식그래프/에이전트"| Phase2
+    Phase1 -->|"지식그래프 & 에이전트"| Phase2
 
-    subgraph Phase2 ["PHASE 2: GraphRAG 엔진"]
+    subgraph Phase2 ["PHASE 2: 루트원인 GraphRAG 엔진"]
         direction TB
-        P2_1["AI 핵심 신호 추출"]
-        P2_2["지식그래프 순회 & 손실액"]
-        P2_3["3중 하이브리드 & 승인 게이트"]
+        P2_1["AI 핵심 신호 추출\n(증상 · 부품 · 심각도)"]
+        P2_2["지식그래프 순회 & 집계\n(8건 이상 승격 · 손실액)"]
+        P2_3["3중 하이브리드 & 사람 승인\n(LangGraph Gate)"]
     end
 
-    Phase2 -->|"실시간 코파일럿"| Phase3
+    Phase2 -->|"실시간 대화형 전환"| Phase3
 
-    subgraph Phase3 ["PHASE 3: 운영자 코파일럿"]
+    subgraph Phase3 ["PHASE 3: 운영자 코파일럿 & 콘솔"]
         direction TB
-        P3_1["FastAPI 실시간 API"]
-        P3_2["Retrieval-Gated 답변"]
-        P3_3["React 코파일럿 & 3-탭 콘솔"]
+        P3_1["FastAPI 실시간 API\n(챗봇 · 그래프 · 검색 · 에이전트)"]
+        P3_2["Retrieval-Gating\n(3분기 정직한 거절 게이트)"]
+        P3_3["Vite/React 인라인 코파일럿\n& 3-탭 근거 콘솔"]
     end
 
     style Phase1 fill:#f8fafc,stroke:#cbd5e1
@@ -80,41 +80,41 @@ PHASE 2는 단순 텍스트 분류기를 넘어 **에이전틱 지식그래프 �
 
 ```mermaid
 flowchart LR
-    subgraph DataIngestion ["1. 데이터 수집/추출"]
+    subgraph DataIngestion ["1. 데이터 수집 & 신호 추출"]
         direction TB
-        RAW["1,200건 대화 데이터"] --> EXTRACT["LLM Extraction\n(extract.py)"]
-        EXTRACT --> SIGNALS["구조화 신호"]
+        RAW["1,200건 고객 대화 데이터 (Bitext CS)"] --> EXTRACT["LLM Function Calling 추출기\n(extract.py)"]
+        EXTRACT --> SIGNALS["구조화 신호\n(Intent, Symptom, Component, Severity)"]
     end
 
-    subgraph KnowledgeGraph ["2. Neo4j 지식그래프"]
+    subgraph KnowledgeGraph ["2. Neo4j 지식그래프 & 임베딩"]
         direction TB
-        SIGNALS --> KG_LOAD["Neo4j MERGE\n(load.py)"]
-        KG_LOAD --> DENSE["FastEmbed 384d"]
-        KG_LOAD --> SPARSE["Lucene Full-text"]
-        KG_LOAD --> GRAPH_NODES["지식그래프 노드/엣지"]
+        SIGNALS --> KG_LOAD["Neo4j MERGE 로더\n(load.py)"]
+        KG_LOAD --> DENSE["FastEmbed ONNX 384d 벡터 인덱스"]
+        KG_LOAD --> SPARSE["Lucene Full-text 인덱스"]
+        KG_LOAD --> GRAPH_NODES["지식그래프 노드/엣지 구축\n(Customer→Conv→Symptom→Component)"]
     end
 
-    subgraph RootCauseEngine ["3. GraphRAG 엔진"]
+    subgraph RootCauseEngine ["3. 루트원인 탐지 & GraphRAG"]
         direction TB
-        GRAPH_NODES --> CYPHER["Cypher 순회\n(rootcause.py)"]
-        CYPHER --> PROMOTION{"동일 부품\n8건 이상?"}
-        PROMOTION -- YES --> RC_PROMOTE["RootCause 승격\n& 손실액 계산"]
+        GRAPH_NODES --> CYPHER["Cypher 순회 엔진\n(rootcause.py)"]
+        CYPHER --> PROMOTION{"동일 부품 지목\n8건 이상?"}
+        PROMOTION -- YES --> RC_PROMOTE["RootCause 노드 승격\n+ ₩ 매출 손실액 집계"]
         
-        RC_PROMOTE --> RRF_RETRIEVER["3중 하이브리드 & RRF\n(retriever.py)"]
+        RC_PROMOTE --> RRF_RETRIEVER["3중 하이브리드 검색 & RRF 융합\n(retriever.py)"]
         DENSE --> RRF_RETRIEVER
         SPARSE --> RRF_RETRIEVER
-        RRF_RETRIEVER --> DRAFTER["이슈 초안 작성\n(drafter.py)"]
+        RRF_RETRIEVER --> DRAFTER["팩트 근거 이슈 초안 작성\n(drafter.py)"]
     end
 
-    subgraph HumanInTheLoop ["4. LangGraph 승인"]
+    subgraph HumanInTheLoop ["4. LangGraph 승인 게이트 & 배포"]
         direction TB
-        DRAFTER --> INTERRUPT["LangGraph interrupt()\n(agent.py)"]
-        INTERRUPT --> APPROVAL{"승인 결정"}
-        APPROVAL -- 승인 --> DISPATCH["GitHub Issue 배포\n(dispatch.py)"]
-        APPROVAL -- 거절 --> REJECT["배포 취소"]
+        DRAFTER --> INTERRUPT["LangGraph interrupt()\n인간 승인 대기 노드 (agent.py)"]
+        INTERRUPT --> APPROVAL{"사람의 승인 결정"}
+        APPROVAL -- Approved --> DISPATCH["GitHub Issue 배포 & Provenance 기록\n(dispatch.py)"]
+        APPROVAL -- Rejected --> REJECT["배포 취소 & 로깅"]
         
-        DISPATCH --> NEO4J_EDGE["Neo4j 출처 엣지"]
-        DISPATCH --> DASHBOARD["dashboard.html"]
+        DISPATCH --> NEO4J_EDGE["Neo4j 출처 엣지 생성\n(Action)-[:EVIDENCES]->(Conv)"]
+        DISPATCH --> DASHBOARD["out/dashboard.html 생성\n(6가지 Visual)"]
     end
 
     DataIngestion --> KnowledgeGraph --> RootCauseEngine --> HumanInTheLoop
@@ -137,24 +137,33 @@ erDiagram
     Action }|--o{ Conversation : EVIDENCES
 
     Customer {
-        string id PK
+        string customer_id PK
     }
     Conversation {
-        string id PK
+        string conv_id PK
+        string text
         float32_array embedding_384d
+        string intent
+        float confidence
     }
     Symptom {
         string name PK
     }
     Component {
         string name PK
+        int frequency
     }
     RootCause {
-        string key PK
+        string component PK
+        int frequency
         int total_risk_krw
+        float avg_severity
+        string hypothesis
     }
     Action {
         string issue_id PK
+        string title
+        string status
     }
 ```
 
