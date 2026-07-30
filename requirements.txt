@@ -3,7 +3,9 @@
 # serverless bundle limit: fastembed (ONNX + model), scikit-learn, pandas, joblib,
 # and langchain-community (pulled in only for the local SQLiteCache — see
 # src/graph/llm.py's `if not os.getenv("VERCEL")` guard, which skips that import
-# on Vercel). Query embeddings come from a hosted OpenAI-compatible endpoint
+# on Vercel). Also excludes numpy: it's only used by src/pipeline/analyze.py
+# (PHASE1 local pipeline), which the serverless API surface never imports.
+# Query embeddings come from a hosted OpenAI-compatible endpoint
 # (VOC_EMBED_BACKEND=api), so no fastembed is needed at request time. `uv`/pyproject
 # remain the source of truth for local dev; this file is only read by Vercel's
 # Python builder (kept out of its view of pyproject.toml/uv.lock via .vercelignore).
@@ -15,4 +17,3 @@ langchain-neo4j>=0.3.0
 langgraph>=0.2.0
 neo4j>=5.28.0
 python-dotenv>=1.0.0
-numpy>=2.0

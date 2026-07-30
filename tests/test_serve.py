@@ -11,6 +11,7 @@ import json
 from pathlib import Path
 
 import pytest
+import uvicorn
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
@@ -116,8 +117,10 @@ def test_should_include_cors_allow_origin_header(client, monkeypatch):
 
 # ── [정상] main → uvicorn.run with config port ────────────────────────────
 def test_should_run_uvicorn_with_search_port_when_main(monkeypatch):
+    # main() imports uvicorn lazily (kept out of the Vercel bundle, §B deploy);
+    # patch the real module so that call-time `import uvicorn` picks it up.
     calls = {}
-    monkeypatch.setattr(serve.uvicorn, "run",
+    monkeypatch.setattr(uvicorn, "run",
                         lambda app, **kw: calls.update(app=app, **kw))
     serve.main()
     assert calls["app"] is serve.app

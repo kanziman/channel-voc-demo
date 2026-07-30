@@ -13,7 +13,6 @@ CORS is open because the dashboard is opened cross-origin (file:// / static host
 """
 from __future__ import annotations
 
-import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
@@ -85,6 +84,8 @@ def search(req: SearchRequest):
 
 
 def main() -> int:
+    import uvicorn  # local-dev-only server; never needed when Vercel imports `app`
+
     print(f"▶ VOC live hybrid search on http://127.0.0.1:{config.SEARCH_PORT}")
     print(f"  model={config.EMBED_MODEL} ({config.EMBED_DIM}d) · dense+fulltext+graph → RRF")
     print("  open out/dashboard.html and use the search playground.  Ctrl-C to stop.")
