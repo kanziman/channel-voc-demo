@@ -1,5 +1,6 @@
 {
-  "buildCommand": "cd web && npm install && npm run build && cp -r ../out/* dist/ || true",
+  "framework": null,
+  "buildCommand": "cd web && npm install && npm run build && (cp -r ../out/* dist/ || true)",
   "outputDirectory": "web/dist",
   "functions": {
     "api/index.py": {
