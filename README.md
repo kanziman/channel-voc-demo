@@ -28,27 +28,30 @@
 초기 AX 해커톤 제출작(PHASE 1)을 지식그래프·AI 에이전트 엔진(PHASE 2)으로 고도화하고, 다시 운영자가 채널톡 데스크에서 실시간으로 질문하는 대화형 코파일럿(PHASE 3)으로 발전시킨 프로젝트입니다.
 
 ```mermaid
-flowchart TD
-    subgraph Phase1 ["PHASE 1: AX 해커톤 제출작"]
-        P1_1["순차적 자동 분석 (대화 수집 → 분석 → 개발 티켓 발행)"]
-        P1_2["머신러닝 기반 의도 분류 (Scikit-Learn)"]
-        P1_3["기본 GitHub Issue / Jira 연동"]
+flowchart LR
+    subgraph Phase1 ["PHASE 1: 해커톤"]
+        direction TB
+        P1_1["순차 자동 분석"]
+        P1_2["ML 의도 분류"]
+        P1_3["GitHub Issue 연동"]
     end
 
-    Phase1 -->|"지식그래프 및 에이전트 도입"| Phase2
+    Phase1 -->|"지식그래프/에이전트"| Phase2
 
-    subgraph Phase2 ["PHASE 2: 루트원인 GraphRAG 엔진"]
-        P2_1["AI 기반 핵심 신호 추출 (증상 · 문제 부품 · 심각도)"]
-        P2_2["지식그래프 순회 (동일 문제 8건 이상 시 루트원인 승격 및 손실액 계산)"]
-        P2_3["3중 하이브리드 검색 & 사람 승인 후 안전 배포 (LangGraph Gate)"]
+    subgraph Phase2 ["PHASE 2: GraphRAG 엔진"]
+        direction TB
+        P2_1["AI 핵심 신호 추출"]
+        P2_2["지식그래프 순회 & 손실액"]
+        P2_3["3중 하이브리드 & 승인 게이트"]
     end
 
-    Phase2 -->|"배치 → 실시간 대화형 전환"| Phase3
+    Phase2 -->|"실시간 코파일럿"| Phase3
 
-    subgraph Phase3 ["PHASE 3: 운영자 코파일럿 & 근거 콘솔"]
-        P3_1["FastAPI 실시간 API (챗봇 · 그래프 · 검색 · 에이전트)"]
-        P3_2["retrieval-gating — 근거 없으면 답하지 않는 3분기 게이트"]
-        P3_3["Vite/React 인라인 코파일럿 + 3-탭 근거 콘솔 · Vercel 배포"]
+    subgraph Phase3 ["PHASE 3: 운영자 코파일럿"]
+        direction TB
+        P3_1["FastAPI 실시간 API"]
+        P3_2["Retrieval-Gated 답변"]
+        P3_3["React 코파일럿 & 3-탭 콘솔"]
     end
 
     style Phase1 fill:#f8fafc,stroke:#cbd5e1
