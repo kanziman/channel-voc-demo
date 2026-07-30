@@ -75,6 +75,12 @@ def _embed_api(texts: list[str]) -> list[list[float]]:
         base_url=config.EMBED_API_URL,
         api_key=SecretStr(config.EMBED_API_KEY),
         model=config.EMBED_MODEL,
+        # Without this, OpenAIEmbeddings pre-tokenizes `texts` with tiktoken and
+        # sends `input` as nested integer-token arrays (an OpenAI-proper
+        # optimization). Third-party OpenAI-compatible hosts — Cloudflare
+        # Workers AI included — reject that shape ("expected string, received
+        # array"); this makes it send the raw strings instead.
+        check_embedding_ctx_length=False,
     )
     return client.embed_documents(texts)
 
