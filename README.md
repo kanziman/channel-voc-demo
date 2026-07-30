@@ -128,7 +128,10 @@ flowchart LR
 
 ### 2. Neo4j 지식그래프 데이터 모델 (ERD)
 
+<div align="center" style="max-width: 520px; margin: 0 auto;">
+
 ```mermaid
+%%{init: {'theme': 'neutral', 'erd': {'useMaxWidth': false}}}%%
 erDiagram
     Customer ||--o{ Conversation : INITIATED
     Conversation ||--o{ Symptom : MENTIONS
@@ -166,6 +169,8 @@ erDiagram
         string status
     }
 ```
+
+</div>
 
 ---
 
