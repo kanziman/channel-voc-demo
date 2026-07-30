@@ -79,40 +79,45 @@ PHASE 2는 단순 텍스트 분류기를 넘어 **에이전틱 지식그래프 �
 ### 1. 엔드투엔드 시스템 다이어그램 (System Flow)
 
 ```mermaid
-flowchart TD
-    subgraph DataIngestion ["1. 데이터 수집 & 신호 추출"]
-        RAW["1,200건 고객 대화 데이터 (Bitext CS)"] --> EXTRACT["LLM Function Calling 추출기\n(extract.py)"]
-        EXTRACT --> SIGNALS["구조화 신호\n(Intent, Symptom, Component, Severity)"]
+flowchart LR
+    subgraph DataIngestion ["1. 데이터 수집/추출"]
+        direction TB
+        RAW["1,200건 대화 데이터"] --> EXTRACT["LLM Extraction\n(extract.py)"]
+        EXTRACT --> SIGNALS["구조화 신호"]
     end
 
-    subgraph KnowledgeGraph ["2. Neo4j 지식그래프 & 임베딩"]
-        SIGNALS --> KG_LOAD["Neo4j MERGE 로더\n(load.py)"]
-        KG_LOAD --> DENSE["FastEmbed ONNX 384d 벡터 인덱스"]
-        KG_LOAD --> SPARSE["Lucene Full-text 인덱스"]
-        KG_LOAD --> GRAPH_NODES["지식그래프 노드/엣지 구축\n(Customer→Conv→Symptom→Component)"]
+    subgraph KnowledgeGraph ["2. Neo4j 지식그래프"]
+        direction TB
+        SIGNALS --> KG_LOAD["Neo4j MERGE\n(load.py)"]
+        KG_LOAD --> DENSE["FastEmbed 384d"]
+        KG_LOAD --> SPARSE["Lucene Full-text"]
+        KG_LOAD --> GRAPH_NODES["지식그래프 노드/엣지"]
     end
 
-    subgraph RootCauseEngine ["3. 루트원인 탐지 & GraphRAG"]
-        GRAPH_NODES --> CYPHER["Cypher 순회 엔진\n(rootcause.py)"]
-        CYPHER --> PROMOTION{"동일 부품 지목\n8건 이상?"}
-        PROMOTION -- YES --> RC_PROMOTE["RootCause 노드 승격\n+ ₩ 매출 손실액 집계"]
+    subgraph RootCauseEngine ["3. GraphRAG 엔진"]
+        direction TB
+        GRAPH_NODES --> CYPHER["Cypher 순회\n(rootcause.py)"]
+        CYPHER --> PROMOTION{"동일 부품\n8건 이상?"}
+        PROMOTION -- YES --> RC_PROMOTE["RootCause 승격\n& 손실액 계산"]
         
-        RC_PROMOTE --> RRF_RETRIEVER["3중 하이브리드 검색 & RRF 융합\n(retriever.py)"]
+        RC_PROMOTE --> RRF_RETRIEVER["3중 하이브리드 & RRF\n(retriever.py)"]
         DENSE --> RRF_RETRIEVER
         SPARSE --> RRF_RETRIEVER
-        
-        RRF_RETRIEVER --> DRAFTER["팩트 근거 이슈 초안 작성\n(drafter.py)"]
+        RRF_RETRIEVER --> DRAFTER["이슈 초안 작성\n(drafter.py)"]
     end
 
-    subgraph HumanInTheLoop ["4. LangGraph 승인 게이트 & 배포"]
-        DRAFTER --> INTERRUPT["LangGraph interrupt()\n인간 승인 대기 노드 (agent.py)"]
-        INTERRUPT --> APPROVAL{"사람의 승인 결정"}
-        APPROVAL -- Approved --> DISPATCH["GitHub Issue 배포 & Provenance 기록\n(dispatch.py)"]
-        APPROVAL -- Rejected --> REJECT["배포 취소 & 로깅"]
+    subgraph HumanInTheLoop ["4. LangGraph 승인"]
+        direction TB
+        DRAFTER --> INTERRUPT["LangGraph interrupt()\n(agent.py)"]
+        INTERRUPT --> APPROVAL{"승인 결정"}
+        APPROVAL -- 승인 --> DISPATCH["GitHub Issue 배포\n(dispatch.py)"]
+        APPROVAL -- 거절 --> REJECT["배포 취소"]
         
-        DISPATCH --> NEO4J_EDGE["Neo4j 출처 엣지 생성\n(Action)-[:EVIDENCES]->(Conv)"]
-        DISPATCH --> DASHBOARD["out/dashboard.html 생성\n(6가지 인터랙티브 Visual)"]
+        DISPATCH --> NEO4J_EDGE["Neo4j 출처 엣지"]
+        DISPATCH --> DASHBOARD["dashboard.html"]
     end
+
+    DataIngestion --> KnowledgeGraph --> RootCauseEngine --> HumanInTheLoop
 
     style RAW fill:#f9f9fb,stroke:#d1d5db,stroke-width:1px
     style EXTRACT fill:#eff6ff,stroke:#3b82f6,stroke-width:1.5px
