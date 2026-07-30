@@ -8,22 +8,30 @@ The whole PHASE2 codebase depends *only* on this module for model access:
 
 A SQLite LLM cache makes chat calls deterministic + cheap on re-runs (demo
 reproducibility). temperature is pinned to 0 everywhere.
+
+The cache is skipped on Vercel: langchain-community (needed only for
+SQLiteCache) drags in a dependency tree that blows past the 500MB serverless
+function bundle limit, and /tmp is wiped between cold starts anyway so the
+cache wouldn't earn its keep there. `VERCEL` is set by the platform on every
+build and invocation (§B deploy).
 """
 from __future__ import annotations
 
 import functools
+import os
 from typing import Iterable
 
-from langchain_community.cache import SQLiteCache
-from langchain_core.globals import set_llm_cache
 from langchain_openai import ChatOpenAI
 from pydantic import SecretStr
 
 from . import config
 
-# Deterministic on-disk cache for all chat calls (keyed by prompt+model+params).
-config.CACHE_DIR.mkdir(parents=True, exist_ok=True)
-set_llm_cache(SQLiteCache(database_path=str(config.CACHE_DIR / "llm_cache.sqlite")))
+if not os.getenv("VERCEL"):
+    from langchain_community.cache import SQLiteCache
+    from langchain_core.globals import set_llm_cache
+
+    config.CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    set_llm_cache(SQLiteCache(database_path=str(config.CACHE_DIR / "llm_cache.sqlite")))
 
 
 @functools.lru_cache(maxsize=8)

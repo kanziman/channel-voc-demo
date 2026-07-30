@@ -1,15 +1,17 @@
 # Serverless (Vercel Python) runtime deps — §B deploy.
-# Deliberately EXCLUDES the local-only heavy deps that blow past the ~250MB
-# serverless bundle limit: fastembed (ONNX + model), scikit-learn, pandas, joblib.
-# Query embeddings come from a hosted OpenAI-compatible endpoint (VOC_EMBED_BACKEND=api),
-# so no fastembed is needed at request time. `uv`/pyproject remain the source of
-# truth for local dev; this file is only read by Vercel's Python builder.
+# Deliberately EXCLUDES the local-only heavy deps that blow past the 500MB
+# serverless bundle limit: fastembed (ONNX + model), scikit-learn, pandas, joblib,
+# and langchain-community (pulled in only for the local SQLiteCache — see
+# src/graph/llm.py's `if not os.getenv("VERCEL")` guard, which skips that import
+# on Vercel). Query embeddings come from a hosted OpenAI-compatible endpoint
+# (VOC_EMBED_BACKEND=api), so no fastembed is needed at request time. `uv`/pyproject
+# remain the source of truth for local dev; this file is only read by Vercel's
+# Python builder (kept out of its view of pyproject.toml/uv.lock via .vercelignore).
 fastapi>=0.115
 pydantic>=2
 langchain>=0.3.30
 langchain-openai>=0.3.35
 langchain-neo4j>=0.3.0
-langchain-community>=0.3.0
 langgraph>=0.2.0
 neo4j>=5.28.0
 python-dotenv>=1.0.0
