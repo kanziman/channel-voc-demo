@@ -15,11 +15,9 @@
 
 ### 웹 대시보드 데모 (Vercel Live)
 
-[![웹 대시보드 데모](docs/dashboard_preview.png)](https://channel-voc-demo.vercel.app/)
-
-> [https://channel-voc-demo.vercel.app](https://channel-voc-demo.vercel.app)
+> 🔗 **[https://channel-voc-demo.vercel.app](https://channel-voc-demo.vercel.app)**
 > 
-> *상단 이미지 또는 링크를 클릭하면 별도 환경 구축 없이 브라우저에서 6단계 엔진 프로세스와 하이브리드 검색을 직접 테스트해 보실 수 있습니다.*
+> *위 링크를 클릭하면 별도 환경 구축 없이 브라우저에서 6단계 엔진 프로세스와 하이브리드 검색을 직접 테스트해 보실 수 있습니다.*
 
 ---
 
