@@ -265,7 +265,8 @@ flowchart LR
 ### 4. 배포 (Vercel & Cloudflare)
 
 - **Vercel**: 프론트엔드(Vite React 정적 자산)와 백엔드 FastAPI(서버리스 Python Serverless Function)를 통합 구성. 로컬 `fastembed`(ONNX 런타임)를 동일 모델·동일 384d의 서빙 인프라 엔드포인트로 전환하여 서버리스 번들 크기 경량화 완료.
-- **Cloudflare (Pages & Tunnel / Workers)**:
+- **Cloudflare (Pages, Workers AI & Tunnel)**:
+  - **Cloudflare Workers AI**: 로컬 Heavy ONNX 의존성 없이 에지 단에서 **`@cf/baai/bge-small-en` (384d)** 모델을 직접 호출하여 실시간 검색 쿼리 임베딩 벡터를 초고속 생성 (Neo4j Vector Index와 100% 차원 호환).
   - **Cloudflare Pages**: 글로벌 Edge CDN 네트워크를 활용하여 Vite React 프론트엔드 콘솔을 초고속 글로벌 분산 배포.
   - **Cloudflare Tunnel (`cloudflared`)**: 로컬 Neo4j 인스턴스 및 FastAPI 백엔드 포트(`:8756`)를 제로트러스트 보안 터널로 외부에 노출하여 에지 단에 실시간 연동.
   - 환경 변수 및 상세 배포 절차는 [`docs/dev/deploy.md`](docs/dev/deploy.md) 참고.
