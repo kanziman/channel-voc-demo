@@ -67,6 +67,23 @@ def test_should_id_action_by_rootcause_key_matching_snapshot(client, monkeypatch
     assert b["edges"][0]["target"] == "act::rc_billing"
 
 
+def test_should_label_action_with_its_title_not_the_rootcause_key(client, monkeypatch):
+    # Stripping "act_" off Action.key ("act_rc_billing") leaves "rc_billing" — the
+    # *RootCause's own* key. Using that as the Action's display label renders it
+    # as a visual duplicate of the RootCause node it's attached to (reported: the
+    # evidence graph showed two "rc_billing"-labelled nodes). The Action's own
+    # `title` property must win instead.
+    rels = [
+        {"sl": ["RootCause"], "sp": {"key": "rc_billing"},
+         "el": ["Action"], "ep": {"key": "act_rc_billing", "title": "[VOC] Fix billing invoice mismatch"},
+         "t": "DISPATCHED_AS"},
+    ]
+    _patch_db_run(monkeypatch, _fake_expand_db(["RootCause"], {"key": "rc_billing"}, rels))
+    b = client.get("/api/graph/subgraph", params={"expand": "rc::rc_billing"}).json()
+    action_node = next(n for n in b["nodes"] if n["id"] == "act::rc_billing")
+    assert action_node["label"] == "[VOC] Fix billing invoice mismatch"
+
+
 # ── expand 1-hop ──────────────────────────────────────────────────────────────
 def _fake_expand_db(center_labels, center_props, rels):
     def run(cypher, **params):

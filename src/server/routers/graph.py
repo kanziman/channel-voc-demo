@@ -67,6 +67,11 @@ def _node_id(labels: list[str], props: dict) -> tuple[str, str, str]:
     # Action.key is "act_<rc_key>" (dispatch.py) — strip so both paths share one id.
     if label == "Action":
         keyval = keyval.removeprefix("act_")
+        # keyval is now the *RootCause's* own key (e.g. "rc_billing") — reusing it
+        # as the display label makes the Action node read as a duplicate of the
+        # RootCause node it's attached to. Show the actual issue title instead.
+        display = str(props.get("title", "") or keyval)
+        return f"{prefix}::{keyval}", label, display
     return f"{prefix}::{keyval}", label, keyval
 
 
