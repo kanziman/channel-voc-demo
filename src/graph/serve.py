@@ -68,8 +68,22 @@ class SearchRequest(BaseModel):
 
 
 @app.get("/health")
+@app.get("/api/health")
 def health() -> dict:
-    return {"status": "ok", "model": config.EMBED_MODEL, "dim": config.EMBED_DIM}
+    neo4j_ok = False
+    try:
+        from . import db
+        db.run("RETURN 1 AS ping")
+        neo4j_ok = True
+    except BaseException:
+        neo4j_ok = False
+
+    return {
+        "status": "ok",
+        "model": config.EMBED_MODEL,
+        "dim": config.EMBED_DIM,
+        "neo4j": neo4j_ok,
+    }
 
 
 @app.post("/search")

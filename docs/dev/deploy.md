@@ -18,7 +18,7 @@ Vercel 서버리스 Python 번들 한계(~250MB)를 초과한다. 그래서:
 | :-- | :-- |
 | `api/index.py` | 서버리스 진입점 — `src.graph.serve:app`(ASGI) 재노출 |
 | `requirements.txt` | 서버리스 런타임 deps(무거운 로컬 deps 제외) |
-| `vercel.json` | 프론트 빌드 + `out/*` 복사 + `/api/*`→함수 라우팅 + `src/**` 포함 |
+| `vercel.json` | 프론트 빌드 + `out/*` 복사 + `/api/*`→함수 라우팅 + `src/**` 포함 + Cron Keep-Alive (`/api/health` 매일 0시) |
 | `src/graph/llm.py` · `config.py` | `EMBED_BACKEND` 분기 + `CACHE_DIR` env-override |
 
 ## Vercel 프로젝트 환경변수 (필수)
