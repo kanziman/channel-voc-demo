@@ -17,3 +17,6 @@ We support major credit/debit cards and local wallets at checkout.
 
 **How long does a refund take?**
 Refunds are processed within a few business days after approval.
+
+**I can't log in or register — what should I do?**
+Use **Forgot password** to reset, and make sure you register with the same email used at checkout. Social logins are also supported.
